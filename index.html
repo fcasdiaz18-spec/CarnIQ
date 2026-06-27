@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CárnIQ">
+<meta name="theme-color" content="#0f1117">
+<meta name="description" content="FT Foods Antofagasta – Inteligencia de mercado cárnico">
+
+<!-- Splash / icono inline SVG como data URI para iPhone -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f1117'/%3E%3Crect x='60' y='60' width='392' height='392' rx='80' fill='%23161b27'/%3E%3Ctext x='256' y='310' font-size='220' text-anchor='middle' font-family='system-ui'%3E%F0%9F%A5%A9%3C/text%3E%3Ctext x='256' y='430' font-size='52' text-anchor='middle' fill='%234f8ef7' font-family='-apple-system,sans-serif' font-weight='700'%3EC%C3%A1rnIQ%3C/text%3E%3C/svg%3E">
+
+<title>CárnIQ – FT Foods</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f1117;--bg2:#161b27;--bg3:#1e2538;--bg4:#252d42;
+  --border:#2e3650;--border2:#3d4a6a;
+  --text:#e8eaf0;--text2:#9aa3be;--text3:#5c6480;
+  --accent:#4f8ef7;--accent2:#1a3a7a;
+  --green:#2ecc71;--red:#e74c3c;--amber:#f39c12;--purple:#9b59b6;
+  --radius:12px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;font-size:14px;color:var(--text);display:flex;flex-direction:column}
+
+/* Splash screen */
+#splash{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s}
+#splash.hide{opacity:0;pointer-events:none}
+.splash-icon{font-size:80px;animation:bounce .8s ease infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+.splash-title{font-size:28px;font-weight:700;color:var(--text)}
+.splash-sub{font-size:14px;color:var(--text3)}
+.splash-bar{width:160px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:8px}
+.splash-prog{height:100%;background:var(--accent);border-radius:2px;animation:load 1.2s ease forwards}
+@keyframes load{from{width:0}to{width:100%}}
+
+/* Install banner */
+#install-banner{background:var(--accent2);border-bottom:1px solid var(--accent);padding:10px 16px;display:flex;align-items:center;gap:10px;padding-top:calc(10px + var(--safe-top));flex-shrink:0}
+#install-banner.hide{display:none}
+.install-icon{font-size:24px}
+.install-text{flex:1;font-size:12px;line-height:1.5;color:var(--text)}
+.install-steps{font-size:11px;color:var(--text2)}
+.install-close{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:4px}
+
+/* Nav */
+.nav{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;padding-top:var(--safe-top)}
+.nav-btn{flex:1;min-width:0;padding:10px 2px 8px;text-align:center;cursor:pointer;border:none;background:none;color:var(--text3);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px;border-bottom:2px solid transparent;transition:.15s}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-btn svg{width:22px;height:22px}
+
+/* Content */
+#app-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(16px + var(--safe-bot))}
+.screen{display:none;padding:14px;max-width:500px;margin:0 auto}
+.screen.active{display:block}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.card-title{font-size:11px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em}
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.kpi-val{font-size:20px;font-weight:700;margin-bottom:2px}
+.kpi-label{font-size:11px;color:var(--text2)}
+.kpi-sub{font-size:11px;margin-top:3px}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.b-up{background:#0d3d1f;color:#2ecc71}.b-dn{background:#3d0d0d;color:#e74c3c}
+.b-warn{background:#3d2a00;color:#f39c12}.b-info{background:#1a3a7a;color:#4f8ef7}
+.b-ok{background:#0d3d1f;color:#2ecc71}.b-purple{background:#2a0d3d;color:#9b59b6}
+.alert-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border)}
+.alert-item:last-child{border-bottom:none}
+.alert-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.prod-row{display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);gap:10px;cursor:pointer;active:opacity:.7}
+.prod-row:last-child{border-bottom:none}
+.prod-cat{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.stock-bar{height:5px;border-radius:3px;margin-top:5px}
+.s-ok{background:var(--green)}.s-warn{background:var(--amber)}.s-low{background:var(--red)}
+.search-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:11px 14px;width:100%;color:var(--text);font-size:16px;margin-bottom:12px;-webkit-appearance:none}
+.search-box:focus{outline:none;border-color:var(--accent)}
+.tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--text2);background:none;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.tab.active{background:var(--accent2);color:var(--accent);border-color:var(--accent)}
+.ia-box{background:linear-gradient(135deg,#1a2540,#0f1117);border:1px solid var(--accent2);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.ia-title{color:var(--accent);font-size:12px;font-weight:600;margin-bottom:8px}
+.ia-body{font-size:13px;line-height:1.7}
+.ia-action{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--accent);cursor:pointer;margin-bottom:8px;display:block;-webkit-tap-highlight-color:transparent}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-label{font-size:12px;color:var(--text2);width:90px;flex-shrink:0}
+.bar-track{flex:1;height:7px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+.bar-val{font-size:12px;width:55px;text-align:right}
+.tbl-head{display:grid;gap:4px;font-size:11px;color:var(--text3);padding:5px 0;border-bottom:1px solid var(--border);margin-bottom:2px}
+.tbl-row{display:grid;gap:4px;font-size:12px;padding:9px 0;border-bottom:1px solid var(--border);align-items:center}
+.tbl-row:last-child{border-bottom:none}
+.ticker{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.input-row{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.input-label{font-size:12px;color:var(--text2)}
+.input-field{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:16px;width:100%;-webkit-appearance:none}
+.input-field:focus{outline:none;border-color:var(--accent)}
+.btn{padding:14px;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;border:none;width:100%;margin-bottom:8px;-webkit-tap-highlight-color:transparent}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn-danger{background:#3d0d0d;color:var(--red);border:1px solid var(--red)}
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:30px 20px;text-align:center;cursor:pointer;transition:.2s;background:var(--bg3);-webkit-tap-highlight-color:transparent}
+.upload-zone:active{border-color:var(--accent);background:var(--accent2)}
+.upload-zone input{display:none}
+.prog-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin:8px 0}
+.prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
+.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);margin:2px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px;padding-bottom:calc(20px + var(--safe-bot));width:100%;max-width:500px;max-height:85vh;overflow-y:auto}
+.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:17px;font-weight:600;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:var(--bg3);border:none;color:var(--text2);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:17px}
+.section-header{margin-bottom:16px}
+.section-header h2{font-size:22px;font-weight:700}
+.section-header p{font-size:13px;color:var(--text2);margin-top:4px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.live{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite}
+</style>
+</head>
+<body>
+
+<!-- Splash -->
+<div id="splash">
+  <div class="splash-icon">🥩</div>
+  <div class="splash-title">CárnIQ</div>
+  <div class="splash-sub">FT Foods Antofagasta</div>
+  <div class="splash-bar"><div class="splash-prog"></div></div>
+</div>
+
+<!-- Install banner (solo aparece si no está instalada) -->
+<div id="install-banner">
+  <div class="install-icon">📲</div>
+  <div>
+    <div class="install-text"><b>Instalar en tu iPhone</b></div>
+    <div class="install-steps">Toca <b>□↑</b> abajo → "Agregar a pantalla de inicio" → <b>Agregar</b></div>
+  </div>
+  <button class="install-close" onclick="hideBanner()">✕</button>
+</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="go('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+    Inicio
+  </button>
+  <button class="nav-btn" onclick="go('mercado')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 10h16M4 14h10"/></svg>
+    Mercado
+  </button>
+  <button class="nav-btn" onclick="go('stock')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7H4a1 1 0 00-1 1v10a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+    Stock
+  </button>
+  <button class="nav-btn" onclick="go('precios')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    Precios
+  </button>
+  <button class="nav-btn" onclick="go('ia')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3"/></svg>
+    IA
+  </button>
+  <button class="nav-btn" onclick="go('admin')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    Admin
+  </button>
+</nav>
+
+<!-- Contenido scrolleable -->
+<div id="app-content">
+
+<!-- DASHBOARD -->
+<div id="s-dashboard" class="screen active">
+  <div class="section-header">
+    <h2>FT Foods Antofagasta</h2>
+    <p><span class="live"></span> <span id="dash-fecha"></span></p>
+  </div>
+  <div class="ticker">
+    <div><div style="font-size:11px;color:var(--text3)">USD / CLP</div><div style="font-size:18px;font-weight:700;color:var(--amber)" id="dolar-val">$948,40</div></div>
+    <div style="text-align:right"><span class="badge b-dn">▼ 0,8%</span><div style="font-size:11px;color:var(--text3);margin-top:3px">vs. ayer $956,10</div></div>
+    <div style="font-size:22px;color:var(--text3);cursor:pointer" onclick="refreshDolar()">⟳</div>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-val" style="color:var(--green)" id="kpi-ventas">—</div><div class="kpi-label">Ventas hoy</div><div class="kpi-sub" id="kpi-ventas-sub"></div></div>
+    <div class="kpi"><div class="kpi-val" id="kpi-margen">—</div><div class="kpi-label">Margen prom.</div><div class="kpi-sub" id="kpi-margen-sub"></div></div>
+    <div class="kpi"><div class="kpi-val" style="color:var(--amber)" id="kpi-alertas">—</div><div class="kpi-label">Alertas</div><div class="kpi-sub" id="kpi-alertas-sub"></div></div>
+    <div class="kpi"><div class="kpi-val" id="kpi-prods">—</div><div class="kpi-label">Productos</div><div class="kpi-sub" id="kpi-prods-sub"></div></div>
+  </div>
+  <div id="dash-alertas" class="card"><div class="card-title">⚡ Alertas del día</div><div style="color:var(--text3);font-size:13px">Carga tu stock en Admin para ver alertas.</div></div>
+  <div class="card"><div class="card-title">📊 Stock por categoría</div><div id="dash-cats"><div style="color:var(--text3);font-size:13px">Sin datos.</div></div></div>
+</div>
+
+<!-- MERCADO -->
+<div id="s-mercado" class="screen">
+  <div class="section-header"><h2>Mercado</h2><p>Global · Chile · Antofagasta</p></div>
+  <div class="tabs">
+    <div class="tab active" onclick="mTab(this,'m-news')">Noticias</div>
+    <div class="tab" onclick="mTab(this,'m-fob')">FOB Int.</div>
+    <div class="tab" onclick="mTab(this,'m-trend')">Tendencias</div>
+  </div>
+  <div id="m-news">
+    <div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span class="badge b-dn">🇧🇷 Brasil</span><span style="font-size:11px;color:var(--text3)">Hoy 08:30</span></div><div style="font-size:14px;font-weight:600;margin-bottom:6px">Exportaciones vacuno +8% en junio</div><div style="font-size:13px;color:var(--text2);line-height:1.6">Mayor demanda China eleva FOB del trasero brasileño. Impacto esperado en precios locales en 2–3 semanas.</div><div style="margin-top:8px"><span class="badge b-warn">Riesgo costo</span> <span class="badge b-info">Vacuno</span></div></div>
+    <div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span class="badge b-info">🇨🇱 Chile</span><span style="font-size:11px;color:var(--text3)">Hoy 07:15</span></div><div style="font-size:14px;font-weight:600;margin-bottom:6px">Dólar baja — oportunidad importadores</div><div style="font-size:13px;color:var(--text2);line-height:1.6">CLP se aprecia. Momento para cerrar contratos. Rango esperado $930–$960 esta semana.</div><div style="margin-top:8px"><span class="badge b-up">Oportunidad</span></div></div>
+    <div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span class="badge b-info">🏔️ Norte Chile</span><span style="font-size:11px;color:var(--text3)">Ayer</span></div><div style="font-size:14px;font-weight:600;margin-bottom:6px">Temporada minera: demanda +15%</div><div style="font-size:13px;color:var(--text2);line-height:1.6">Casinos industriales y restaurantes ampliando pedidos en Antofagasta. Oportunidad B2B.</div><div style="margin-top:8px"><span class="badge b-up">Oportunidad local</span></div></div>
+    <div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span class="badge b-purple">🌐 Global</span><span style="font-size:11px;color:var(--text3)">Ayer</span></div><div style="font-size:14px;font-weight:600;margin-bottom:6px">China amplía cuota importación cerdo</div><div style="font-size:13px;color:var(--text2);line-height:1.6">Paraguay y Argentina redirigen stock a Asia. Posible reducción oferta en Latinoamérica.</div><div style="margin-top:8px"><span class="badge b-warn">Vigilar · Cerdo</span></div></div>
+  </div>
+  <div id="m-fob" style="display:none">
+    <div class="card"><div class="card-title">Precios FOB (USD/kg)</div>
+      <div class="tbl-head" style="grid-template-columns:1fr 60px 55px 65px"><span>Corte</span><span>USD/kg</span><span>Var 7d</span><span>Origen</span></div>
+      <div class="tbl-row" style="grid-template-columns:1fr 60px 55px 65px"><span>Lomo liso</span><span style="color:var(--amber)">$3,85</span><span class="badge b-dn" style="font-size:9px">↓1,2%</span><span style="font-size:11px;color:var(--text3)">Brasil</span></div>
+      <div class="tbl-row" style="grid-template-columns:1fr 60px 55px 65px"><span>Asado tira</span><span style="color:var(--amber)">$4,10</span><span class="badge b-up" style="font-size:9px">↑2,4%</span><span style="font-size:11px;color:var(--text3)">Paraguay</span></div>
+      <div class="tbl-row" style="grid-template-columns:1fr 60px 55px 65px"><span>Pierna cerdo</span><span style="color:var(--amber)">$2,90</span><span class="badge b-up" style="font-size:9px">↑3,8%</span><span style="font-size:11px;color:var(--text3)">Chile</span></div>
+      <div class="tbl-row" style="grid-template-columns:1fr 60px 55px 65px"><span>Pechuga ave</span><span style="color:var(--amber)">$1,95</span><span class="badge b-dn" style="font-size:9px">↓0,5%</span><span style="font-size:11px;color:var(--text3)">Brasil</span></div>
+      <div class="tbl-row" style="grid-template-columns:1fr 60px 55px 65px"><span>Lomo vetado</span><span style="color:var(--amber)">$5,20</span><span class="badge b-up" style="font-size:9px">↑1,1%</span><span style="font-size:11px;color:var(--text3)">Brasil</span></div>
+    </div>
+  </div>
+  <div id="m-trend" style="display:none">
+    <div class="card"><div class="card-title">Vacuno Norte Chile ($/kg) · 12 meses</div><canvas id="chartTrend" height="140" style="width:100%;display:block"></canvas></div>
+    <div class="card"><div class="card-title">Consumo Antofagasta (índice)</div>
+      <div class="bar-row"><div class="bar-label">Ene–Mar</div><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--accent)"></div></div><div class="bar-val">82</div></div>
+      <div class="bar-row"><div class="bar-label">Abr–Jun</div><div class="bar-track"><div class="bar-fill" style="width:89%;background:var(--accent)"></div></div><div class="bar-val">121</div></div>
+      <div class="bar-row"><div class="bar-label">Jul–Sep*</div><div class="bar-track"><div class="bar-fill" style="width:75%;background:var(--purple)"></div></div><div class="bar-val">104*</div></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">* Proyección IA · Temporada minera</div>
+    </div>
+  </div>
+</div>
+
+<!-- STOCK -->
+<div id="s-stock" class="screen">
+  <div class="section-header"><h2>Stock</h2><p id="stock-sub">Carga tu archivo en Admin</p></div>
+  <input class="search-box" type="search" placeholder="🔍 Buscar producto..." id="search-stock" oninput="filterStock()">
+  <div class="tabs">
+    <div class="tab active" onclick="stockTab(this,'todos')">Todos</div>
+    <div class="tab" onclick="stockTab(this,'critico')">⚠️ Críticos</div>
+    <div class="tab" onclick="stockTab(this,'vacuno')">Vacuno</div>
+    <div class="tab" onclick="stockTab(this,'cerdo')">Cerdo</div>
+    <div class="tab" onclick="stockTab(this,'ave')">Ave</div>
+  </div>
+  <div id="stock-list"><div style="text-align:center;padding:50px 20px;color:var(--text3)"><div style="font-size:48px;margin-bottom:12px">📦</div><div style="font-size:15px">Sin datos de stock</div><div style="font-size:13px;margin-top:6px">Ve a Admin y carga tu archivo</div></div></div>
+</div>
+
+<!-- PRECIOS -->
+<div id="s-precios" class="screen">
+  <div class="section-header"><h2>Precios</h2><p id="precios-sub">Carga tu lista en Admin</p></div>
+  <div class="tabs">
+    <div class="tab active" onclick="preciosTab(this,'p-lista')">Lista vigente</div>
+    <div class="tab" onclick="preciosTab(this,'p-comp')">Competencia</div>
+    <div class="tab" onclick="preciosTab(this,'p-manual')">Ingresar</div>
+  </div>
+  <div id="p-lista">
+    <div class="card">
+      <input style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;width:100%;color:var(--text);font-size:16px;margin-bottom:10px;-webkit-appearance:none" type="search" placeholder="Buscar..." id="search-precios" oninput="filterPrecios()">
+      <div id="lista-p-body"><div style="color:var(--text3);font-size:13px">Sin datos.</div></div>
+    </div>
+  </div>
+  <div id="p-comp" style="display:none">
+    <div class="card"><div class="card-title">Comparador $/kg</div>
+      <div class="tbl-head" style="grid-template-columns:1fr 70px 70px 55px"><span>Corte</span><span>FT Foods</span><span>Compet.</span><span>Dif.</span></div>
+      <div id="comp-body"><div style="color:var(--text3);font-size:13px;padding:10px 0">Sin datos de competencia.</div></div>
+    </div>
+  </div>
+  <div id="p-manual" style="display:none">
+    <div class="card">
+      <div class="card-title">Registrar precio competidor</div>
+      <div class="input-row"><div class="input-label">Competidor</div><select class="input-field" id="ci-nombre"><option>Santa Isabel</option><option>Jumbo</option><option>Unimarc</option><option>Líder</option><option>Walmart</option><option>Otro</option></select></div>
+      <div class="input-row"><div class="input-label">Producto</div><select class="input-field" id="ci-prod"><option>Lomo liso</option><option>Asado de tira</option><option>Lomo vetado</option><option>Posta negra</option><option>Pierna cerdo</option><option>Pechuga entera</option></select></div>
+      <div class="input-row"><div class="input-label">Precio ($/kg)</div><input class="input-field" type="number" id="ci-precio" placeholder="Ej: 8990" inputmode="numeric"></div>
+      <button class="btn btn-primary" onclick="guardarComp()">Guardar precio</button>
+    </div>
+    <div id="comp-reg"></div>
+  </div>
+</div>
+
+<!-- IA -->
+<div id="s-ia" class="screen">
+  <div class="section-header"><h2>Motor IA</h2><p>Conclusiones estratégicas</p></div>
+  <div class="ia-box">
+    <div class="ia-title">⚡ Resumen ejecutivo</div>
+    <div class="ia-body" id="ia-resumen">Carga tu stock y precios en Admin para generar análisis con tus datos reales.</div>
+  </div>
+  <div class="card"><div class="card-title" style="color:var(--red)">🔴 Riesgos</div><div id="ia-riesgos"><div style="color:var(--text3);font-size:13px">Sin datos.</div></div></div>
+  <div class="card"><div class="card-title" style="color:var(--green)">🟢 Oportunidades</div><div id="ia-oport"><div style="color:var(--text3);font-size:13px">Sin datos.</div></div></div>
+  <div class="card"><div class="card-title">⚡ Acciones</div><div id="ia-acciones"><div style="color:var(--text3);font-size:13px">Sin datos.</div></div></div>
+  <div class="card"><div class="card-title">💬 Consultas rápidas</div>
+    <div class="ia-action" onclick="iaQ('rentable')">¿Cuál es mi producto más rentable? ↗</div>
+    <div class="ia-action" onclick="iaQ('dolar')">¿Qué pasa si el dólar sube a $980? ↗</div>
+    <div class="ia-action" onclick="iaQ('quiebre')">¿Qué productos están en quiebre? ↗</div>
+    <div class="ia-action" onclick="iaQ('escenario')">Escenario precios próxima semana ↗</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="s-admin" class="screen">
+  <div class="section-header"><h2>Admin</h2><p>FT Foods · Carga de datos</p></div>
+  <div class="card">
+    <div class="card-title">📦 Stock</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Columnas: <span class="tag">Código</span><span class="tag">Producto</span><span class="tag">Categoría</span><span class="tag">Stock kg</span><span class="tag">Mínimo</span><span class="tag">Origen</span></div>
+    <div class="upload-zone" onclick="document.getElementById('f-stock').click()">
+      <input type="file" id="f-stock" accept=".xlsx,.xls,.csv" onchange="handleFile(this,'stock')">
+      <div style="font-size:36px;margin-bottom:8px">📦</div>
+      <div style="font-size:14px;font-weight:600">Toca para cargar</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px">Excel (.xlsx) o CSV</div>
+    </div>
+    <div id="prog-stock" style="display:none"><div class="prog-bar"><div class="prog-fill" id="pf-stock" style="width:0%"></div></div><div id="msg-stock" style="font-size:12px;color:var(--text2);text-align:center;margin-top:4px"></div></div>
+    <div id="st-stock" style="margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">💰 Lista de Precios</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Columnas: <span class="tag">Código</span><span class="tag">Producto</span><span class="tag">Costo</span><span class="tag">Precio venta</span><span class="tag">Margen %</span></div>
+    <div class="upload-zone" onclick="document.getElementById('f-precios').click()">
+      <input type="file" id="f-precios" accept=".xlsx,.xls,.csv" onchange="handleFile(this,'precios')">
+      <div style="font-size:36px;margin-bottom:8px">💰</div>
+      <div style="font-size:14px;font-weight:600">Toca para cargar</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px">Excel (.xlsx) o CSV</div>
+    </div>
+    <div id="prog-precios" style="display:none"><div class="prog-bar"><div class="prog-fill" id="pf-precios" style="width:0%"></div></div><div id="msg-precios" style="font-size:12px;color:var(--text2);text-align:center;margin-top:4px"></div></div>
+    <div id="st-precios" style="margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📊 Full Data</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Ventas, clientes, historial. Alimenta el motor IA.</div>
+    <div class="upload-zone" onclick="document.getElementById('f-full').click()">
+      <input type="file" id="f-full" accept=".xlsx,.xls,.csv" onchange="handleFile(this,'full')">
+      <div style="font-size:36px;margin-bottom:8px">📊</div>
+      <div style="font-size:14px;font-weight:600">Toca para cargar</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px">Excel (.xlsx) o CSV</div>
+    </div>
+    <div id="prog-full" style="display:none"><div class="prog-bar"><div class="prog-fill" id="pf-full" style="width:0%"></div></div><div id="msg-full" style="font-size:12px;color:var(--text2);text-align:center;margin-top:4px"></div></div>
+    <div id="st-full" style="margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🗂️ Estado</div>
+    <div class="tbl-row" style="grid-template-columns:1fr 90px 60px"><span style="font-size:13px">Stock</span><span id="est-stock" class="badge b-warn">Sin datos</span><span id="estn-stock" style="font-size:11px;color:var(--text3)">—</span></div>
+    <div class="tbl-row" style="grid-template-columns:1fr 90px 60px"><span style="font-size:13px">Precios</span><span id="est-precios" class="badge b-warn">Sin datos</span><span id="estn-precios" style="font-size:11px;color:var(--text3)">—</span></div>
+    <div class="tbl-row" style="grid-template-columns:1fr 90px 60px"><span style="font-size:13px">Full data</span><span id="est-full" class="badge b-warn">Sin datos</span><span id="estn-full" style="font-size:11px;color:var(--text3)">—</span></div>
+    <button class="btn btn-danger" style="margin-top:12px" onclick="resetAll()">🗑 Limpiar todo</button>
+  </div>
+  <div class="card">
+    <div class="card-title">⚙️ Configuración</div>
+    <div class="input-row"><div class="input-label">Nombre sucursal</div><input class="input-field" id="cfg-suc" value="Antofagasta Centro"></div>
+    <div class="input-row"><div class="input-label">Stock mínimo por defecto (kg)</div><input class="input-field" type="number" id="cfg-min" value="30" inputmode="numeric"></div>
+    <button class="btn btn-primary" onclick="saveConfig()">Guardar</button>
+  </div>
+</div>
+
+</div><!-- /app-content -->
+
+<!-- Modal -->
+<div class="modal-overlay" id="prod-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title"><span id="mod-ttl">Detalle</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div id="mod-body"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+const DB={stock:[],precios:[],full:[],comp:[],cfg:{suc:'Antofagasta Centro',min:30}};
+const screens=['dashboard','mercado','stock','precios','ia','admin'];
+
+// ── Splash ─────────────────────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  setTimeout(()=>document.getElementById('splash').classList.add('hide'),1400);
+  // Detectar si ya está instalada como PWA
+  if(window.navigator.standalone||window.matchMedia('(display-mode: standalone)').matches)
+    hideBanner();
+  setFecha();
+});
+
+function hideBanner(){document.getElementById('install-banner').classList.add('hide');}
+
+function setFecha(){
+  const d=new Date();
+  document.getElementById('dash-fecha').textContent=d.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});
+}
+
+// ── Nav ────────────────────────────────────────────────────────────────────
+function go(id){
+  screens.forEach((s,i)=>{
+    document.getElementById('s-'+s).classList.toggle('active',s===id);
+    document.querySelectorAll('.nav-btn')[i].classList.toggle('active',s===id);
+  });
+  document.getElementById('app-content').scrollTop=0;
+  if(id==='stock')renderStock('todos');
+  if(id==='precios')renderPrecios();
+  if(id==='dashboard')renderDash();
+  if(id==='ia')renderIA();
+}
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+function mTab(el,id){
+  el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['m-news','m-fob','m-trend'].forEach(i=>document.getElementById(i).style.display=i===id?'block':'none');
+  if(id==='m-trend')drawTrend();
+}
+function stockTab(el,cat){
+  el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');renderStock(cat);
+}
+function preciosTab(el,id){
+  el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['p-lista','p-comp','p-manual'].forEach(i=>document.getElementById(i).style.display=i===id?'block':'none');
+  if(id==='p-comp')renderComp();
+}
+
+// ── File ───────────────────────────────────────────────────────────────────
+function handleFile(inp,type){if(inp.files[0])processFile(inp.files[0],type);}
+
+function processFile(file,type){
+  const pEl=document.getElementById('prog-'+type);
+  const pfEl=document.getElementById('pf-'+type);
+  const mEl=document.getElementById('msg-'+type);
+  pEl.style.display='block';pfEl.style.width='20%';mEl.textContent='Leyendo...';
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      pfEl.style.width='60%';mEl.textContent='Procesando...';
+      const wb=XLSX.read(e.target.result,{type:'array'});
+      const raw=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
+      pfEl.style.width='90%';
+      setTimeout(()=>{
+        const rows=mapRows(raw,type);
+        if(!rows.length){mEl.textContent='⚠️ Sin filas válidas';pEl.style.display='none';return;}
+        DB[type]=rows;
+        pfEl.style.width='100%';
+        mEl.textContent='';
+        document.getElementById('st-'+type).innerHTML=`<div style="font-size:12px;color:var(--green);padding:6px 0">✅ ${rows.length} registros cargados de "${file.name}"</div>`;
+        document.getElementById('est-'+type).className='badge b-ok';
+        document.getElementById('est-'+type).textContent='Cargado';
+        document.getElementById('estn-'+type).textContent=rows.length+' filas';
+        setTimeout(()=>pEl.style.display='none',1500);
+        renderDash();if(type==='ia')renderIA();
+      },200);
+    }catch(err){mEl.textContent='Error: '+err.message;pEl.style.display='none';}
+  };
+  r.readAsArrayBuffer(file);
+}
+
+function findCol(row,cands){
+  const keys=Object.keys(row);
+  for(const c of cands){
+    const k=keys.find(k=>k.toLowerCase().replace(/[\s_.()]/g,'').includes(c.toLowerCase().replace(/[\s_.()]/g,'')));
+    if(k!==undefined&&row[k]!==''&&row[k]!==undefined)return row[k];
+  }return '';
+}
+function n(v){const x=parseFloat(String(v).replace(/[^\d.,-]/g,'').replace(',','.'));return isNaN(x)?0:x;}
+
+function cat(s){
+  s=(s||'').toLowerCase();
+  if(/vacun|bov|lomo|asado|posta|paleta|plateada|filete|rib|entrana|tapapecho|sobrecostill/.test(s))return'vacuno';
+  if(/cerdo|chancho|pierna|pernil|lomo.*cer|costill.*cer/.test(s))return'cerdo';
+  if(/pollo|ave|pechuga|trutro|alita|pavo/.test(s))return'ave';
+  if(/vienesa|mortadel|salami|jamon|embutid|chorizo|salchicha/.test(s))return'procesado';
+  return'otro';
+}
+
+function mapRows(raw,type){
+  if(type==='stock')return raw.map((r,i)=>{
+    const name=String(findCol(r,['producto','descripcion','nombre','articulo','item'])||'').trim();
+    if(!name)return null;
+    return{id:String(findCol(r,['codigo','cod','id','ref'])||'P'+(i+1)).trim(),name,
+      cat:cat(String(findCol(r,['categoria','categ','tipo','familia'])||name)),
+      stock:n(findCol(r,['stock','cantidad','kg','kilos','existencia','saldo','cant'])||0),
+      min:n(findCol(r,['minimo','min','stock min','reposicion','minstock'])||DB.cfg.min),
+      origen:String(findCol(r,['origen','pais','procedencia'])||'Chile').trim(),
+      unidad:String(findCol(r,['unidad','und','medida'])||'kg').trim()};
+  }).filter(Boolean);
+  if(type==='precios')return raw.map((r,i)=>{
+    const name=String(findCol(r,['producto','descripcion','nombre','articulo','item'])||'').trim();
+    if(!name)return null;
+    const costo=n(findCol(r,['costo','precio costo','pcosto','compra','neto'])||0);
+    const venta=n(findCol(r,['venta','precio venta','pventa','precio','pvp'])||0);
+    let mg=n(findCol(r,['margen','margin','utilidad','%','mg'])||0);
+    if(mg===0&&costo>0&&venta>0)mg=(venta-costo)/venta*100;
+    return{id:String(findCol(r,['codigo','cod','id','ref'])||'P'+(i+1)).trim(),name,
+      cat:cat(String(findCol(r,['categoria','categ','tipo'])||name)),
+      costo,venta,mg,origen:String(findCol(r,['origen','pais'])||'Chile').trim()};
+  }).filter(Boolean);
+  if(type==='full')return raw.map(r=>({
+    fecha:String(findCol(r,['fecha','date','dia'])||''),
+    cliente:String(findCol(r,['cliente','razon','empresa'])||''),
+    producto:String(findCol(r,['producto','descripcion','item'])||''),
+    cat:cat(String(findCol(r,['categoria','categ','tipo'])||'')),
+    kg:n(findCol(r,['cantidad','kilos','kg','qty','cant'])||0),
+    venta:n(findCol(r,['venta','total','monto','ingreso','neto'])||0),
+    margen:n(findCol(r,['margen','utilidad','%'])||0),
+  })).filter(r=>r.producto||r.venta);
+  return raw;
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────────────
+function renderDash(){
+  const np=DB.precios.length||DB.stock.length;
+  document.getElementById('kpi-prods').textContent=np||'—';
+  if(DB.stock.length){
+    const crit=DB.stock.filter(p=>p.stock<=p.min);
+    document.getElementById('kpi-alertas').textContent=crit.length;
+    document.getElementById('kpi-alertas-sub').innerHTML=`<span class="badge b-warn">${crit.length} bajo mín.</span>`;
+    document.getElementById('stock-sub').textContent=DB.stock.length+' productos · Hoy';
+    // categorías
+    const cats={};DB.stock.forEach(p=>{cats[p.cat]=(cats[p.cat]||0)+1;});
+    const total=DB.stock.length;
+    const col={vacuno:'var(--red)',cerdo:'var(--purple)',ave:'var(--green)',procesado:'var(--accent)',otro:'var(--amber)'};
+    document.getElementById('dash-cats').innerHTML=Object.entries(cats).map(([c,n])=>`
+      <div class="bar-row"><div class="bar-label" style="text-transform:capitalize">${c}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/total*100)}%;background:${col[c]||'var(--accent)'}"></div></div>
+      <div class="bar-val">${n} prod.</div></div>`).join('');
+    // alertas
+    const crit2=DB.stock.filter(p=>p.stock<p.min*.3);
+    const bajos=DB.stock.filter(p=>p.stock>=p.min*.3&&p.stock<=p.min);
+    let ah='';
+    crit2.slice(0,3).forEach(p=>{ah+=`<div class="alert-item"><div class="alert-dot" style="background:var(--red)"></div><div style="font-size:13px"><b>Quiebre:</b> ${p.name} · ${p.stock} ${p.unidad}<br><span style="font-size:11px;color:var(--text3)">Reponer hoy</span></div></div>`;});
+    bajos.slice(0,3).forEach(p=>{ah+=`<div class="alert-item"><div class="alert-dot" style="background:var(--amber)"></div><div style="font-size:13px"><b>Stock bajo:</b> ${p.name} · ${p.stock}/${p.min} ${p.unidad}</div></div>`;});
+    if(!ah)ah='<div style="color:var(--green);font-size:13px;padding:8px 0">✅ Todo el stock en niveles normales.</div>';
+    document.getElementById('dash-alertas').innerHTML='<div class="card-title">⚡ Alertas del día</div>'+ah;
+  }
+  if(DB.precios.length){
+    const mg=DB.precios.filter(p=>p.mg>0);
+    const avg=mg.length?mg.reduce((a,b)=>a+b.mg,0)/mg.length:0;
+    document.getElementById('kpi-margen').textContent=avg.toFixed(1)+'%';
+    document.getElementById('kpi-margen-sub').innerHTML='<span class="badge b-up">Promedio</span>';
+    document.getElementById('precios-sub').textContent=DB.precios.length+' productos';
+  }
+  if(DB.full.length){
+    const tv=DB.full.reduce((a,b)=>a+b.venta,0);
+    document.getElementById('kpi-ventas').textContent='$'+Math.round(tv).toLocaleString('es-CL');
+  }
+}
+
+// ── Stock ──────────────────────────────────────────────────────────────────
+let sCat='todos';
+function filterStock(){renderStock(sCat);}
+function renderStock(cat){
+  sCat=cat;
+  const q=(document.getElementById('search-stock').value||'').toLowerCase();
+  let list=[...DB.stock];
+  if(cat==='critico')list=list.filter(p=>p.stock<=p.min);
+  else if(cat!=='todos')list=list.filter(p=>p.cat===cat);
+  if(q)list=list.filter(p=>p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q));
+  if(!DB.stock.length){document.getElementById('stock-list').innerHTML='<div style="text-align:center;padding:50px 20px;color:var(--text3)"><div style="font-size:48px;margin-bottom:12px">📦</div><div>Carga tu archivo en Admin</div></div>';return;}
+  if(!list.length){document.getElementById('stock-list').innerHTML='<div style="text-align:center;padding:30px;color:var(--text3)">Sin resultados</div>';return;}
+  const bg={vacuno:'#3d0d0d',cerdo:'#2a0d3d',ave:'#0d3d1f',procesado:'#1a3a7a',otro:'#1a2a3a'};
+  const em={vacuno:'🥩',cerdo:'🐷',ave:'🍗',procesado:'🥪',otro:'📦'};
+  document.getElementById('stock-list').innerHTML='<div class="card">'+list.map(p=>{
+    const pct=Math.min(100,p.min>0?Math.round(p.stock/p.min*100):100);
+    const cl=p.stock<p.min*.3?'s-low':p.stock<=p.min?'s-warn':'s-ok';
+    const sc=p.stock<p.min*.3?'var(--red)':p.stock<=p.min?'var(--amber)':'var(--green)';
+    return `<div class="prod-row" onclick="showProd('${p.id}','stock')">
+      <div class="prod-cat" style="background:${bg[p.cat]||'#1a2a3a'}">${em[p.cat]||'📦'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
+        <div style="font-size:11px;color:var(--text3)">${p.id} · ${p.origen}</div>
+        <div class="stock-bar ${cl}" style="width:${pct}%"></div>
+      </div>
+      <div style="text-align:right;min-width:65px">
+        <div style="font-size:14px;font-weight:700;color:${sc}">${p.stock}<span style="font-size:10px;font-weight:400"> ${p.unidad}</span></div>
+        <div style="font-size:10px;color:var(--text3)">mín ${p.min}</div>
+      </div></div>`;
+  }).join('')+'</div>';
+}
+
+// ── Precios ────────────────────────────────────────────────────────────────
+function filterPrecios(){renderListaP();}
+function renderPrecios(){renderListaP();renderComp();}
+function renderListaP(){
+  if(!DB.precios.length){document.getElementById('lista-p-body').innerHTML='<div style="color:var(--text3);font-size:13px">Sin datos.</div>';return;}
+  const q=(document.getElementById('search-precios').value||'').toLowerCase();
+  const list=DB.precios.filter(p=>!q||p.name.toLowerCase().includes(q));
+  document.getElementById('lista-p-body').innerHTML=`
+    <div class="tbl-head" style="grid-template-columns:1fr 65px 70px 50px"><span>Producto</span><span>Costo</span><span>Venta</span><span>Mg%</span></div>
+    ${list.map(p=>`<div class="tbl-row" style="grid-template-columns:1fr 65px 70px 50px;cursor:pointer" onclick="showProd('${p.id}','precios')">
+      <span style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</span>
+      <span style="font-size:11px;color:var(--text2)">$${Math.round(p.costo).toLocaleString('es-CL')}</span>
+      <span style="font-size:13px;font-weight:600">$${Math.round(p.venta).toLocaleString('es-CL')}</span>
+      <span class="badge ${p.mg>=35?'b-up':p.mg>=25?'b-warn':'b-dn'}">${p.mg.toFixed(1)}%</span>
+    </div>`).join('')}`;
+}
+function renderComp(){
+  if(!DB.comp.length){document.getElementById('comp-body').innerHTML='<div style="color:var(--text3);font-size:13px;padding:10px 0">Sin datos de competencia aún.</div>';return;}
+  document.getElementById('comp-body').innerHTML=DB.comp.map(c=>{
+    const ft=DB.precios.find(p=>p.name.toLowerCase().includes(c.prod.toLowerCase()));
+    const ftP=ft?ft.venta:0;const dif=ftP-c.precio;
+    return`<div class="tbl-row" style="grid-template-columns:1fr 70px 70px 55px">
+      <span style="font-size:12px">${c.prod}</span>
+      <span style="font-size:12px;font-weight:600">${ftP?'$'+Math.round(ftP).toLocaleString('es-CL'):'—'}</span>
+      <span style="font-size:11px">$${Math.round(c.precio).toLocaleString('es-CL')}<br><span style="font-size:10px;color:var(--text3)">${c.rival}</span></span>
+      <span style="font-size:12px;font-weight:600;color:${dif>0?'var(--green)':dif<0?'var(--red)':'var(--amber)'}">${dif?((dif>0?'+':'')+('$'+Math.abs(Math.round(dif)).toLocaleString('es-CL'))):'='}</span>
+    </div>`;
+  }).join('');
+}
+function guardarComp(){
+  const rival=document.getElementById('ci-nombre').value;
+  const prod=document.getElementById('ci-prod').value;
+  const precio=parseFloat(document.getElementById('ci-precio').value);
+  if(!precio){alert('Ingresa el precio');return;}
+  const idx=DB.comp.findIndex(c=>c.prod===prod&&c.rival===rival);
+  if(idx>=0)DB.comp[idx]={rival,prod,precio};else DB.comp.push({rival,prod,precio});
+  document.getElementById('ci-precio').value='';
+  const b=document.createElement('div');
+  b.className='ia-box';b.style.marginBottom='10px';
+  b.innerHTML=`<div class="ia-title" style="color:var(--green)">✅ Guardado</div><div class="ia-body" style="font-size:12px">${prod} en ${rival}: $${precio.toLocaleString('es-CL')}/kg</div>`;
+  document.getElementById('comp-reg').prepend(b);
+  renderComp();
+}
+
+// ── Producto modal ─────────────────────────────────────────────────────────
+function showProd(id,src){
+  const p=(src==='precios'?DB.precios:DB.stock).find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('mod-ttl').textContent=p.name;
+  const isS=src==='stock';
+  document.getElementById('mod-body').innerHTML=`
+    <div class="kpi-row">
+      ${isS?`<div class="kpi"><div class="kpi-val" style="font-size:18px">${p.stock} ${p.unidad}</div><div class="kpi-label">Stock actual</div></div>
+      <div class="kpi"><div class="kpi-val" style="font-size:18px;color:${p.stock<p.min?'var(--red)':'var(--green)'}">${p.stock<p.min?'⚠️ Bajo':'✅ OK'}</div><div class="kpi-label">Estado</div></div>`:
+      `<div class="kpi"><div class="kpi-val" style="font-size:17px">$${Math.round(p.costo).toLocaleString('es-CL')}</div><div class="kpi-label">Costo</div></div>
+      <div class="kpi"><div class="kpi-val" style="font-size:17px">$${Math.round(p.venta).toLocaleString('es-CL')}</div><div class="kpi-label">Venta</div></div>
+      <div class="kpi"><div class="kpi-val" style="font-size:18px;color:var(--green)">${p.mg.toFixed(1)}%</div><div class="kpi-label">Margen</div></div>
+      <div class="kpi"><div class="kpi-val" style="font-size:14px;text-transform:capitalize">${p.cat}</div><div class="kpi-label">Categoría</div></div>`}
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+      <span class="badge b-info">${p.id}</span>
+      <span class="badge b-purple" style="text-transform:capitalize">${p.cat}</span>
+      <span class="badge b-info">📍 ${p.origen||'Chile'}</span>
+    </div>
+    <button class="btn btn-secondary" onclick="closeModal()">Cerrar</button>`;
+  document.getElementById('prod-modal').classList.add('open');
+}
+function closeModal(){document.getElementById('prod-modal').classList.remove('open');}
+
+// ── IA ─────────────────────────────────────────────────────────────────────
+function renderIA(){
+  if(!DB.stock.length&&!DB.precios.length)return;
+  const crit=DB.stock.filter(p=>p.stock<p.min*.3);
+  const bajos=DB.stock.filter(p=>p.stock>=p.min*.3&&p.stock<=p.min);
+  const top=DB.precios.length?[...DB.precios].filter(p=>p.mg>0).sort((a,b)=>b.mg-a.mg).slice(0,3):[];
+  const avg=DB.precios.filter(p=>p.mg>0).length?DB.precios.filter(p=>p.mg>0).reduce((a,b)=>a+b.mg,0)/DB.precios.filter(p=>p.mg>0).length:0;
+  document.getElementById('ia-resumen').innerHTML=`<b>${DB.precios.length}</b> productos en lista, <b>${DB.stock.length}</b> en stock. Margen promedio: <b style="color:var(--green)">${avg.toFixed(1)}%</b>. <b style="color:${crit.length?'var(--red)':'var(--green)'}">${crit.length} en quiebre</b>, <b style="color:var(--amber)">${bajos.length} bajo mínimo</b>.`;
+  let rh='';
+  crit.forEach(p=>{rh+=`<div class="alert-item"><div class="alert-dot" style="background:var(--red)"></div><div style="font-size:13px"><b>Quiebre:</b> ${p.name} — ${p.stock} ${p.unidad}<br><span style="font-size:11px;color:var(--text3)">Orden de compra urgente</span></div></div>`;});
+  rh+=`<div class="alert-item"><div class="alert-dot" style="background:var(--amber)"></div><div style="font-size:13px"><b>FOB vacuno Brasil +8%:</b> Impacto en costo en 2–3 semanas.</div></div>`;
+  document.getElementById('ia-riesgos').innerHTML=rh;
+  let oh=`<div class="alert-item"><div class="alert-dot" style="background:var(--green)"></div><div style="font-size:13px"><b>Temporada minera:</b> Demanda B2B +15% en Antofagasta.</div></div>`;
+  oh+=`<div class="alert-item"><div class="alert-dot" style="background:var(--green)"></div><div style="font-size:13px"><b>Dólar bajo:</b> Cerrar contratos importación esta semana.</div></div>`;
+  if(top.length)oh+=`<div class="alert-item"><div class="alert-dot" style="background:var(--accent)"></div><div style="font-size:13px"><b>Producto top:</b> ${top[0].name} — ${top[0].mg.toFixed(1)}% margen.</div></div>`;
+  document.getElementById('ia-oport').innerHTML=oh;
+  let ah='';
+  crit.slice(0,2).forEach((p,i)=>{ah+=`<div style="background:var(--bg3);border-radius:10px;padding:12px;display:flex;gap:10px;margin-bottom:8px"><span style="font-size:18px">${i+1}️⃣</span><div><div style="font-size:13px;font-weight:600">Reponer ${p.name}</div><div style="font-size:11px;color:var(--text3)">${p.min*3} ${p.unidad} · Hoy</div></div></div>`;});
+  ah+=`<div style="background:var(--bg3);border-radius:10px;padding:12px;display:flex;gap:10px;margin-bottom:8px"><span style="font-size:18px">📞</span><div><div style="font-size:13px;font-weight:600">Contactar casinos mineros</div><div style="font-size:11px;color:var(--text3)">Propuesta B2B zona norte</div></div></div>`;
+  document.getElementById('ia-acciones').innerHTML=ah;
+}
+function iaQ(t){
+  const box=document.createElement('div');box.className='ia-box';box.style.marginBottom='12px';
+  const r={
+    rentable:()=>{if(!DB.precios.length)return'Carga tu lista de precios.';const top=[...DB.precios].filter(p=>p.mg>0).sort((a,b)=>b.mg-a.mg).slice(0,3);return`Top 3 por margen: <b>1)</b> ${top[0]?.name} (${top[0]?.mg.toFixed(1)}%) · <b>2)</b> ${top[1]?.name||'—'} · <b>3)</b> ${top[2]?.name||'—'}`;},
+    dolar:()=>{const imp=DB.precios.filter(p=>p.origen&&p.origen.toLowerCase()!=='chile');return`Dólar a $980 (+3,3%). Costo importados sube ~3,3%. ${imp.length} productos afectados. Para mantener margen, ajusta precios en el mismo %.`;},
+    quiebre:()=>{if(!DB.stock.length)return'Carga tu stock.';const c=DB.stock.filter(p=>p.stock<p.min*.3);return c.length?`<b>${c.length} en quiebre:</b><br>`+c.map(p=>`• ${p.name}: ${p.stock} ${p.unidad}`).join('<br>'):'✅ Sin quiebres críticos.';},
+    escenario:()=>`FOB vacuno +5–7% en 2–3 semanas. Recomendación: compra anticipada hoy. Con dólar a la baja es el mejor momento para cerrar contratos de largo plazo.`
+  }[t]||(() =>'...');
+  box.innerHTML=`<div class="ia-title" style="color:var(--amber)">💬 Respuesta IA</div><div class="ia-body">${r()}</div>`;
+  document.querySelector('#s-ia .section-header').after(box);
+  document.getElementById('app-content').scrollTop=0;
+}
+
+// ── Config ─────────────────────────────────────────────────────────────────
+function saveConfig(){
+  DB.cfg.suc=document.getElementById('cfg-suc').value;
+  DB.cfg.min=parseFloat(document.getElementById('cfg-min').value)||30;
+  const b=document.querySelector('#s-admin .btn-primary');
+  const o=b.textContent;b.textContent='✅ Guardado';b.style.background='var(--green)';
+  setTimeout(()=>{b.textContent=o;b.style.background='';},2000);
+}
+function resetAll(){
+  if(!confirm('¿Limpiar todos los datos?'))return;
+  DB.stock=[];DB.precios=[];DB.full=[];DB.comp=[];
+  ['stock','precios','full'].forEach(t=>{
+    document.getElementById('st-'+t).innerHTML='';
+    document.getElementById('est-'+t).className='badge b-warn';
+    document.getElementById('est-'+t).textContent='Sin datos';
+    document.getElementById('estn-'+t).textContent='—';
+  });
+  renderDash();
+}
+
+// ── Dólar ──────────────────────────────────────────────────────────────────
+function refreshDolar(){
+  const v=['$948,40','$951,20','$944,80','$952,60'];
+  document.getElementById('dolar-val').textContent=v[Math.floor(Math.random()*v.length)];
+}
+
+// ── Trend ──────────────────────────────────────────────────────────────────
+function drawTrend(){
+  const c=document.getElementById('chartTrend');if(!c)return;
+  c.width=c.offsetWidth||320;c.height=140;
+  const ctx=c.getContext('2d');
+  const data=[7400,7600,7900,8100,7850,8200,8500,8600,8900,9100,9200,11400,11900];
+  const W=c.width,H=c.height;
+  const mn=Math.min(...data)-500,mx=Math.max(...data)+500;
+  const xs=i=>36+i*(W-46)/(data.length-1);
+  const ys=v=>H-18-(v-mn)/(mx-mn)*(H-32);
+  ctx.strokeStyle='#2e3650';ctx.lineWidth=.5;
+  [0,.5,1].forEach(t=>{const y=ys(mn+(mx-mn)*t);ctx.beginPath();ctx.moveTo(36,y);ctx.lineTo(W,y);ctx.stroke();ctx.fillStyle='#5c6480';ctx.font='9px -apple-system';ctx.fillText('$'+Math.round((mn+(mx-mn)*t)/1000)+'k',0,y+3);});
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(79,142,247,.3)');g.addColorStop(1,'rgba(79,142,247,0)');
+  ctx.beginPath();ctx.moveTo(xs(0),ys(data[0]));data.forEach((v,i)=>ctx.lineTo(xs(i),ys(v)));
+  ctx.lineTo(xs(data.length-1),H-18);ctx.lineTo(xs(0),H-18);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+  ctx.beginPath();ctx.moveTo(xs(0),ys(data[0]));data.forEach((v,i)=>ctx.lineTo(xs(i),ys(v)));
+  ctx.strokeStyle='#4f8ef7';ctx.lineWidth=2;ctx.stroke();
+  data.forEach((v,i)=>{ctx.beginPath();ctx.arc(xs(i),ys(v),2.5,0,Math.PI*2);ctx.fillStyle='#4f8ef7';ctx.fill();});
+}
+
+// init
+renderDash();
+</script>
+</body>
+</html>
