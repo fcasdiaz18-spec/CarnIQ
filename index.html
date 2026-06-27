@@ -342,12 +342,7 @@ textarea.inf{resize:vertical;min-height:70px;font-family:inherit}
     <div style="text-align:right"><div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:3px">Actualizado</div><div style="font-size:11px;color:#4ade80;font-weight:600" id="dash-usd-time">Hoy 09:15</div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;cursor:pointer" onclick="refreshRates()">⟳ Actualizar</div></div>
   </div>
 
-  <div class="kgrid">
-    <div class="kpi"><div class="kv" id="kv">—</div><div class="kl">Ventas</div></div>
-    <div class="kpi"><div class="kv" id="km">—</div><div class="kl">Margen promedio</div></div>
-    <div class="kpi"><div class="kv" style="color:var(--r)" id="ka">0</div><div class="kl">Alertas</div></div>
-    <div class="kpi"><div class="kv" id="kp">—</div><div class="kl">Productos</div></div>
-  </div>
+  <div class="kgrid" id="dash-kgrid" style="display:none"></div>
 
   <div id="dash-alts" class="card"><div class="ct">⚡ Alertas de stock crítico</div><div style="color:var(--t3);font-size:13px">Carga tu archivo de stock para visualizar alertas.</div></div>
   <div class="card"><div class="ct">📊 Distribución por categoría</div><div id="dash-cats"><div style="color:var(--t3);font-size:13px">Sin datos disponibles.</div></div></div>
@@ -625,11 +620,12 @@ textarea.inf{resize:vertical;min-height:70px;font-family:inherit}
   </div>
   <div class="card">
     <div class="ct">💰 Lista de precios <span id="est-precios" class="badge ba">Sin datos</span></div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:10px">Acepta Excel, CSV <b>o imágenes JPG/PNG</b> de tu lista de precios. Desde imágenes, la IA extrae los precios automáticamente.</div>
     <div class="uz" onclick="document.getElementById('fpr').click()">
-      <input type="file" id="fpr" accept=".xlsx,.xls,.csv,.ods" onchange="hFile(this,'precios')">
+      <input type="file" id="fpr" accept=".xlsx,.xls,.csv,.ods,.jpg,.jpeg,.png,.heic,.webp" onchange="hFile(this,'precios')">
       <div style="font-size:24px;margin-bottom:5px">💰</div>
       <div style="font-size:14px;font-weight:600">Cargar lista de precios</div>
-      <div style="font-size:12px;color:var(--t3);margin-top:3px">Excel .xlsx · .xls · CSV</div>
+      <div style="font-size:12px;color:var(--t3);margin-top:3px">Excel · CSV · JPG · PNG</div>
     </div>
     <div id="pp-precios" style="display:none"><div class="pb"><div class="pf" id="pf-precios" style="width:0%"></div></div><div id="pm-precios" style="font-size:12px;color:var(--t2);text-align:center;margin-top:4px"></div></div>
     <div id="stbar-precios"></div>
@@ -687,9 +683,21 @@ async function loadDB(){
   if(DB.coverUrl){document.getElementById('hero-img').src=DB.coverUrl;document.getElementById('sp-bg').style.backgroundImage=`url('${DB.coverUrl}')`;}
 }
 
-// ════════════════════════════════════════════════
-// NEWS DATA
-// ════════════════════════════════════════════════
+// ─── News images — curated per category ──────
+const NEWS_IMAGES = {
+  pasos:   'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=70', // mountain pass road
+  sanidad_aftosa: 'https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=600&q=70', // cows field
+  sanidad_aviar:  'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=70', // chickens farm
+  sanidad_cerdo:  'https://images.unsplash.com/photo-1528467269665-b72962cd10d7?w=600&q=70', // pigs
+  sanidad_gen:    'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=70', // lab/vet
+  vacuno:  'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70', // beef cuts
+  cerdo:   'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&q=70', // pork
+  ave:     'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70', // chicken
+  mercado_dolar:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70', // finance
+  mercado_minero:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70', // mining
+  puerto: 'https://images.unsplash.com/photo-1523920290228-4f321a939b4c?w=600&q=70', // port
+};
+
 const NEWS=[
   {cat:'pasos',u:'critico',src:'Dirección de Vialidad MOP',url:'https://vialidad.cl/noticias',
    img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=70',
@@ -1055,12 +1063,19 @@ function toggleGroup(id){
 
 // ─── File Upload ──────────────────────────────
 function hFile(inp,type){if(inp.files[0])procFile(inp.files[0],type);}
-function hMulti(inp){Array.from(inp.files).forEach(f=>{const ext=f.name.split('.').pop().toLowerCase();['xlsx','xls','csv','ods'].includes(ext)?procFile(f,'full'):addFI(f,'doc');});}
 
 function procFile(file,type){
+  const ext=file.name.split('.').pop().toLowerCase();
+  const isImg=['jpg','jpeg','png','heic','webp','bmp'].includes(ext);
+
+  // If image uploaded for precios — use Claude vision to extract
+  if(isImg && type==='precios'){
+    procImagePrecios(file);
+    return;
+  }
+
   const pEl=document.getElementById('pp-'+type),pfEl=document.getElementById('pf-'+type),mEl=document.getElementById('pm-'+type),sbEl=document.getElementById('stbar-'+type);
   pEl.style.display='block';pfEl.style.width='10%';mEl.textContent='Leyendo archivo...';
-  const ext=file.name.split('.').pop().toLowerCase();
   const r=new FileReader();
   r.onload=e=>{
     try{
@@ -1070,16 +1085,64 @@ function procFile(file,type){
       pfEl.style.width='80%';
       setTimeout(async()=>{
         const rows=mapR(best,type);
-        if(!rows.length){mEl.textContent='⚠️ Sin filas válidas. Columnas: '+Object.keys(best[0]||{}).join(', ');return;}
+        if(!rows.length){mEl.textContent='⚠️ Sin filas válidas. Columnas detectadas: '+Object.keys(best[0]||{}).join(', ');return;}
         DB[type]=rows;pfEl.style.width='100%';mEl.textContent='';
         const el=document.getElementById('est-'+type);if(el){el.className='badge bg';el.textContent='✅ '+rows.length;}
-        if(sbEl)sbEl.innerHTML=`<div style="background:var(--gbg);border:1px solid #86efac;border-radius:var(--rsm);padding:8px 12px;font-size:12px;color:var(--g);margin-top:8px">✅ ${rows.length} registros cargados de "${file.name}"</div>`;
+        if(sbEl)sbEl.innerHTML=`<div style="background:var(--gbg);border:1px solid #86efac;border-radius:var(--rsm);padding:8px 12px;font-size:12px;color:var(--g);margin-top:8px">✅ ${rows.length} registros de "${file.name}"</div>`;
         addFI(file,type,rows.length);await saveDB();setTimeout(()=>pEl.style.display='none',2000);renderDash();updCtx();
         if(type==='stock')renSt('todos');
       },200);
-    }catch(err){mEl.textContent='❌ Error: '+err.message;pEl.style.display='none';}
+    }catch(err){mEl.textContent='❌ Error: '+err.message+'. Intenta exportar el archivo como CSV desde Excel.';pEl.style.display='none';}
   };
   ext==='csv'?r.readAsText(file,'utf-8'):r.readAsArrayBuffer(file);
+}
+
+async function procImagePrecios(file){
+  const pEl=document.getElementById('pp-precios'),pfEl=document.getElementById('pf-precios'),mEl=document.getElementById('pm-precios'),sbEl=document.getElementById('stbar-precios');
+  pEl.style.display='block';pfEl.style.width='20%';mEl.textContent='Analizando imagen con IA...';
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const b64=e.target.result.split(',')[1];
+    try{
+      pfEl.style.width='50%';mEl.textContent='Extrayendo precios...';
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-6',max_tokens:2000,
+          messages:[{role:'user',content:[
+            {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
+            {type:'text',text:'Esta es una lista de precios de carnes. Extrae TODOS los productos con su precio. Responde ÚNICAMENTE con un JSON array sin explicaciones ni markdown:\n[{"nombre":"nombre producto","codigo":"código si existe","precio_venta":precio_número,"categoria":"Vacuno|Cerdo|Ave|Procesado"}]\nSi no hay código, usa "". Precios solo en números, sin símbolos. Si no ves lista de precios, responde [].'}
+          ]}]
+        })
+      });
+      const data=await res.json();
+      pfEl.style.width='85%';
+      let txt=data.content?.[0]?.text||'[]';
+      txt=txt.replace(/```json|```/g,'').trim();
+      let extracted=[];
+      try{extracted=JSON.parse(txt);}catch{extracted=[];}
+      if(!extracted.length){mEl.textContent='⚠️ No se pudieron extraer precios de la imagen. Verifica que sea una lista clara.';pEl.style.display='none';return;}
+      // Convert to our format
+      const rows=extracted.map((p,i)=>({
+        id:p.codigo||'P'+(i+1),
+        name:p.nombre||'',
+        cat:cat(p.categoria||p.nombre||''),
+        catDisplay:p.categoria||catDisplayFromCat(cat(p.categoria||p.nombre||'')),
+        costo:0,
+        venta:Number(p.precio_venta)||0,
+        mg:0,
+        origen:'Chile'
+      })).filter(p=>p.name&&p.venta>0);
+      DB.precios=rows;pfEl.style.width='100%';mEl.textContent='';
+      const el=document.getElementById('est-precios');if(el){el.className='badge bg';el.textContent='✅ '+rows.length;}
+      if(sbEl)sbEl.innerHTML=`<div style="background:var(--gbg);border:1px solid #86efac;border-radius:var(--rsm);padding:8px 12px;font-size:12px;color:var(--g);margin-top:8px">✅ ${rows.length} precios extraídos de la imagen con IA</div>`;
+      addFI(file,'precios',rows.length);await saveDB();setTimeout(()=>pEl.style.display='none',2000);renderDash();updCtx();
+    }catch(err){
+      mEl.textContent='❌ Error al procesar imagen. Intenta con un Excel o CSV.';
+      pEl.style.display='none';
+    }
+  };
+  reader.readAsDataURL(file);
 }
 
 function fc(row,c){const k=Object.keys(row).find(k=>c.some(x=>k.toLowerCase().replace(/[\s_.()áéíóúñ]/g,'').includes(x.toLowerCase().replace(/[\s_.()áéíóúñ]/g,''))));return k&&row[k]!==''&&row[k]!==null?row[k]:'';}
@@ -1087,9 +1150,71 @@ function n(v){if(typeof v==='number')return v;const x=parseFloat(String(v).repla
 function cat(s){s=(s||'').toLowerCase();if(/vacun|bov|lomo|asado|posta|paleta|plateada|filete|rib|entrana|tapapecho/.test(s))return'vacuno';if(/cerdo|chancho|pierna|pernil|costill.*cer|pork/.test(s))return'cerdo';if(/pollo|ave|pechuga|trutro|alita|pavo|chicken/.test(s))return'ave';if(/vienesa|mortadel|salami|jamon|embutid|chorizo|salchicha/.test(s))return'procesado';return'otro';}
 
 function mapR(raw,type){
-  if(type==='stock')return raw.map((r,i)=>{const name=String(fc(r,['producto','descripcion','nombre','articulo','item','desc'])||'').trim();if(!name)return null;return{id:String(fc(r,['codigo','cod','sku','id','ref','code','lote'])||'P'+(i+1)).trim(),name,cat:cat(String(fc(r,['categoria','categ','tipo','familia','category','especie'])||name)),stock:n(fc(r,['stock','cantidad','kilos','kg','existencia','saldo','cant','qty','disponible','cajas'])||0),min:n(fc(r,['minimo','min','stockmin','stock min','reposicion','minimum'])||DB.cfg.min),origen:String(fc(r,['origen','pais','procedencia','origin','country'])||'Chile').trim(),unidad:String(fc(r,['unidad','und','medida','unit'])||'kg').trim()};}).filter(Boolean);
-  if(type==='precios')return raw.map((r,i)=>{const name=String(fc(r,['producto','descripcion','nombre','articulo','item','desc'])||'').trim();if(!name)return null;const costo=n(fc(r,['costo','precio costo','pcosto','compra','neto','cost','p.costo'])||0),venta=n(fc(r,['venta','precio venta','pventa','precio','pvp','price','p.venta','valor'])||0);let mg=n(fc(r,['margen','margin','utilidad','%','mg','markup'])||0);if(mg===0&&costo>0&&venta>0)mg=(venta-costo)/venta*100;return{id:String(fc(r,['codigo','cod','sku','id','ref','code'])||'P'+(i+1)).trim(),name,cat:cat(String(fc(r,['categoria','categ','tipo','especie'])||name)),costo,venta,mg,origen:String(fc(r,['origen','pais','procedencia'])||'Chile').trim()};}).filter(Boolean);
+  if(type==='stock')return raw.map((r,i)=>{
+    const name=String(fc(r,['producto','descripcion','nombre','articulo','item','desc'])||'').trim();
+    if(!name)return null;
+    // Category: prefer explicit column, fallback to detect from name
+    const catCol=String(fc(r,['categoria','categ','tipo','familia','category','especie','rubro'])||'').trim();
+    const catVal=catCol?catFromCol(catCol):cat(name);
+    // Friendly display category from column value or name
+    const catDisplay=catCol?normalizeCat(catCol):catDisplayFromCat(catVal);
+    return{
+      id:String(fc(r,['codigo','cod','sku','id','ref','code','lote'])||'P'+(i+1)).trim(),
+      name,
+      cat:catVal,
+      catDisplay,
+      stock:n(fc(r,['stock','cantidad','kilos','kg','existencia','saldo','cant','qty','disponible','cajas','kgs'])||0),
+      min:n(fc(r,['minimo','min','stockmin','stock min','reposicion','minimum'])||DB.cfg.min),
+      origen:String(fc(r,['origen','pais','procedencia','origin','country'])||'Chile').trim(),
+      unidad:String(fc(r,['unidad','und','medida','unit'])||'kg').trim()
+    };
+  }).filter(Boolean);
+  if(type==='precios')return raw.map((r,i)=>{
+    const name=String(fc(r,['producto','descripcion','nombre','articulo','item','desc'])||'').trim();
+    if(!name)return null;
+    const costo=n(fc(r,['costo','precio costo','pcosto','compra','neto','cost','p.costo'])||0);
+    const venta=n(fc(r,['venta','precio venta','pventa','precio','pvp','price','p.venta','valor'])||0);
+    let mg=n(fc(r,['margen','margin','utilidad','%','mg','markup'])||0);
+    if(mg===0&&costo>0&&venta>0)mg=(venta-costo)/venta*100;
+    const catCol=String(fc(r,['categoria','categ','tipo','especie'])||'').trim();
+    return{
+      id:String(fc(r,['codigo','cod','sku','id','ref','code'])||'P'+(i+1)).trim(),
+      name,
+      cat:catCol?catFromCol(catCol):cat(name),
+      catDisplay:catCol?normalizeCat(catCol):catDisplayFromCat(catCol?catFromCol(catCol):cat(name)),
+      costo,venta,mg,
+      origen:String(fc(r,['origen','pais','procedencia'])||'Chile').trim()
+    };
+  }).filter(Boolean);
   return raw.map(r=>({producto:String(fc(r,['producto','descripcion','item','nombre'])||''),venta:n(fc(r,['venta','total','monto','ingreso'])||0)})).filter(r=>r.producto||r.venta);
+}
+
+// Category from explicit column value
+function catFromCol(s){
+  s=(s||'').toLowerCase();
+  if(/vacun|bov|res|vaca|carne.*vac/.test(s))return'vacuno';
+  if(/cerdo|chancho|porc|pork/.test(s))return'cerdo';
+  if(/ave|pollo|poultr|bird|gall/.test(s))return'ave';
+  if(/proces|embutid|salchicha|vienesa|mortadel|jamon/.test(s))return'procesado';
+  if(/congel/.test(s))return'congelado';
+  return cat(s); // fallback to name detection
+}
+
+// Normalize category to display name
+function normalizeCat(s){
+  const lc=(s||'').toLowerCase();
+  if(/vacun|bov|res/.test(lc))return'Vacuno';
+  if(/cerdo|chancho|porc/.test(lc))return'Cerdo';
+  if(/ave|pollo|poultr/.test(lc))return'Ave';
+  if(/proces|embutid/.test(lc))return'Procesado';
+  if(/congel/.test(lc))return'Congelado';
+  // Return original with first letter uppercase if no match
+  return s.charAt(0).toUpperCase()+s.slice(1).toLowerCase();
+}
+
+function catDisplayFromCat(c){
+  const map={vacuno:'Vacuno',cerdo:'Cerdo',ave:'Ave',procesado:'Procesado',otro:'Otro',congelado:'Congelado'};
+  return map[c]||c;
 }
 
 function addFI(file,type,rows){
