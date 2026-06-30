@@ -351,7 +351,15 @@ textarea.inf{resize:vertical;min-height:70px;font-family:inherit}
 
 <!-- NOTICIAS -->
 <div id="s-news" class="scr">
-  <div class="sh"><h2>Noticias</h2><p>Mercado cárnico · Fuentes verificadas y oficiales</p></div>
+  <div class="sh"><h2>Noticias</h2>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+      <p style="margin:0">Mercado cárnico · Actualización automática cada 6h</p>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="news-ts" style="font-size:10px;color:var(--t3)"></span>
+        <button onclick="fetchAndRender(currentNewsTab)" style="background:var(--r);color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer">⟳ Actualizar</button>
+      </div>
+    </div>
+  </div>
   <div class="tabs">
     <div class="tab active" onclick="nTab(this,'all')">Todas</div>
     <div class="tab" onclick="nTab(this,'critico')">🔴 Críticas</div>
@@ -681,6 +689,197 @@ async function loadDB(){
   for(const p of DB.catalog){const ph=await loadPh(p.id);if(ph)p.photo=ph;}
   if(DB.logoUrl)applyLogo(DB.logoUrl);
   if(DB.coverUrl){document.getElementById('hero-img').src=DB.coverUrl;document.getElementById('sp-bg').style.backgroundImage=`url('${DB.coverUrl}')`;}
+}
+
+// ════════════════════════════════════════════════
+// LIVE NEWS ENGINE — Claude AI con web search
+// Se actualiza cada 6 horas automáticamente
+// ════════════════════════════════════════════════
+let NEWS_CACHE = [];
+
+// Active news = live cache or static fallback
+function getNews(){ return NEWS_CACHE.length > 0 ? NEWS_CACHE : NEWS_STATIC; }
+let NEWS_LAST_FETCH = 0;
+const NEWS_TTL = 6 * 60 * 60 * 1000; // 6 horas
+
+async function fetchLiveNews(force=false){
+  const now = Date.now();
+  if(!force && NEWS_CACHE.length > 0 && (now - NEWS_LAST_FETCH) < NEWS_TTL){
+    return NEWS_CACHE;
+  }
+
+  // Show loading state
+  const el = document.getElementById('news-list');
+  if(el) el.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--t3)">
+    <div style="font-size:32px;margin-bottom:10px">🔄</div>
+    <div style="font-size:14px;font-weight:600;color:var(--t)">Buscando noticias en línea...</div>
+    <div style="font-size:12px;margin-top:5px">Actualizando con información del día</div>
+  </div>`;
+
+  const prompt = `Eres un analista experto en el mercado cárnico de Chile y Latinoamérica. 
+Busca y genera 10 noticias REALES y ACTUALES (máximo de las últimas 48 horas) sobre estos temas para FT Foods Antofagasta, empresa importadora y distribuidora de carnes:
+
+1. Cierre o restricciones en Paso Los Libertadores, Paso Jama u otros pasos fronterizos Chile-Argentina
+2. Puerto de Valparaíso o San Antonio: atrasos, paros, congestión
+3. Fiebre Aftosa, Influenza Aviar, Peste Porcina Africana u otras enfermedades animales en Paraguay, Argentina, Brasil, Chile
+4. Precios FOB de vacuno, cerdo y ave en Brasil, Paraguay, USA
+5. Tipo de cambio USD/CLP y su impacto en importaciones de carne
+6. Demanda minera y consumo en Antofagasta y Norte de Chile
+7. Normativas SAG, aranceles o cambios regulatorios para importación de carne a Chile
+8. Mercado cárnico global: China, exportaciones, oferta y demanda
+
+Para cada noticia, usa la fecha y contexto MÁS RECIENTE disponible (junio 2025 o lo más actual posible).
+
+Responde SOLO con un JSON array válido, sin markdown, sin texto adicional:
+[{
+  "titulo": "título claro y específico",
+  "cuerpo": "2-3 oraciones con información concreta, cifras y datos reales",
+  "categoria": "pasos|sanidad|vacuno|cerdo|ave|mercado",
+  "urgencia": "critico|alerta|info",
+  "fuente": "nombre de la fuente real",
+  "url": "URL real de la fuente o sitio oficial",
+  "pais": "emoji + país/región (ej: 🇧🇷 Brasil)",
+  "tiempo": "Hoy|Ayer|Hace X días"
+}]`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4000,
+        tools: [{type: 'web_search_20250305', name: 'web_search'}],
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+
+    const data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+
+    // Extract text from response (may include tool_use blocks)
+    const textBlock = data.content?.find(b => b.type === 'text');
+    let txt = textBlock?.text || '[]';
+    txt = txt.replace(/```json|```/g,'').trim();
+
+    // Extract JSON array from text
+    const match = txt.match(/\[[\s\S]*\]/);
+    if(!match) throw new Error('No JSON array found');
+
+    const raw = JSON.parse(match[0]);
+    if(!Array.isArray(raw) || raw.length === 0) throw new Error('Empty array');
+
+    // Map to internal format
+    const mapped = raw.map(n => ({
+      cat: n.categoria || 'mercado',
+      u:   n.urgencia  || 'info',
+      src: n.fuente    || 'Fuente verificada',
+      url: n.url       || '#',
+      img: getNewsImg(n.categoria, n.urgencia, n.cuerpo),
+      pais: n.pais     || '🌐 Global',
+      t:    n.tiempo   || 'Hoy',
+      title: n.titulo,
+      body:  n.cuerpo,
+      tags:  buildTags(n.categoria, n.urgencia),
+      live:  true
+    }));
+
+    NEWS_CACHE = mapped;
+    NEWS_LAST_FETCH = Date.now();
+    await iSet('news_cache', {data: mapped, ts: Date.now()});
+    updateNewsTimestamp();
+    return mapped;
+
+  } catch(err) {
+    console.warn('Live news error:', err.message);
+    // Fallback: try to load from IDB cache
+    const cached = await iGet('news_cache');
+    if(cached && cached.data && cached.data.length > 0){
+      NEWS_CACHE = cached.data;
+      NEWS_LAST_FETCH = cached.ts;
+      return NEWS_CACHE;
+    }
+    // Last resort: static news
+    return NEWS_STATIC;
+  }
+}
+
+function getNewsImg(cat, urgencia, body){
+  const imgs = {
+    pasos:   'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=70',
+    sanidad_vac: 'https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=600&q=70',
+    sanidad_ave: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=70',
+    sanidad_cer: 'https://images.unsplash.com/photo-1528467269665-b72962cd10d7?w=600&q=70',
+    sanidad_gen: 'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=70',
+    vacuno:  'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70',
+    cerdo:   'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&q=70',
+    ave:     'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70',
+    mercado_dolar: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',
+    mercado_minero:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70',
+    puerto: 'https://images.unsplash.com/photo-1523920290228-4f321a939b4c?w=600&q=70',
+    sag:    'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&q=70',
+  };
+  if(cat==='pasos') return body?.includes('puerto')||body?.includes('port') ? imgs.puerto : imgs.pasos;
+  if(cat==='sanidad'){
+    const b=(body||'').toLowerCase();
+    if(/aviar|ave|pollo|h5n1/.test(b)) return imgs.sanidad_ave;
+    if(/cerdo|porc|ppa|prrs/.test(b)) return imgs.sanidad_cer;
+    if(/vacun|bov|aftosa|fmd/.test(b)) return imgs.sanidad_vac;
+    return imgs.sanidad_gen;
+  }
+  if(cat==='vacuno') return imgs.vacuno;
+  if(cat==='cerdo') return imgs.cerdo;
+  if(cat==='ave') return imgs.ave;
+  if(cat==='mercado'){
+    const b=(body||'').toLowerCase();
+    if(/miner|antofagast|cobre/.test(b)) return imgs.mercado_minero;
+    if(/sag|sanitari|normat|arancel/.test(b)) return imgs.sag;
+    return imgs.mercado_dolar;
+  }
+  return imgs.mercado_dolar;
+}
+
+function buildTags(cat, urgencia){
+  const catTags = {
+    pasos:   ['ba','Logística'],
+    sanidad: ['br','Sanidad animal'],
+    vacuno:  ['ba','Vacuno'],
+    cerdo:   ['ba','Cerdo'],
+    ave:     ['bb','Ave'],
+    mercado: ['bg','Mercado'],
+  };
+  const urgTags = {
+    critico: ['br','Acción inmediata'],
+    alerta:  ['ba','Monitorear'],
+    info:    ['bg','Informativo'],
+  };
+  const ct = catTags[cat] || ['bk','General'];
+  const ut = urgTags[urgencia] || ['bk','Info'];
+  return [...ct, ...ut];
+}
+
+function updateNewsTimestamp(){
+  const el = document.getElementById('news-ts');
+  if(!el) return;
+  const d = new Date(NEWS_LAST_FETCH);
+  el.textContent = `Actualizado: ${d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})}`;
+}
+
+// Schedule auto-refresh every 6 hours
+function scheduleNewsRefresh(){
+  // Check on focus (user returns to app)
+  document.addEventListener('visibilitychange', ()=>{
+    if(!document.hidden && Date.now() - NEWS_LAST_FETCH > NEWS_TTL) fetchAndRender('all');
+  });
+  // Interval check every 30 min
+  setInterval(()=>{
+    if(Date.now() - NEWS_LAST_FETCH > NEWS_TTL) fetchAndRender('all');
+  }, 30 * 60 * 1000);
+}
+
+async function fetchAndRender(cat){
+  const data = await fetchLiveNews();
+  renderNewsData(data, cat);
 }
 
 // ─── News images — curated per category ──────
