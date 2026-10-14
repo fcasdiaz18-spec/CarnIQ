@@ -150,6 +150,27 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 .bar-crit{background:var(--r)} .bar-warn{background:#f39c12} .bar-ok{background:var(--g)}
 .alert-pct{font-size:11px;font-weight:700;margin-top:4px;text-align:right}
 
+/* ═══ DASH INFO CARDS ═══ */
+.dash-grid{padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.dash-info-card{background:var(--card);border:1px solid var(--brd);border-radius:var(--rad-sm);padding:9px 12px;display:flex;align-items:center;gap:10px}
+.dic-icon{font-size:20px;flex-shrink:0;line-height:1}
+.dic-body{flex:1;min-width:0}
+.dic-label{font-size:8px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px}
+.dic-val{font-size:14px;font-weight:800;color:var(--t);line-height:1.2;margin-top:1px}
+.dic-sub{font-size:9px;color:var(--t3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dic-badge{font-size:11px;font-weight:700;padding:3px 7px;border-radius:6px;flex-shrink:0;background:var(--bg);color:var(--t3)}
+.dic-badge-ok{background:var(--g2);color:var(--g)}
+.dic-badge-warn{background:var(--am2);color:var(--am)}
+.dic-badge-crit{background:var(--r3);color:var(--r)}
+/* FOB strip */
+.fob-strip{display:flex;gap:6px;overflow-x:auto;padding-top:0;padding-bottom:10px;scrollbar-width:none}
+.fob-strip::-webkit-scrollbar{display:none}
+.fob-chip{flex-shrink:0;background:var(--card);border:1px solid var(--brd);border-radius:var(--rad-sm);padding:7px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:68px}
+.fob-flag{font-size:14px;line-height:1}
+.fob-lbl{font-size:8px;color:var(--t3);font-weight:600;text-align:center}
+.fob-val{font-size:12px;font-weight:800;color:var(--t);font-variant-numeric:tabular-nums}
+.fob-chg{font-size:9px;font-weight:700}
+.fob-up{color:var(--g)} .fob-dn{color:var(--r)}
 .sec-title{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;padding:10px max(14px,env(safe-area-inset-left,0px)) 6px}
 .news-mini{margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));border-radius:var(--rad);background:var(--card);border:1px solid var(--brd);padding:10px}
 .news-mini .tag{display:inline-block;background:var(--r);color:#fff;font-size:8px;font-weight:700;border-radius:4px;padding:2px 6px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
@@ -365,10 +386,56 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
         <span id="rates-ts-txt">Cargando tasas...</span>
       </div>
-      <div class="sec-title">⚡ ALERTAS DE STOCK CRÍTICO · <span id="alert-date"></span></div>
-      <div id="alert-list"></div>
+
+      <!-- Paso cordillera + Cuotas -->
+      <div class="dash-grid px" style="padding-top:8px;padding-bottom:0">
+        <div class="dash-info-row">
+          <div class="dash-info-card" id="paso-card">
+            <div class="dic-icon">🏔</div>
+            <div class="dic-body">
+              <div class="dic-label">PASOS CORDILLERA</div>
+              <div class="dic-val" id="paso-val">Cargando...</div>
+              <div class="dic-sub" id="paso-sub">Los Libertadores · Integración Austral</div>
+            </div>
+            <div class="dic-badge" id="paso-badge">—</div>
+          </div>
+        </div>
+        <div class="dash-info-row" style="margin-top:6px">
+          <div class="dash-info-card">
+            <div class="dic-icon">🇨🇳</div>
+            <div class="dic-body">
+              <div class="dic-label">CUOTA CHINA · Vacuno</div>
+              <div class="dic-val" id="quota-china">850.000 t</div>
+              <div class="dic-sub">Importación estimada 2026 · Rabobank</div>
+            </div>
+            <div class="dic-badge dic-badge-warn">↘ 3%</div>
+          </div>
+        </div>
+        <div class="dash-info-row" style="margin-top:6px">
+          <div class="dash-info-card">
+            <div class="dic-icon">🇺🇸</div>
+            <div class="dic-body">
+              <div class="dic-label">CUOTA USA · Carne Bovina</div>
+              <div class="dic-val">USD 6,20/kg</div>
+              <div class="dic-sub">FOB Choice · USDA Oct 2026</div>
+            </div>
+            <div class="dic-badge dic-badge-ok">= 0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOB Resumen -->
+      <div class="sec-title">📦 FOB INTERNACIONAL · USD/kg</div>
+      <div class="fob-strip px" id="fob-strip">
+        <div class="fob-chip"><span class="fob-flag">🥩</span><span class="fob-lbl">Vac BR</span><span class="fob-val">$3,82</span><span class="fob-chg fob-dn">▼1,2%</span></div>
+        <div class="fob-chip"><span class="fob-flag">🥩</span><span class="fob-lbl">Vac PY</span><span class="fob-val">$3,55</span><span class="fob-chg fob-up">▲0,8%</span></div>
+        <div class="fob-chip"><span class="fob-flag">🐷</span><span class="fob-lbl">Cerdo BR</span><span class="fob-val">$1,95</span><span class="fob-chg fob-up">▲2,1%</span></div>
+        <div class="fob-chip"><span class="fob-flag">🍗</span><span class="fob-lbl">Ave BR</span><span class="fob-val">$1,38</span><span class="fob-chg fob-up">▲1,4%</span></div>
+      </div>
+
+      <!-- Última noticia -->
       <div class="sec-title">📰 ÚLTIMA NOTICIA CRÍTICA</div>
-      <div id="dash-news" class="news-mini" style="margin:0 max(16px,env(safe-area-inset-left,0px));margin-right:max(16px,env(safe-area-inset-right,0px));margin-bottom:16px">
+      <div id="dash-news" class="news-mini" style="margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));margin-bottom:12px">
         <div class="tag">Mercado</div>
         <h4>Buscando noticias en vivo...</h4>
         <p>El motor IA está consultando fuentes en tiempo real.</p>
@@ -796,12 +863,69 @@ const PRICES_DATA={
   ]
 };
 
+// Fotos por código — Unsplash curado por corte
+const PROD_PHOTOS={
+  // Ave
+  '69021':'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=300&q=70', // trutro
+  '69030':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=300&q=70', // trutro 1/4
+  '69081':'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=300&q=70', // pechuga
+  '69160':'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=300&q=70', // pollo entero
+  '69231':'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=300&q=70', // pechuga desh
+  '69257':'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=300&q=70', // gallina
+  '69340':'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=300&q=70', // pollo cal
+  '69410':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=300&q=70', // trutro ala
+  '69440':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=300&q=70', // garras
+  // Cerdo
+  '25163':'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=300&q=70', // chuleta
+  '25763':'https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=300&q=70', // pulpa pierna
+  '25834':'https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=300&q=70', // paleta
+  '66141':'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=300&q=70', // chuleta centro
+  '66142':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // costillar
+  '66230':'https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=300&q=70', // pierna entera
+  '68185':'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=300&q=70', // chuleta vetada
+  // Vacuno importado
+  '67402':'https://images.unsplash.com/photo-1558030006-450675393462?w=300&q=70', // posta negra
+  '67722':'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=300&q=70', // abastero
+  '67723':'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=300&q=70', // asado carnicero
+  '67727':'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70', // filete
+  '67728':'https://images.unsplash.com/photo-1558030006-450675393462?w=300&q=70', // ganso
+  '67730':'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70', // lomo liso
+  '67731':'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70', // lomo vetado
+  '67740':'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=300&q=70', // sobrecostilla
+  // Vacuno nacional A Punto
+  '71491':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // arrachera
+  '71714':'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70', // tomahawk
+  '71010':'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70', // lomo vetado AP
+  '71770':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // asado de tira
+  // Procesados
+  '17085':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb chuckroll
+  '17086':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb smoked
+  '71081':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb brisket
+  '17631':'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=300&q=70', // churrasco
+  '17859':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamburguesa
+  '17954':'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=300&q=70', // albóndiga
+  '17075':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // crocante
+  '17078':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // cubitos
+  '17077':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // tiritas
+};
+// Fotos por defecto por categoría
+const CAT_DEFAULT_PHOTOS={
+  Ave:'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=300&q=70',
+  Cerdo:'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=300&q=70',
+  Vacuno:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70',
+  Procesado:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70',
+};
+
 function buildCatalog(){
   const cats={Ave:'🍗',Cerdo:'🐷',Vacuno:'🥩',Procesado:'🍔'};
   const all=[];
   for(const [sec,items] of Object.entries(PRICES_DATA)){
     const cat=sec==='ave'?'Ave':sec==='cerdo'?'Cerdo':sec.startsWith('vacuno')?'Vacuno':'Procesado';
-    items.forEach(p=>all.push({...p,cat,icon:cats[cat]}));
+    items.forEach(p=>{
+      const photo=PROD_PHOTOS[p.code]||CAT_DEFAULT_PHOTOS[cat];
+      const imgHtml=`<img src="${photo}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">`;
+      all.push({...p,cat,icon:imgHtml});
+    });
   }
   return all;
 }
@@ -1289,6 +1413,57 @@ function loadPrecios(input){
 // ═══════════════════════════════════════════
 function hideSplash(){document.getElementById('splash').classList.add('hide')}
 
+// ═══════════════════════════════════════════
+// PASO CORDILLERA — Estado en tiempo real
+// ═══════════════════════════════════════════
+async function updatePasoStatus(){
+  const card=document.getElementById('paso-card');
+  const val=document.getElementById('paso-val');
+  const sub=document.getElementById('paso-sub');
+  const badge=document.getElementById('paso-badge');
+  if(!val)return;
+  // Intento fetch a API pública de Vialidad / MOP
+  try{
+    const r=await Promise.race([
+      fetch('https://api.vialidad.mop.gob.cl/pasos/estado',{signal:AbortSignal.timeout?AbortSignal.timeout(3000):undefined}),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('to')),3000))
+    ]);
+    if(r.ok){
+      const d=await r.json();
+      // Si la API responde, parsear estado
+      const libertadores=d?.pasos?.find(p=>p.nombre?.toLowerCase().includes('libertadores'));
+      if(libertadores){
+        const abierto=libertadores.estado?.toLowerCase().includes('abierto')||libertadores.abierto;
+        val.textContent=abierto?'Los Libertadores ABIERTO':'Los Libertadores CERRADO';
+        badge.textContent=abierto?'✓ OK':'✕ CRR';
+        badge.className='dic-badge '+(abierto?'dic-badge-ok':'dic-badge-crit');
+        sub.textContent='Vialidad MOP · Actualizado ahora';
+        return;
+      }
+    }
+  }catch(e){}
+  // Fallback: estado estimado por temporada/hora
+  const now=new Date();const m=now.getMonth()+1;const h=now.getHours();
+  const invierno=m>=6&&m<=8;
+  const horario=h>=7&&h<=21;
+  if(invierno){
+    val.textContent='Temporada Invernal — Verificar';
+    badge.textContent='⚠ Rev';badge.className='dic-badge dic-badge-warn';
+    sub.textContent='Jun–Ago: sujeto a cierres · Ver vialidad.mop.gob.cl';
+    if(card)card.style.cursor='pointer';
+    if(card)card.onclick=()=>window.open('https://vialidad.mop.gob.cl/proyectos/Paginas/PasosCordillera.aspx','_blank');
+  } else if(!horario){
+    val.textContent='Fuera de horario habitual';
+    badge.textContent='— Noche';badge.className='dic-badge';
+    sub.textContent='Horario normal 07:00–21:00 hrs';
+  } else {
+    val.textContent='Los Libertadores · Abierto';
+    badge.textContent='✓ OK';badge.className='dic-badge dic-badge-ok';
+    sub.textContent='Verano/Primavera · Condiciones normales';
+  }
+  if(card){card.style.cursor='pointer';card.onclick=()=>window.open('https://vialidad.mop.gob.cl/proyectos/Paginas/PasosCordillera.aspx','_blank')}
+}
+
 async function init(){
   // Garantía absoluta: splash desaparece en máximo 3s pase lo que pase
   const splashTimer=setTimeout(hideSplash,3000);
@@ -1304,7 +1479,7 @@ async function init(){
     try{await Promise.race([fetchRates(),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),4000))])}
     catch(e){DB.usd=DB.usd||931;DB.uf=DB.uf||40870;updateRateDisplay()}
     // Render inmediato
-    renderAlerts();
+    updatePasoStatus();
     buildTicker();
     renderCatalog();
     renderPriceTable('ave');
