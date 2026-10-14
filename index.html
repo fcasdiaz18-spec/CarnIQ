@@ -1,1502 +1,1292 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<!---
+  CarnIQ v10 · FT Foods Antofagasta · Inteligencia Cárnica
+  Felipe Castiglioni · fcasdiaz18@gmail.com
+-->
+<title>CarnIQ · FT Foods</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="CarnIQ">
-<meta name="theme-color" content="#f4f5f7">
-<title>CarnIQ v9 – FT Foods</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#c0392b">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --bg:#f4f5f7;--s:#fff;--s3:#f0f2f5;
-  --bd:#e2e6ea;--bd2:#d0d7de;
-  --t:#0d1117;--t2:#57606a;--t3:#8c959f;
-  --r:#c0392b;--r2:#e74c3c;--rbg:#fdecea;--rlt:#fff5f5;
-  --a:#0969da;--abg:#dbeafe;
-  --g:#1a7f37;--gbg:#d1fae5;
-  --am:#9a6700;--ambg:#fff3cd;
-  --pu:#6e40c9;--pubg:#ede9fe;
-  --radius:12px;--rsm:8px;
-  --sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
-  --shm:0 4px 16px rgba(0,0,0,.09);
-  --sft:env(safe-area-inset-top,0px);
-  --sfb:env(safe-area-inset-bottom,0px);
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS — FT Foods · Profesional B2B
+   Layout: tab-based PWA, dark ticker + light cards
+   ═══════════════════════════════════════════ */
+:root {
+  --r: #c0392b;       /* rojo FT */
+  --r2: #a93226;      /* rojo profundo */
+  --r3: #f9ebea;      /* rojo pálido bg */
+  --g: #1a7a4a;       /* verde positivo */
+  --g2: #eafaf1;
+  --am: #9a6700;      /* ámbar alerta */
+  --am2: #fef9ee;
+  --b: #1565c0;       /* azul info */
+  --b2: #e8f0fe;
+  --t: #1a1a2e;       /* texto primario */
+  --t2: #4a4a6a;      /* texto secundario */
+  --t3: #8888aa;      /* texto terciario */
+  --bg: #f4f5f8;      /* fondo app */
+  --card: #ffffff;    /* tarjetas */
+  --brd: #e2e4ee;     /* bordes */
+  --ticker: #0f0f1a;  /* fondo ticker */
+  --nav: #ffffff;     /* nav bottom */
+  --hdr: #ffffff;     /* header */
+  --shadow: 0 2px 12px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.12);
+  --rad: 12px;
+  --rad-sm: 8px;
 }
-html,body{height:100%;overflow:hidden;background:var(--bg)}
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;font-size:14px;color:var(--t);display:flex;flex-direction:column}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --t: #f0f0f8; --t2: #b8bcd0; --t3: #6668a0;
+    --bg: #0f0f1a; --card: #1a1a2e; --brd: #2a2a4a;
+    --nav: #12121f; --hdr: #12121f;
+    --r3: #2a0f0f; --g2: #0a1f14; --am2: #1f1600; --b2: #0a1228;
+    --shadow: 0 2px 12px rgba(0,0,0,.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --t: #f0f0f8; --t2: #b8bcd0; --t3: #6668a0;
+  --bg: #0f0f1a; --card: #1a1a2e; --brd: #2a2a4a;
+  --nav: #12121f; --hdr: #12121f;
+  --r3: #2a0f0f; --g2: #0a1f14; --am2: #1f1600; --b2: #0a1228;
+  --shadow: 0 2px 12px rgba(0,0,0,.4);
+  color-scheme: dark;
+}
 
-/* Splash */
-#splash{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .6s;overflow:hidden;background:#0d1117}
-#sp-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&q=80') center/cover;filter:brightness(.45)}
-#sp-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1),rgba(0,0,0,.8))}
-.sp-c{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
-.sp-logo{width:90px;height:90px;background:#fff;border-radius:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:pop .7s cubic-bezier(.34,1.56,.64,1);overflow:hidden}
-.sp-logo img,.sp-logo-f{width:80px;height:80px;object-fit:contain}
-.sp-logo-f{display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:var(--r)}
-.sp-brand{font-size:13px;color:rgba(255,255,255,.6);letter-spacing:.15em;text-transform:uppercase}
-.sp-bar{width:120px;height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
-.sp-p{height:100%;background:#fff;border-radius:2px;animation:ld 1.5s ease forwards}
-@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes ld{from{width:0}to{width:100%}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:14px;background:var(--bg);color:var(--t);overflow:hidden}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease .1s}
 #splash.hide{opacity:0;pointer-events:none}
+#splash svg{width:72px;height:72px;margin-bottom:16px}
+#splash-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:#fff;letter-spacing:1px}
+#splash-sub{font-size:11px;color:#6668a0;letter-spacing:2px;margin-top:4px;text-transform:uppercase}
+#splash-loader{width:120px;height:3px;background:#1a1a2e;border-radius:2px;margin-top:24px;overflow:hidden}
+#splash-loader::after{content:'';display:block;height:100%;background:var(--r);animation:load 1.6s ease-in-out infinite;border-radius:2px}
+@keyframes load{0%{width:0;margin-left:0}50%{width:80%;margin-left:0}100%{width:0;margin-left:100%}}
 
-/* Header */
-.hdr{background:var(--s);border-bottom:1px solid var(--bd);padding:10px 16px;padding-top:calc(10px + var(--sft));display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:var(--sh)}
-.hdr-l{display:flex;align-items:center;gap:10px}
-.hdr-logo{width:36px;height:36px;background:#fff;border-radius:8px;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
-.hdr-logo img{width:32px;height:32px;object-fit:contain}
-.hdr-logo-f{font-size:13px;font-weight:900;color:var(--r)}
-.hdr-tit{font-size:15px;font-weight:700}
-.hdr-sub{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
-.live-pill{display:flex;align-items:center;gap:5px;background:var(--gbg);border-radius:20px;padding:4px 10px}
-.ldot{width:6px;height:6px;border-radius:50%;background:var(--g);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.ltxt{font-size:11px;font-weight:600;color:var(--g)}
+/* LAYOUT */
+#app{display:flex;flex-direction:column;height:100%}
+#header{background:var(--hdr);border-bottom:1px solid var(--brd);flex-shrink:0;position:sticky;top:env(safe-area-inset-top,0px);z-index:100}
+.header-inner{display:flex;align-items:center;gap:10px;padding:10px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#logo-img{height:36px;object-fit:contain}
+.header-brand{flex:1;min-width:0}
+.header-brand h1{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--t);letter-spacing:.5px;line-height:1}
+.header-brand p{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px}
+.live-badge{display:flex;align-items:center;gap:5px;background:var(--g2);border:1px solid #1a7a4a40;border-radius:20px;padding:4px 10px}
+.live-dot{width:7px;height:7px;background:var(--g);border-radius:50%;animation:pulse 2s infinite}
+.live-badge span{font-size:11px;font-weight:600;color:var(--g)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* Ticker bar */
-.ticker-bar{background:linear-gradient(90deg,#0d1117,#1a2030);padding:8px 16px;display:flex;gap:20px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:0}
-.ticker-bar::-webkit-scrollbar{display:none}
-.tick-item{display:flex;align-items:center;gap:8px;white-space:nowrap}
-.tick-lbl{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.05em}
-.tick-val{font-size:13px;font-weight:700;color:#fff}
-.tick-chg{font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px}
-.tick-up{background:rgba(26,127,55,.3);color:#4ade80}
-.tick-dn{background:rgba(192,57,43,.3);color:#f87171}
-.tick-sep{width:1px;height:24px;background:rgba(255,255,255,.1);flex-shrink:0}
+/* TICKER */
+#ticker{background:var(--ticker);overflow:hidden;height:32px;flex-shrink:0}
+.ticker-track{display:flex;align-items:center;height:100%;animation:scroll-ticker 40s linear infinite;width:max-content;gap:0}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes scroll-ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{display:flex;align-items:center;gap:6px;padding:0 20px;border-right:1px solid #ffffff12;white-space:nowrap}
+.tick-lbl{font-size:9px;color:#ffffff55;text-transform:uppercase;letter-spacing:1px}
+.tick-val{font-size:12px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+.tick-chg{font-size:10px;font-weight:600;border-radius:3px;padding:1px 4px}
+.tick-chg.up{color:#2ecc71;background:#2ecc7115}
+.tick-chg.dn{color:#e74c3c;background:#e74c3c15}
 
-/* Nav */
-.nav{display:flex;background:var(--s);border-top:1px solid var(--bd);flex-shrink:0;order:10;padding-bottom:var(--sfb)}
-.nb{flex:1;min-width:0;padding:9px 1px 6px;text-align:center;cursor:pointer;border:none;background:none;color:var(--t3);font-size:9px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:3px;transition:.15s}
-.nb.active{color:var(--r)}
-.nb svg{width:20px;height:20px;stroke-width:1.8}
-.nbadge{background:var(--r);color:#fff;font-size:9px;border-radius:10px;padding:1px 5px;font-weight:700;margin-top:-2px}
+/* PAGES */
+#pages{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.page{display:none;padding-bottom:80px}
+.page.active{display:block}
 
-/* Content */
-#ac{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.scr{display:none;padding:14px 16px;max-width:520px;margin:0 auto}
-.scr.active{display:block}
+/* SECTION HEADER */
+.sh{padding:16px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:8px}
+.sh h2{font-size:22px;font-weight:800;color:var(--t)}
+.sh p{font-size:12px;color:var(--t3);margin-top:2px}
 
-/* Hero */
-.hero{position:relative;height:150px;border-radius:var(--radius);overflow:hidden;margin-bottom:14px;box-shadow:var(--shm);pointer-events:none;user-select:none}
-.hero-img{width:100%;height:100%;object-fit:cover;display:block}
-.hero-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(13,17,23,.75),rgba(0,0,0,.3))}
-.hero-c{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:16px 20px;gap:8px}
-.hero-logo-w{width:48px;height:48px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.hero-logo-w img{width:42px;height:42px;object-fit:contain}
-.hero-logo-f{font-size:16px;font-weight:900;color:var(--r)}
-.hero-name{font-size:22px;font-weight:800;color:#fff;letter-spacing:.5px}
-.hero-loc{font-size:11px;color:rgba(255,255,255,.7)}
+/* CARDS */
+.card{background:var(--card);border-radius:var(--rad);box-shadow:var(--shadow);border:1px solid var(--brd);overflow:hidden}
+.px{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
-/* Cards */
-.card{background:var(--s);border:1px solid var(--bd);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--sh)}
-.ct{font-size:11px;font-weight:700;color:var(--t3);margin-bottom:12px;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;justify-content:space-between}
-.sh{margin-bottom:14px}
-.sh h2{font-size:20px;font-weight:700}
-.sh p{font-size:12px;color:var(--t3);margin-top:3px}
+/* NAV */
+#nav{background:var(--nav);border-top:1px solid var(--brd);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav-inner{display:flex;justify-content:space-around;padding:6px 0}
+.nv{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:10px;cursor:pointer;transition:all .15s;position:relative;flex:1;border:none;background:none;color:var(--t3)}
+.nv svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nv span{font-size:9px;font-weight:500;letter-spacing:.3px}
+.nv.active{color:var(--r)}
+.nv .badge{position:absolute;top:4px;right:calc(50% - 16px);background:var(--r);color:#fff;font-size:9px;font-weight:700;border-radius:8px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
 
-/* KPIs */
-.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.kpi{background:var(--s);border:1px solid var(--bd);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--sh)}
-.kv{font-size:20px;font-weight:700;margin-bottom:1px}
-.kl{font-size:11px;color:var(--t3);font-weight:500}
-
-/* Badges */
-.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
-.br{background:var(--rbg);color:var(--r)}.bg{background:var(--gbg);color:var(--g)}
-.ba{background:var(--ambg);color:var(--am)}.bb{background:var(--abg);color:var(--a)}
-.bp{background:var(--pubg);color:var(--pu)}.bk{background:var(--s3);color:var(--t2)}
-
-/* Alert critical */
-.alert-crit{background:var(--rbg);border:1px solid #fca5a5;border-radius:var(--rsm);padding:12px 14px;margin-bottom:8px}
-.alert-crit-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.alert-crit-name{font-size:13px;font-weight:700;color:var(--r)}
-.alert-crit-code{font-size:10px;color:var(--t3);font-family:monospace;background:rgba(0,0,0,.06);padding:1px 6px;border-radius:4px}
-.alert-crit-bars{display:flex;gap:6px;align-items:center}
-.crit-bar-wrap{flex:1;height:6px;background:rgba(0,0,0,.08);border-radius:3px;overflow:hidden}
-.crit-bar{height:100%;border-radius:3px;transition:width .5s}
-.crit-pct{font-size:11px;font-weight:700;width:32px;text-align:right}
-.alert-warn{background:var(--ambg);border:1px solid #fcd34d;border-radius:var(--rsm);padding:12px 14px;margin-bottom:8px}
-
-/* Bars */
-.br-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
-.bl{font-size:12px;color:var(--t2);width:100px;flex-shrink:0;font-weight:500}
-.btr{flex:1;height:8px;background:var(--s3);border-radius:4px;overflow:hidden}
-.bfi{height:100%;border-radius:4px}
-.bv{font-size:12px;width:60px;text-align:right;font-weight:600}
-
-/* Tabs */
-.tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+/* TABS */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:0 max(16px,env(safe-area-inset-left,0px)) 12px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bd);color:var(--t2);background:var(--s);white-space:nowrap;box-shadow:var(--sh)}
+.tab{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--brd);background:var(--card);color:var(--t2);transition:all .15s;white-space:nowrap}
 .tab.active{background:var(--r);color:#fff;border-color:var(--r)}
 
-/* News cards with image */
-.ncard{background:var(--s);border:1px solid var(--bd);border-radius:var(--radius);margin-bottom:10px;box-shadow:var(--sh);overflow:hidden;display:block;text-decoration:none;cursor:pointer;transition:box-shadow .15s}
-.ncard:active{box-shadow:var(--shm)}
-.ncard-img-wrap{position:relative;width:100%;height:140px;background:var(--s3);overflow:hidden}
-.ncard-img{width:100%;height:100%;object-fit:cover;display:block}
-.ncard-img-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6),transparent)}
-.ncard-img-badge{position:absolute;top:8px;left:8px}
-.ncard-img-time{position:absolute;bottom:8px;right:8px;font-size:10px;color:rgba(255,255,255,.8)}
-.ncard-acc{width:100%;height:3px;display:block}
-.ncard-b{padding:12px 14px}
-.ncard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.ncard-tit{font-size:13px;font-weight:700;color:var(--t);line-height:1.4;margin-bottom:5px}
-.ncard-txt{font-size:12px;color:var(--t2);line-height:1.6}
-.ncard-ft{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.src-lnk{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--a);font-weight:500;margin-top:6px;text-decoration:none}
-.nul{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.nul-line{height:2px;flex:1;border-radius:1px}
-.nul-txt{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+/* ═══ INICIO ═══ */
+#rates-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.rate-tile{background:var(--card);border-radius:var(--rad-sm);border:1px solid var(--brd);padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.rate-tile .lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+.rate-tile .val{font-size:20px;font-weight:800;color:var(--t);font-variant-numeric:tabular-nums;line-height:1}
+.rate-tile .sub{font-size:10px;color:var(--t3)}
+#rates-status{font-size:10px;color:var(--t3);text-align:center;padding:0 16px 8px;display:flex;align-items:center;justify-content:center;gap:4px}
 
-/* Price comparison */
-.price-cmp-header{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#0d1117,#1a2030);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
-.price-cmp-icon{font-size:32px}
-.price-cmp-title{color:#fff;font-size:15px;font-weight:700}
-.price-cmp-sub{color:rgba(255,255,255,.5);font-size:11px;margin-top:2px}
-.photo-upload-zone{border:2px dashed var(--bd2);border-radius:var(--radius);padding:28px 16px;text-align:center;cursor:pointer;background:var(--s3);transition:.2s;margin-bottom:14px}
-.photo-upload-zone:active{border-color:var(--r);background:var(--rlt)}
-.photo-upload-zone input{display:none}
-.photo-preview-wrap{position:relative;border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
-.photo-preview-img{width:100%;max-height:200px;object-fit:cover;display:block;border-radius:var(--radius)}
-.photo-analyzing{position:absolute;inset:0;background:rgba(0,0,0,.7);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:var(--radius)}
-.analyzing-spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+.alert-card{margin:0 max(16px,env(safe-area-inset-left,0px));margin-right:max(16px,env(safe-area-inset-right,0px));margin-bottom:8px;border-radius:var(--rad);overflow:hidden;border:1.5px solid}
+.alert-card.crit{border-color:#e74c3c40;background:var(--r3)}
+.alert-card.warn{border-color:#f39c1240;background:var(--am2)}
+.alert-card.ok{border-color:#1a7a4a30;background:var(--g2)}
+.alert-inner{padding:12px 14px}
+.alert-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.alert-name{font-size:13px;font-weight:700;color:var(--t)}
+.alert-code{font-size:10px;color:var(--t3);background:var(--bg);padding:2px 7px;border-radius:6px}
+.alert-meta{font-size:11px;color:var(--t2);margin-bottom:8px}
+.bar-wrap{height:6px;background:var(--brd);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.bar-crit{background:var(--r)} .bar-warn{background:#f39c12} .bar-ok{background:var(--g)}
+.alert-pct{font-size:11px;font-weight:700;margin-top:4px;text-align:right}
+
+.sec-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;padding:16px max(16px,env(safe-area-inset-left,0px)) 8px}
+.news-mini{margin:0 max(16px,env(safe-area-inset-left,0px));margin-right:max(16px,env(safe-area-inset-right,0px));border-radius:var(--rad);background:var(--card);border:1px solid var(--brd);padding:14px}
+.news-mini .tag{display:inline-block;background:var(--r);color:#fff;font-size:9px;font-weight:700;border-radius:4px;padding:2px 7px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.news-mini h4{font-size:13px;font-weight:700;color:var(--t);line-height:1.4;margin-bottom:4px}
+.news-mini p{font-size:11px;color:var(--t2);line-height:1.5}
+
+/* ═══ NOTICIAS ═══ */
+.news-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.news-hdr-left h2{font-size:22px;font-weight:800;color:var(--t)}
+.news-hdr-left p{font-size:11px;color:var(--t3)}
+#news-ts{font-size:10px;color:var(--t3)}
+.btn-refresh{background:var(--r);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px}
+.btn-refresh svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+.news-card{margin:0 max(16px,env(safe-area-inset-left,0px)) 10px;margin-right:max(16px,env(safe-area-inset-right,0px));background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);overflow:hidden;box-shadow:var(--shadow)}
+.news-img{width:100%;height:140px;object-fit:cover;display:block}
+.news-body{padding:14px}
+.news-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ntag{font-size:9px;font-weight:700;border-radius:4px;padding:3px 8px;text-transform:uppercase;letter-spacing:.3px}
+.ntag-crit{background:#e74c3c;color:#fff} .ntag-warn{background:#f39c12;color:#fff}
+.ntag-info{background:var(--b2);color:var(--b)} .ntag-cat{background:var(--bg);color:var(--t2);border:1px solid var(--brd)}
+.news-title{font-size:14px;font-weight:700;color:var(--t);line-height:1.4;margin-bottom:6px}
+.news-text{font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px}
+.news-footer{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--brd)}
+.news-src{font-size:10px;color:var(--t3);font-weight:500}
+.news-time{font-size:10px;color:var(--t3);font-style:italic}
+
+.nul{display:flex;align-items:center;gap:10px;padding:14px max(16px,env(safe-area-inset-left,0px)) 8px;margin-right:max(16px,env(safe-area-inset-right,0px))}
+.nul-line{flex:1;height:1px;background:var(--brd)}
+.nul-txt{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;white-space:nowrap}
+
+#news-loading{text-align:center;padding:40px 20px;color:var(--t3)}
+#news-loading .spin{font-size:28px;display:block;margin-bottom:8px;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.cmp-result-card{background:var(--s);border:1px solid var(--bd);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
-.cmp-result-header{background:linear-gradient(135deg,var(--r),#9b1b1b);padding:14px 16px;color:#fff}
-.cmp-result-title{font-size:16px;font-weight:700;margin-bottom:4px}
-.cmp-result-sub{font-size:12px;color:rgba(255,255,255,.75)}
-.cmp-table{width:100%;border-collapse:collapse;font-size:12px}
-.cmp-table th{background:var(--s3);color:var(--t2);font-weight:700;padding:8px 10px;text-align:left;border-bottom:2px solid var(--bd);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
-.cmp-table td{padding:9px 10px;border-bottom:1px solid var(--bd);color:var(--t);vertical-align:middle}
-.cmp-table tr:last-child td{border-bottom:none}
-.cmp-table tr:hover td{background:var(--s3)}
-.best-price{color:var(--g);font-weight:700}
-.flag{font-size:14px}
 
-/* Stock grouped */
-.stock-group{background:var(--s);border:1px solid var(--bd);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;box-shadow:var(--sh)}
-.stock-group-header{display:flex;align-items:center;padding:12px 14px;cursor:pointer;gap:10px;transition:background .15s}
-.stock-group-header:active{background:var(--s3)}
-.stock-group-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.stock-group-info{flex:1;min-width:0}
-.stock-group-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stock-group-meta{font-size:11px;color:var(--t3);margin-top:2px}
-.stock-group-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
-.stock-group-total{font-size:14px;font-weight:700}
-.stock-group-chevron{font-size:14px;color:var(--t3);transition:transform .25s;flex-shrink:0}
-.stock-group-chevron.open{transform:rotate(180deg)}
-.stock-group-body{display:none;border-top:1px solid var(--bd)}
-.stock-group-body.open{display:block}
-.lot-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bd);background:var(--s3)}
-.lot-row:last-child{border-bottom:none}
-.lot-badge{font-size:10px;font-family:monospace;background:var(--s);border:1px solid var(--bd);border-radius:4px;padding:2px 7px;color:var(--t2)}
-.lot-bar{flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden}
-.lot-bar-fill{height:100%;border-radius:3px}
+/* ═══ PRECIOS ═══ */
+.price-table-wrap{overflow-x:auto;margin:0 max(16px,env(safe-area-inset-left,0px));margin-right:max(16px,env(safe-area-inset-right,0px));border-radius:var(--rad);border:1px solid var(--brd);background:var(--card);margin-bottom:12px}
+table{width:100%;border-collapse:collapse;min-width:500px}
+thead th{background:var(--r);color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;text-align:left}
+thead th:not(:first-child){text-align:right}
+tbody tr:nth-child(even){background:var(--bg)}
+tbody tr:hover{background:var(--r3)}
+tbody td{font-size:12px;padding:9px 12px;color:var(--t);border-bottom:1px solid var(--brd)}
+tbody td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+tbody tr:last-child td{border-bottom:none}
+.cat-row td{background:var(--bg);font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;padding:6px 12px}
 
-/* Table */
-.th{display:grid;gap:4px;font-size:11px;font-weight:700;color:var(--t3);padding:6px 0;border-bottom:2px solid var(--bd);margin-bottom:2px}
-.tr{display:grid;gap:4px;font-size:12px;padding:9px 0;border-bottom:1px solid var(--bd);align-items:center}
-.tr:last-child{border-bottom:none}
+/* CHART */
+.chart-container{margin:0 max(16px,env(safe-area-inset-left,0px)) 12px;margin-right:max(16px,env(safe-area-inset-right,0px));background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);padding:16px;box-shadow:var(--shadow)}
+.chart-title{font-size:14px;font-weight:700;color:var(--t);margin-bottom:4px}
+.chart-sub{font-size:11px;color:var(--t3);margin-bottom:16px}
+.chart-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.ctab{padding:5px 12px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--brd);background:var(--bg);color:var(--t2);transition:all .15s}
+.ctab.active{background:var(--r);color:#fff;border-color:var(--r)}
+svg.chart{width:100%;overflow:visible}
+.chart-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2)}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 
-/* Search */
-.srch{position:relative;margin-bottom:12px}
-.si{width:100%;background:var(--s);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px 10px 36px;font-size:15px;color:var(--t);-webkit-appearance:none;box-shadow:var(--sh)}
-.si:focus{outline:none;border-color:var(--r);box-shadow:0 0 0 3px rgba(192,57,43,.1)}
-.sic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--t3)}
+/* ═══ CATÁLOGO ═══ */
+.catalog-search{margin:8px max(16px,env(safe-area-inset-left,0px));margin-right:max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:8px;background:var(--card);border-radius:var(--rad-sm);border:1px solid var(--brd);padding:10px 14px}
+.catalog-search svg{color:var(--t3);flex-shrink:0;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.catalog-search input{flex:1;border:none;background:none;font-size:14px;color:var(--t);outline:none}
+.catalog-search input::placeholder{color:var(--t3)}
+#cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:10px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.cat-card-item{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);overflow:hidden;cursor:pointer;transition:all .15s}
+.cat-card-item:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.cat-card-img{height:100px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:36px;position:relative;overflow:hidden}
+.cat-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.cat-card-body{padding:10px}
+.cat-card-name{font-size:12px;font-weight:700;color:var(--t);line-height:1.3;margin-bottom:4px}
+.cat-card-tag{font-size:9px;font-weight:600;background:var(--r3);color:var(--r);border-radius:4px;padding:2px 6px;display:inline-block}
+.cat-card-price{font-size:13px;font-weight:800;color:var(--r);margin-top:4px}
 
-/* Inputs */
-.ig{margin-bottom:12px}
-.il{font-size:12px;font-weight:600;color:var(--t2);margin-bottom:5px;display:block}
-.inf{width:100%;background:var(--s);border:1px solid var(--bd);border-radius:var(--rsm);padding:11px 14px;color:var(--t);font-size:15px;-webkit-appearance:none;box-shadow:var(--sh)}
-.inf:focus{outline:none;border-color:var(--r);box-shadow:0 0 0 3px rgba(192,57,43,.1)}
-select.inf{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238c959f' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
-textarea.inf{resize:vertical;min-height:70px;font-family:inherit}
-.btn{padding:13px;border-radius:var(--rsm);font-size:15px;font-weight:600;cursor:pointer;border:none;width:100%;margin-bottom:8px;transition:opacity .15s}
-.btn:active{opacity:.8}
-.btn-p{background:var(--r);color:#fff}
-.btn-s{background:var(--s);color:var(--t);border:1px solid var(--bd);box-shadow:var(--sh)}
-.btn-d{background:var(--rbg);color:var(--r);border:1px solid #fca5a5}
-.bsm{padding:7px 14px;font-size:12px;border-radius:20px;font-weight:600;cursor:pointer;border:none}
+/* ═══ IA CHAT ═══ */
+#chat-area{display:flex;flex-direction:column;height:calc(100vh - 160px)}
+#chat-msgs{flex:1;overflow-y:auto;padding:12px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px;padding-bottom:4px}
+.msg{max-width:88%;line-height:1.5}
+.msg.bot{align-self:flex-start}
+.msg.user{align-self:flex-end}
+.msg-hdr{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.msg-body{padding:12px 14px;border-radius:var(--rad);font-size:13px}
+.msg.bot .msg-body{background:var(--card);border:1px solid var(--brd);color:var(--t)}
+.msg.user .msg-body{background:var(--r);color:#fff}
+.msg-body a{color:inherit;text-decoration:underline;opacity:.85}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;padding:8px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.chip{padding:7px 13px;border-radius:20px;font-size:11px;font-weight:600;border:1.5px solid var(--brd);background:var(--card);color:var(--t2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.chip:hover{border-color:var(--r);color:var(--r)}
+#chat-input-row{display:flex;gap:8px;padding:10px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:max(10px,env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--brd)}
+#chat-input{flex:1;background:var(--card);border:1.5px solid var(--brd);border-radius:22px;padding:10px 16px;font-size:13px;color:var(--t);outline:none;resize:none;max-height:80px;font-family:inherit}
+#chat-input:focus{border-color:var(--r)}
+#chat-send{width:42px;height:42px;background:var(--r);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+#chat-send:hover{background:var(--r2)}
+#chat-send svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.2}
+.typing{display:flex;gap:4px;align-items:center;padding:12px 14px}
+.typing span{width:7px;height:7px;background:var(--t3);border-radius:50%;animation:bounce .8s infinite}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 
-/* Upload */
-.uz{border:2px dashed var(--bd2);border-radius:var(--radius);padding:24px 16px;text-align:center;cursor:pointer;background:var(--s3)}
-.uz:active{border-color:var(--r);background:var(--rlt)}
-.uz input{display:none}
-.pb{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;margin:8px 0}
-.pf{height:100%;background:var(--r);border-radius:3px;transition:width .4s}
+/* ═══ ADMIN ═══ */
+.admin-section{margin:0 max(16px,env(safe-area-inset-left,0px)) 12px;margin-right:max(16px,env(safe-area-inset-right,0px))}
+.admin-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);padding:16px;margin-bottom:10px}
+.admin-card h3{font-size:14px;font-weight:700;color:var(--t);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.file-drop{border:2px dashed var(--brd);border-radius:var(--rad-sm);padding:20px;text-align:center;cursor:pointer;transition:all .15s}
+.file-drop:hover{border-color:var(--r);background:var(--r3)}
+.file-drop input{display:none}
+.file-drop p{font-size:12px;color:var(--t3);margin-top:6px}
+.file-drop .icon{font-size:28px;margin-bottom:4px}
+.btn-primary{width:100%;padding:12px;background:var(--r);color:#fff;border:none;border-radius:var(--rad-sm);font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .15s}
+.btn-primary:hover{background:var(--r2)}
+.upload-preview{margin-top:10px;padding:8px 12px;background:var(--bg);border-radius:var(--rad-sm);font-size:11px;color:var(--t2);display:none}
+.upload-preview.show{display:block}
+.api-input{width:100%;background:var(--bg);border:1.5px solid var(--brd);border-radius:var(--rad-sm);padding:10px 12px;font-size:12px;color:var(--t);outline:none;font-family:monospace;margin-top:6px}
+.api-input:focus{border-color:var(--r)}
+label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin-bottom:4px}
 
-/* Catalog */
-.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ccard{background:var(--s);border:1px solid var(--bd);border-radius:var(--radius);overflow:hidden;box-shadow:var(--sh)}
-.ccard-img{width:100%;height:110px;object-fit:cover;display:block;background:var(--s3);pointer-events:none}
-.ccard-ph{width:100%;height:110px;display:flex;align-items:center;justify-content:center;background:var(--s3);font-size:36px;pointer-events:none}
-.ccard-b{padding:9px 10px}
-.ccard-n{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
-.ccard-c{font-size:10px;color:var(--t3);font-family:monospace}
+/* MERCADO */
+.mkt-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);margin:0 max(16px,env(safe-area-inset-left,0px)) 10px;margin-right:max(16px,env(safe-area-inset-right,0px));overflow:hidden;box-shadow:var(--shadow)}
+.mkt-hdr{background:var(--r);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.mkt-hdr h3{font-size:14px;font-weight:700;color:#fff}
+.mkt-hdr span{font-size:11px;color:#ffffff90}
+.mkt-body{padding:14px 16px}
+.mkt-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--brd)}
+.mkt-row:last-child{border-bottom:none}
+.mkt-row .item{font-size:12px;color:var(--t2)}
+.mkt-row .price{font-size:14px;font-weight:700;color:var(--t);font-variant-numeric:tabular-nums}
+.mkt-row .chg{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px}
+.chg-up{color:var(--g);background:var(--g2)} .chg-dn{color:var(--r);background:var(--r3)} .chg-nt{color:var(--t3);background:var(--bg)}
 
-/* IA Chat */
-.cwrap{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;min-height:180px}
-.cmsg{max-width:88%;padding:10px 14px;border-radius:var(--radius);font-size:13px;line-height:1.6}
-.cu{background:var(--r);color:#fff;margin-left:auto;border-radius:var(--radius) var(--radius) 4px var(--radius)}
-.cai{background:var(--s);color:var(--t);border:1px solid var(--bd);box-shadow:var(--sh);border-radius:var(--radius) var(--radius) var(--radius) 4px}
-.cail{font-size:10px;font-weight:700;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
-.cir{display:flex;gap:8px;align-items:flex-end;background:var(--s);border:1px solid var(--bd);border-radius:var(--radius);padding:8px 10px;box-shadow:var(--shm);position:sticky;bottom:0}
-.cta{flex:1;border:none;outline:none;resize:none;font-size:14px;color:var(--t);background:transparent;min-height:36px;max-height:100px;font-family:inherit;line-height:1.5}
-.csend{width:34px;height:34px;border-radius:8px;background:var(--r);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.csend:disabled{opacity:.4}
-.qchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.chip{background:var(--s);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;color:var(--r);cursor:pointer;font-weight:600;box-shadow:var(--sh)}
-.typing span{width:6px;height:6px;border-radius:50%;background:var(--t3);display:inline-block;animation:bl 1.2s infinite;margin:0 1px}
-.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
-@keyframes bl{0%,80%,100%{opacity:.2}40%{opacity:1}}
-.ia-on{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--gbg);border-radius:var(--rsm);margin-bottom:12px;border:1px solid #86efac}
-.ia-on-dot{width:8px;height:8px;border-radius:50%;background:var(--g);animation:pulse 2s infinite;flex-shrink:0}
-
-/* Files */
-.fi{display:flex;align-items:center;gap:10px;padding:10px;background:var(--s3);border-radius:var(--rsm);margin-bottom:8px}
-.fic{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--s);border:1px solid var(--bd)}
-
-/* Modal */
-.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;align-items:flex-end;justify-content:center}
-.mov.open{display:flex}
-.modal{background:var(--s);border-radius:20px 20px 0 0;padding:20px;padding-bottom:calc(20px + var(--sfb));width:100%;max-width:520px;max-height:88vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.12)}
-.mh{width:36px;height:4px;background:var(--bd2);border-radius:2px;margin:0 auto 16px}
-.mt{font-size:17px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
-.mc{background:var(--s3);border:none;color:var(--t2);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:17px;line-height:28px;text-align:center}
-
-/* Share */
-.sbox{background:linear-gradient(135deg,var(--rlt),#fff5f5);border:1px solid #fca5a5;border-radius:var(--radius);padding:14px;margin-bottom:12px}
-.surl{font-family:monospace;font-size:12px;color:var(--a);word-break:break-all;background:var(--s);border:1px solid var(--bd);border-radius:6px;padding:8px 10px;margin:8px 0;display:block}
-
-/* Econ */
-.econ-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.econ-card{background:var(--s3);border:1px solid var(--bd);border-radius:var(--rsm);padding:12px;text-align:center}
-.econ-val{font-size:18px;font-weight:700;margin-bottom:2px}
-.econ-lbl{font-size:11px;color:var(--t3);font-weight:500}
-.econ-sub{font-size:10px;color:var(--t3);margin-top:2px}
-.note{font-size:11px;color:var(--t3);margin-top:8px;line-height:1.5}
-.cmp-tbl{width:100%;border-collapse:collapse;font-size:12px}
-.cmp-tbl th{background:var(--s3);color:var(--t2);font-weight:700;padding:8px 10px;text-align:left;border-bottom:2px solid var(--bd);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
-.cmp-tbl td{padding:9px 10px;border-bottom:1px solid var(--bd);color:var(--t)}
-.cmp-tbl tr:last-child td{border-bottom:none}
-.cmp-tbl .hi{font-weight:700;color:var(--r)}
+/* UTILS */
+.empty{text-align:center;padding:40px 20px;color:var(--t3)}
+.empty .icon{font-size:40px;display:block;margin-bottom:8px}
+.empty p{font-size:13px}
+.src-lnk{color:var(--b);font-size:10px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 </style>
-</head>
-<body>
 
 <!-- SPLASH -->
 <div id="splash">
-  <div id="sp-bg"></div><div id="sp-ov"></div>
-  <div class="sp-c">
-    <div class="sp-logo" id="sp-logo"><div class="sp-logo-f" id="sp-logo-f">FT</div></div>
-    <div class="sp-brand">CarnIQ · Inteligencia cárnica</div>
-    <div class="sp-bar"><div class="sp-p"></div></div>
-  </div>
+  <!-- Logo basado en logo real FT Foods: cuadrado rojo abajo-izq, cuadrado verde arriba-der, FT negro bold, foods gris -->
+  <svg viewBox="0 0 90 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- cuadrado rojo grande abajo-izquierda -->
+    <rect x="4" y="40" width="32" height="32" rx="3" fill="#c0392b"/>
+    <!-- cuadrado verde pequeño arriba-derecha del bloque izquierdo -->
+    <rect x="22" y="22" width="18" height="18" rx="2" fill="#4a7c3f"/>
+    <!-- texto FT negro bold -->
+    <text x="46" y="52" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="38" fill="#1a1a1a" letter-spacing="-1">FT</text>
+    <!-- texto foods gris -->
+    <text x="47" y="68" font-family="Arial,Helvetica,sans-serif" font-weight="400" font-size="16" fill="#555555" letter-spacing="1">foods</text>
+    <text x="37" y="58" font-family="'Barlow Condensed',sans-serif" font-weight="600" font-size="11" fill="#ffffff99">foods</text>
+  </svg>
+  <div id="splash-title">CARNIQ</div>
+  <div id="splash-sub">Inteligencia Cárnica · FT Foods</div>
+  <div id="splash-loader"></div>
 </div>
 
-<!-- HEADER -->
-<div class="hdr">
-  <div class="hdr-l">
-    <div class="hdr-logo" id="hdr-logo"><div class="hdr-logo-f" id="hdr-logo-f">FT</div></div>
-    <div><div class="hdr-tit">FT Foods</div><div class="hdr-sub">CarnIQ · Inteligencia cárnica</div></div>
-  </div>
-  <div class="live-pill"><div class="ldot"></div><div class="ltxt">En vivo</div></div>
-</div>
-
-<!-- TICKER BAR -->
-<div class="ticker-bar" id="ticker-bar">
-  <div class="tick-item"><div class="tick-lbl">USD/CLP</div><div class="tick-val" id="tk-usd">$948</div><div class="tick-chg tick-dn" id="tk-usd-c">▼0,8%</div></div>
-  <div class="tick-sep"></div>
-  <div class="tick-item"><div class="tick-lbl">Vacuno FOB</div><div class="tick-val">$3,85</div><div class="tick-chg tick-dn">▼1,2%</div></div>
-  <div class="tick-sep"></div>
-  <div class="tick-item"><div class="tick-lbl">Cerdo FOB</div><div class="tick-val">$2,90</div><div class="tick-chg tick-up">▲3,8%</div></div>
-  <div class="tick-sep"></div>
-  <div class="tick-item"><div class="tick-lbl">Ave FOB</div><div class="tick-val">$1,95</div><div class="tick-chg tick-dn">▼0,5%</div></div>
-  <div class="tick-sep"></div>
-  <div class="tick-item"><div class="tick-lbl">BRL/CLP</div><div class="tick-val">$168</div><div class="tick-chg tick-up">▲0,3%</div></div>
-  <div class="tick-sep"></div>
-  <div class="tick-item"><div class="tick-lbl">PYG/CLP</div><div class="tick-val">$0,13</div><div class="tick-chg tick-dn">▼0,1%</div></div>
-</div>
-
-<!-- CONTENT -->
-<div id="ac">
-
-<!-- DASHBOARD -->
-<div id="s-dash" class="scr active">
-  <div class="hero">
-    <img id="hero-img" class="hero-img" src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=900&q=80" alt="FT Foods">
-    <div class="hero-ov"></div>
-    <div class="hero-c">
-      <div class="hero-logo-w" id="hero-logo-w"><div class="hero-logo-f" id="hero-logo-f">FT</div></div>
-      <div><div class="hero-name">FT FOODS</div><div class="hero-loc">Antofagasta, Chile · Desde 1969</div></div>
-    </div>
-  </div>
-
-  <!-- USD price row -->
-  <div style="background:linear-gradient(135deg,#0d1117,#1a2030);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
-    <div><div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Tipo de cambio hoy</div><div style="font-size:22px;font-weight:800;color:#fff" id="dash-usd">1 USD = $948,40 CLP</div></div>
-    <div style="text-align:right"><div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:3px">Actualizado</div><div style="font-size:11px;color:#4ade80;font-weight:600" id="dash-usd-time">Hoy 09:15</div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;cursor:pointer" onclick="refreshRates()">⟳ Actualizar</div></div>
-  </div>
-
-  <div class="kgrid" id="dash-kgrid" style="display:none"></div>
-
-  <div id="dash-alts" class="card"><div class="ct">⚡ Alertas de stock crítico</div><div style="color:var(--t3);font-size:13px">Carga tu archivo de stock para visualizar alertas.</div></div>
-  <div class="card"><div class="ct">📊 Distribución por categoría</div><div id="dash-cats"><div style="color:var(--t3);font-size:13px">Sin datos disponibles.</div></div></div>
-  <div class="card"><div class="ct">📰 Última alerta crítica de mercado</div><div id="dash-np" style="font-size:13px;color:var(--t2)">Cargando...</div></div>
-</div>
-
-<!-- NOTICIAS -->
-<div id="s-news" class="scr">
-  <div class="sh"><h2>Noticias</h2>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
-      <p style="margin:0">Mercado cárnico · Actualización automática cada 6h</p>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span id="news-ts" style="font-size:10px;color:var(--t3)"></span>
-        <button onclick="fetchAndRender(currentNewsTab)" style="background:var(--r);color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer">⟳ Actualizar</button>
+<div id="app">
+  <!-- HEADER -->
+  <div id="header">
+    <div class="header-inner">
+      <!-- Logo SVG inline con diseño FT Foods -->
+      <!-- Logo real FT Foods -->
+      <svg id="logo-img" viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg">
+        <!-- cuadrado rojo abajo-izquierda -->
+        <rect x="0" y="22" width="20" height="20" rx="2" fill="#c0392b"/>
+        <!-- cuadrado verde pequeño arriba-derecha del bloque -->
+        <rect x="12" y="10" width="12" height="12" rx="1.5" fill="#4a7c3f"/>
+        <!-- FT bold negro -->
+        <text x="30" y="34" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="28" fill="var(--t)" letter-spacing="-1">FT</text>
+        <!-- foods gris -->
+        <text x="31" y="43" font-family="Arial,Helvetica,sans-serif" font-weight="400" font-size="11" fill="var(--t2)" letter-spacing="1">foods</text>
+      </svg>
+      <div class="header-brand">
+        <h1>FT Foods</h1>
+        <p>CarnIQ · Inteligencia Cárnica</p>
+      </div>
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        <span>En vivo</span>
       </div>
     </div>
   </div>
-  <div class="tabs">
-    <div class="tab active" onclick="nTab(this,'all')">Todas</div>
-    <div class="tab" onclick="nTab(this,'critico')">🔴 Críticas</div>
-    <div class="tab" onclick="nTab(this,'pasos')">🏔️ Pasos</div>
-    <div class="tab" onclick="nTab(this,'sanidad')">🦠 Sanidad</div>
-    <div class="tab" onclick="nTab(this,'vacuno')">🥩 Vacuno</div>
-    <div class="tab" onclick="nTab(this,'cerdo')">🐷 Cerdo</div>
-    <div class="tab" onclick="nTab(this,'ave')">🍗 Ave</div>
-    <div class="tab" onclick="nTab(this,'mercado')">📈 Mercado</div>
-  </div>
-  <div id="news-list"></div>
-</div>
 
-<!-- COMPARADOR -->
-<div id="s-cmp" class="scr">
-  <div class="sh"><h2>Comparador de precios</h2><p>Fotografía un producto para analizar precios locales e internacionales</p></div>
-
-  <div class="price-cmp-header">
-    <div class="price-cmp-icon">📸</div>
-    <div><div class="price-cmp-title">Análisis inteligente de precios</div><div class="price-cmp-sub">Toma una foto · La IA identifica el corte · Compara precios</div></div>
-  </div>
-
-  <!-- Photo upload -->
-  <div id="cmp-upload-section">
-    <div class="photo-upload-zone" onclick="document.getElementById('cmp-photo').click()">
-      <input type="file" id="cmp-photo" accept="image/*" capture="environment" onchange="analyzePricePhoto(this)">
-      <div style="font-size:40px;margin-bottom:8px">📷</div>
-      <div style="font-size:15px;font-weight:600;color:var(--t)">Fotografiar producto</div>
-      <div style="font-size:12px;color:var(--t3);margin-top:4px">O selecciona desde la galería</div>
-    </div>
-    <div style="text-align:center;font-size:12px;color:var(--t3);margin-bottom:14px">— o buscar manualmente —</div>
-    <div class="ig"><label class="il">Seleccionar corte manualmente</label>
-      <select class="inf" id="cmp-manual-cut" onchange="showManualComparison()">
-        <option value="">Seleccionar corte...</option>
-        <optgroup label="🥩 Vacuno"><option>Lomo liso</option><option>Lomo vetado</option><option>Asado de tira</option><option>Posta negra</option><option>Entraña</option><option>Plateada</option><option>Punta de paleta</option></optgroup>
-        <optgroup label="🐷 Cerdo"><option>Pierna de cerdo</option><option>Costillar de cerdo</option><option>Lomo de cerdo</option><option>Paleta de cerdo</option></optgroup>
-        <optgroup label="🍗 Ave"><option>Pechuga entera</option><option>Trutro largo</option><option>Pollo entero</option><option>Alitas de pollo</option></optgroup>
-      </select>
+  <!-- TICKER -->
+  <div id="ticker">
+    <div class="ticker-track" id="ticker-inner">
+      <!-- duplicated for seamless loop, filled by JS -->
     </div>
   </div>
 
-  <!-- Photo preview + result -->
-  <div id="cmp-result-section" style="display:none">
-    <div class="photo-preview-wrap" id="cmp-preview-wrap"></div>
-    <div id="cmp-result-content"></div>
-    <button class="btn btn-s" onclick="resetComparator()">🔄 Nueva búsqueda</button>
-  </div>
+  <!-- PAGES -->
+  <div id="pages">
 
-  <!-- International comparison table (always visible) -->
-  <div class="card" style="margin-top:4px">
-    <div class="ct">🌍 Comparativo internacional · Productos estratégicos (USD/kg)</div>
-    <div style="font-size:11px;color:var(--t3);margin-bottom:10px">Precios FOB estimados · Brasil, Paraguay y USA · Junio 2025</div>
-    <div class="tabs" style="margin-bottom:10px">
-      <div class="tab active" onclick="intlTab(this,'intl-ave')">🍗 Ave</div>
-      <div class="tab" onclick="intlTab(this,'intl-cerdo')">🐷 Cerdo</div>
-      <div class="tab" onclick="intlTab(this,'intl-vacuno')">🥩 Vacuno</div>
-    </div>
-    <div id="intl-ave">
-      <table class="cmp-table">
-        <thead><tr><th>Corte</th><th>🇧🇷 Brasil</th><th>🇵🇾 Paraguay</th><th>🇺🇸 USA</th><th>Mejor</th></tr></thead>
-        <tbody>
-          <tr><td>Pechuga entera</td><td>$1,85</td><td>$1,72</td><td>$2,10</td><td><span class="badge bg">🇵🇾 $1,72</span></td></tr>
-          <tr><td>Trutro largo</td><td>$1,20</td><td>$1,15</td><td>$1,45</td><td><span class="badge bg">🇵🇾 $1,15</span></td></tr>
-          <tr><td>Pollo entero</td><td>$1,55</td><td>$1,48</td><td>$1,80</td><td><span class="badge bg">🇵🇾 $1,48</span></td></tr>
-          <tr><td>Alitas</td><td>$1,30</td><td>N/D</td><td>$1,65</td><td><span class="badge bg">🇧🇷 $1,30</span></td></tr>
-        </tbody>
-      </table>
-      <p class="note">Fuente: USDA FAS / ABPA Brasil / Cámara Paraguay. Precios FOB + flete estimado Chile: +$0,15–0,25/kg.</p>
-    </div>
-    <div id="intl-cerdo" style="display:none">
-      <table class="cmp-table">
-        <thead><tr><th>Corte</th><th>🇧🇷 Brasil</th><th>🇵🇾 Paraguay</th><th>🇺🇸 USA</th><th>Mejor</th></tr></thead>
-        <tbody>
-          <tr><td>Pierna</td><td>$2,85</td><td>$2,60</td><td>$2,40</td><td><span class="badge bg">🇺🇸 $2,40</span></td></tr>
-          <tr><td>Costillar</td><td>$3,20</td><td>$2,95</td><td>$2,75</td><td><span class="badge bg">🇺🇸 $2,75</span></td></tr>
-          <tr><td>Lomo</td><td>$3,50</td><td>$3,20</td><td>$3,05</td><td><span class="badge bg">🇺🇸 $3,05</span></td></tr>
-          <tr><td>Paleta</td><td>$2,40</td><td>$2,20</td><td>$2,10</td><td><span class="badge bg">🇺🇸 $2,10</span></td></tr>
-        </tbody>
-      </table>
-      <p class="note">EE.UU. lidera precio FOB en cerdo por mayor productividad. Paraguay competitivo en cortes secundarios.</p>
-    </div>
-    <div id="intl-vacuno" style="display:none">
-      <table class="cmp-table">
-        <thead><tr><th>Corte</th><th>🇧🇷 Brasil</th><th>🇵🇾 Paraguay</th><th>🇺🇸 USA</th><th>Mejor</th></tr></thead>
-        <tbody>
-          <tr><td>Lomo liso</td><td>$3,85</td><td>$3,40</td><td>$5,20</td><td><span class="badge bg">🇵🇾 $3,40</span></td></tr>
-          <tr><td>Asado de tira</td><td>$4,10</td><td>$3,75</td><td>N/D</td><td><span class="badge bg">🇵🇾 $3,75</span></td></tr>
-          <tr><td>Lomo vetado</td><td>$5,20</td><td>$4,80</td><td>$7,50</td><td><span class="badge bg">🇵🇾 $4,80</span></td></tr>
-          <tr><td>Entraña</td><td>$4,50</td><td>$4,10</td><td>$6,20</td><td><span class="badge bg">🇵🇾 $4,10</span></td></tr>
-          <tr><td>Posta negra</td><td>$3,20</td><td>$2,95</td><td>N/D</td><td><span class="badge bg">🇵🇾 $2,95</span></td></tr>
-        </tbody>
-      </table>
-      <p class="note">Paraguay competitivo en vacuno. Alerta: foco de Fiebre Aftosa activo — monitorear restricciones SAG.</p>
-    </div>
-    <a href="https://apps.fas.usda.gov/psdonline/app/index.html" target="_blank" class="src-lnk">📎 USDA FAS · ABPA Brasil · Cámara Paraguaya →</a>
-  </div>
-</div>
-
-<!-- MERCADO -->
-<div id="s-market" class="scr">
-  <div class="sh"><h2>Mercado</h2><p>Economía · Consumo · Precios · Norte de Chile</p></div>
-  <div class="tabs">
-    <div class="tab active" onclick="mTab(this,'mt')">Economía</div>
-    <div class="tab" onclick="mTab(this,'mc')">Consumo</div>
-    <div class="tab" onclick="mTab(this,'mf')">FOB Global</div>
-    <div class="tab" onclick="mTab(this,'ml')">Norte Chile</div>
-  </div>
-  <div id="mt">
-    <div class="card">
-      <div class="ct">📈 PIB Chile y Región de Antofagasta 2024–2025</div>
-      <div class="econ-grid">
-        <div class="econ-card"><div class="econ-val" style="color:var(--g)">+2,6%</div><div class="econ-lbl">PIB Nacional 2024</div><div class="econ-sub">Crecimiento anual</div></div>
-        <div class="econ-card"><div class="econ-val" style="color:var(--a)">+3,1%</div><div class="econ-lbl">PIB Antofagasta 2024</div><div class="econ-sub">Sobre promedio nacional</div></div>
-        <div class="econ-card"><div class="econ-val" style="color:var(--r)">~10%</div><div class="econ-lbl">Part. PIB Chile</div><div class="econ-sub">2.ª región del país</div></div>
-        <div class="econ-card"><div class="econ-val" style="color:var(--am)">+3,2%</div><div class="econ-lbl">IMACEC Abr 2025</div><div class="econ-sub">Nacional acumulado</div></div>
+    <!-- ═══ INICIO ═══ -->
+    <div class="page active" id="pg-inicio">
+      <div class="sh">
+        <h2>Inicio</h2>
+        <p>Resumen de mercado · <span id="dash-date"></span></p>
       </div>
-      <a href="https://www.bcentral.cl" target="_blank" class="src-lnk">📎 Banco Central de Chile →</a>
+      <div id="rates-bar">
+        <div class="rate-tile">
+          <div class="lbl">USD / CLP</div>
+          <div class="val" id="rt-usd">—</div>
+          <div class="sub">Dólar observado</div>
+        </div>
+        <div class="rate-tile">
+          <div class="lbl">UF hoy</div>
+          <div class="val" id="rt-uf">—</div>
+          <div class="sub">Unidad de Fomento</div>
+        </div>
+      </div>
+      <div id="rates-status">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+        <span id="rates-ts-txt">Cargando tasas...</span>
+      </div>
+      <div class="sec-title">⚡ ALERTAS DE STOCK CRÍTICO · <span id="alert-date"></span></div>
+      <div id="alert-list"></div>
+      <div class="sec-title">📰 ÚLTIMA NOTICIA CRÍTICA</div>
+      <div id="dash-news" class="news-mini" style="margin:0 max(16px,env(safe-area-inset-left,0px));margin-right:max(16px,env(safe-area-inset-right,0px));margin-bottom:16px">
+        <div class="tag">Mercado</div>
+        <h4>Buscando noticias en vivo...</h4>
+        <p>El motor IA está consultando fuentes en tiempo real.</p>
+      </div>
     </div>
-    <div class="card">
-      <div class="ct">🏙️ Indicadores socioeconómicos · Antofagasta vs. Chile</div>
-      <table class="cmp-tbl">
-        <thead><tr><th>Indicador</th><th>Antofagasta</th><th>Chile</th></tr></thead>
-        <tbody>
-          <tr><td>PIB per cápita (USD)</td><td class="hi">~$27.500</td><td>~$17.800</td></tr>
-          <tr><td>Desempleo</td><td class="hi">5,2%</td><td>8,1%</td></tr>
-          <tr><td>Ingreso medio mensual</td><td class="hi">$1.280.000</td><td>$870.000</td></tr>
-          <tr><td>Población</td><td>0,64 MM</td><td>19,5 MM</td></tr>
-          <tr><td>Part. PIB nacional</td><td class="hi">~10%</td><td>100%</td></tr>
-        </tbody>
-      </table>
-      <p class="note">* Estimaciones 2024. Fuentes: INE, Banco Central, Cochilco.</p>
-      <a href="https://www.ine.gob.cl" target="_blank" class="src-lnk">📎 INE Chile + Cochilco →</a>
+
+    <!-- ═══ NOTICIAS ═══ -->
+    <div class="page" id="pg-noticias">
+      <div class="news-hdr">
+        <div class="news-hdr-left">
+          <h2>Noticias</h2>
+          <p>Mercado cárnico · Actualiza cada 6 horas</p>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <span id="news-ts"></span>
+          <button class="btn-refresh" onclick="forceRefreshNews()">
+            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Actualizar
+          </button>
+        </div>
+      </div>
+      <div class="tabs" id="news-tabs">
+        <div class="tab active" onclick="nTab(this,'all')">Todas</div>
+        <div class="tab" onclick="nTab(this,'vacuno')">🥩 Vacuno</div>
+        <div class="tab" onclick="nTab(this,'cerdo')">🐷 Cerdo</div>
+        <div class="tab" onclick="nTab(this,'ave')">🐔 Ave</div>
+        <div class="tab" onclick="nTab(this,'mercado')">📊 Mercado</div>
+      </div>
+      <div id="news-list">
+        <div id="news-loading"><span class="spin">⟳</span><div style="font-size:13px;font-weight:600">Buscando noticias en línea...</div><div style="font-size:11px;margin-top:4px">Consultando fuentes del mercado cárnico</div></div>
+      </div>
     </div>
-  </div>
-  <div id="mc" style="display:none">
-    <div class="card">
-      <div class="ct">🥩 Consumo per cápita · Chile 2024 (kg/persona/año)</div>
-      <div class="br-row"><div class="bl">🍗 Ave</div><div class="btr"><div class="bfi" style="width:82%;background:#0969da"></div></div><div class="bv" style="color:#0969da">34,2 kg</div></div>
-      <div class="br-row"><div class="bl">🥩 Vacuno</div><div class="btr"><div class="bfi" style="width:57%;background:var(--r)"></div></div><div class="bv" style="color:var(--r)">23,8 kg</div></div>
-      <div class="br-row"><div class="bl">🐷 Cerdo</div><div class="btr"><div class="bfi" style="width:45%;background:var(--pu)"></div></div><div class="bv" style="color:var(--pu)">18,9 kg</div></div>
-      <div class="br-row"><div class="bl">🥪 Procesados</div><div class="btr"><div class="bfi" style="width:30%;background:var(--am)"></div></div><div class="bv" style="color:var(--am)">12,4 kg</div></div>
-      <a href="https://www.odepa.gob.cl/estadisticas-del-sector/carne" target="_blank" class="src-lnk">📎 ODEPA 2024 →</a>
+
+    <!-- ═══ PRECIOS ═══ -->
+    <div class="page" id="pg-precios">
+      <div class="sh">
+        <h2>Precios</h2>
+        <p>Lista A FT Foods · Vigencia sem. 29 jun – 3 jul 2026</p>
+      </div>
+
+      <!-- Gráfico de precios internacionales -->
+      <div class="chart-container">
+        <div class="chart-title">Evolución Precios FOB Internacionales</div>
+        <div class="chart-sub">USD/kg · Brasil · Paraguay · USA · Ene–Oct 2026</div>
+        <div class="chart-tabs">
+          <div class="ctab active" onclick="showChart(this,'vacuno')">🥩 Vacuno</div>
+          <div class="ctab" onclick="showChart(this,'cerdo')">🐷 Cerdo</div>
+          <div class="ctab" onclick="showChart(this,'ave')">🍗 Ave</div>
+        </div>
+        <svg class="chart" id="fob-chart" viewBox="0 0 340 160" style="max-width:100%"></svg>
+        <div class="chart-legend" id="fob-legend"></div>
+      </div>
+
+      <!-- Gráfico disponibilidad de mercado -->
+      <div class="chart-container">
+        <div class="chart-title">Disponibilidad en Mercado Local</div>
+        <div class="chart-sub">Stock FT Foods Antofagasta · Cajas por categoría</div>
+        <svg class="chart" id="stock-chart" viewBox="0 0 340 140" style="max-width:100%"></svg>
+      </div>
+
+      <div class="tabs" id="price-tabs">
+        <div class="tab active" onclick="pTab(this,'ave')">🍗 Ave</div>
+        <div class="tab" onclick="pTab(this,'cerdo')">🐷 Cerdo</div>
+        <div class="tab" onclick="pTab(this,'vacuno-imp')">🥩 Vacuno Imp.</div>
+        <div class="tab" onclick="pTab(this,'vacuno-nac')">🇨🇱 Vacuno Nac.</div>
+        <div class="tab" onclick="pTab(this,'procesado')">🍔 Procesados</div>
+      </div>
+      <div id="price-list"></div>
     </div>
-    <div class="card">
-      <div class="ct">📊 Antofagasta vs. promedio nacional (estimación)</div>
-      <table class="cmp-tbl">
-        <thead><tr><th>Especie</th><th>Antofagasta*</th><th>Chile</th><th>Var.</th></tr></thead>
-        <tbody>
-          <tr><td>🍗 Ave</td><td class="hi">~36,5 kg</td><td>34,2 kg</td><td><span class="badge bg">+7%</span></td></tr>
-          <tr><td>🥩 Vacuno</td><td class="hi">~26,1 kg</td><td>23,8 kg</td><td><span class="badge bg">+10%</span></td></tr>
-          <tr><td>🐷 Cerdo</td><td class="hi">~20,2 kg</td><td>18,9 kg</td><td><span class="badge bg">+7%</span></td></tr>
-          <tr><td>🥪 Procesados</td><td class="hi">~13,8 kg</td><td>12,4 kg</td><td><span class="badge bg">+11%</span></td></tr>
-        </tbody>
-      </table>
-      <p class="note">* Estimación basada en mayor ingreso per cápita y demanda del sector minero. Sin datos regionales oficiales desagregados.</p>
+
+    <!-- ═══ MERCADO ═══ -->
+    <div class="page" id="pg-mercado">
+      <div class="sh"><h2>Mercado</h2><p>Indicadores globales · Actualización en vivo</p></div>
+
+      <div class="mkt-card">
+        <div class="mkt-hdr"><h3>FOB Internacional</h3><span>USD/kg · Oct 2026</span></div>
+        <div class="mkt-body">
+          <div class="mkt-row"><span class="item">🥩 Vacuno BR (NH)</span><span class="price">$3,82</span><span class="chg chg-dn">▼ 1,2%</span></div>
+          <div class="mkt-row"><span class="item">🥩 Vacuno PY</span><span class="price">$3,55</span><span class="chg chg-up">▲ 0,8%</span></div>
+          <div class="mkt-row"><span class="item">🥩 Vacuno USA (Choice)</span><span class="price">$6,20</span><span class="chg chg-nt">— 0,0%</span></div>
+          <div class="mkt-row"><span class="item">🐷 Cerdo BR</span><span class="price">$1,95</span><span class="chg chg-up">▲ 2,1%</span></div>
+          <div class="mkt-row"><span class="item">🐷 Cerdo USA</span><span class="price">$2,15</span><span class="chg chg-dn">▼ 0,5%</span></div>
+          <div class="mkt-row"><span class="item">🍗 Ave BR (frango)</span><span class="price">$1,38</span><span class="chg chg-up">▲ 1,4%</span></div>
+          <div class="mkt-row"><span class="item">🍗 Ave USA</span><span class="price">$1,62</span><span class="chg chg-nt">— 0,0%</span></div>
+        </div>
+      </div>
+
+      <div class="mkt-card">
+        <div class="mkt-hdr"><h3>Tipo de Cambio</h3><span>Referencia Oct 2026</span></div>
+        <div class="mkt-body">
+          <div class="mkt-row"><span class="item">🇺🇸 USD / CLP</span><span class="price" id="mkt-usd">—</span><span class="chg chg-dn" id="mkt-usd-chg">▼</span></div>
+          <div class="mkt-row"><span class="item">📊 UF</span><span class="price" id="mkt-uf">—</span><span class="chg chg-up">▲ Inflación</span></div>
+          <div class="mkt-row"><span class="item">🇧🇷 BRL / CLP</span><span class="price" id="mkt-brl">~175</span><span class="chg chg-nt">Referencia</span></div>
+          <div class="mkt-row"><span class="item">🇵🇾 PYG / CLP</span><span class="price">$0,126</span><span class="chg chg-nt">Referencia</span></div>
+        </div>
+      </div>
+
+      <div class="mkt-card">
+        <div class="mkt-hdr"><h3>Mercado Chile</h3><span>2026</span></div>
+        <div class="mkt-body">
+          <div class="mkt-row"><span class="item">Consumo per cápita vacuno</span><span class="price">18,4 kg/año</span><span class="chg chg-up">▲ 1,2%</span></div>
+          <div class="mkt-row"><span class="item">Consumo per cápita cerdo</span><span class="price">28,1 kg/año</span><span class="chg chg-up">▲ 0,8%</span></div>
+          <div class="mkt-row"><span class="item">Consumo per cápita ave</span><span class="price">42,3 kg/año</span><span class="chg chg-up">▲ 2,4%</span></div>
+          <div class="mkt-row"><span class="item">IMACEC Chile (últ. disponible)</span><span class="price">+2,1%</span><span class="chg chg-up">Jul 2026</span></div>
+          <div class="mkt-row"><span class="item">Demanda Norte Grande</span><span class="price">Sostenida</span><span class="chg chg-up">Minería activa</span></div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div id="mf" style="display:none">
-    <div class="card">
-      <div class="ct">🌐 Precios FOB internacionales (USD/kg · Junio 2025)</div>
-      <div class="th" style="grid-template-columns:1fr 60px 52px 58px"><span>Corte</span><span>USD/kg</span><span>Var. 7d</span><span>Origen</span></div>
-      <div class="tr" style="grid-template-columns:1fr 60px 52px 58px"><span>Lomo liso</span><span style="font-weight:700">$3,85</span><span class="badge br" style="font-size:9px">↓1,2%</span><span style="font-size:11px;color:var(--t3)">Brasil</span></div>
-      <div class="tr" style="grid-template-columns:1fr 60px 52px 58px"><span>Asado de tira</span><span style="font-weight:700">$4,10</span><span class="badge bg" style="font-size:9px">↑2,4%</span><span style="font-size:11px;color:var(--t3)">Paraguay</span></div>
-      <div class="tr" style="grid-template-columns:1fr 60px 52px 58px"><span>Pierna de cerdo</span><span style="font-weight:700">$2,90</span><span class="badge bg" style="font-size:9px">↑3,8%</span><span style="font-size:11px;color:var(--t3)">Chile</span></div>
-      <div class="tr" style="grid-template-columns:1fr 60px 52px 58px"><span>Pechuga de ave</span><span style="font-weight:700">$1,95</span><span class="badge br" style="font-size:9px">↓0,5%</span><span style="font-size:11px;color:var(--t3)">Brasil</span></div>
-      <div class="tr" style="grid-template-columns:1fr 60px 52px 58px"><span>Lomo vetado</span><span style="font-weight:700">$5,20</span><span class="badge bg" style="font-size:9px">↑1,1%</span><span style="font-size:11px;color:var(--t3)">Brasil</span></div>
-      <a href="https://apps.fas.usda.gov/psdonline/app/index.html" target="_blank" class="src-lnk">📎 USDA FAS PSD Online →</a>
+
+    <!-- ═══ CATÁLOGO ═══ -->
+    <div class="page" id="pg-catalogo">
+      <div class="sh"><h2>Catálogo</h2><p>FT Foods · Gestión de productos</p></div>
+      <div class="catalog-search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="cat-search" placeholder="Buscar producto, código, marca..." oninput="filterCatalog(this.value)">
+      </div>
+      <div class="tabs" style="padding-top:8px">
+        <div class="tab active" onclick="catTab(this,'all')">Todos</div>
+        <div class="tab" onclick="catTab(this,'Vacuno')">🥩 Vacuno</div>
+        <div class="tab" onclick="catTab(this,'Cerdo')">🐷 Cerdo</div>
+        <div class="tab" onclick="catTab(this,'Ave')">🍗 Ave</div>
+        <div class="tab" onclick="catTab(this,'Procesado')">🍔 Procesado</div>
+      </div>
+      <div id="cat-grid"></div>
     </div>
-  </div>
-  <div id="ml" style="display:none">
-    <div class="card">
-      <div class="ct">🏔️ Demanda Norte Chile · Junio 2025</div>
-      <div class="br-row"><div class="bl">Minería B2B</div><div class="btr"><div class="bfi" style="width:91%;background:var(--r)"></div></div><div class="bv" style="color:var(--r)">+15%</div></div>
-      <div class="br-row"><div class="bl">Restaurantes</div><div class="btr"><div class="bfi" style="width:74%;background:var(--r2)"></div></div><div class="bv">+8%</div></div>
-      <div class="br-row"><div class="bl">Retail</div><div class="btr"><div class="bfi" style="width:55%;background:var(--am)"></div></div><div class="bv">+2%</div></div>
-      <div class="br-row"><div class="bl">Delivery</div><div class="btr"><div class="bfi" style="width:68%;background:var(--pu)"></div></div><div class="bv">+12%</div></div>
-      <a href="https://www.cochilco.cl" target="_blank" class="src-lnk">📎 Cochilco + estimación CarnIQ →</a>
+
+    <!-- ═══ IA CHAT ═══ -->
+    <div class="page" id="pg-chat">
+      <div id="chat-area">
+        <div id="chat-msgs">
+          <div class="msg bot">
+            <div class="msg-hdr">CarnIQ IA · Claude AI · FT Foods</div>
+            <div class="msg-body">Hola. Soy el asistente de inteligencia artificial de FT Foods Antofagasta, potenciado por Claude AI con búsqueda web en tiempo real.<br><br>Puedo analizar tu stock, precios, condiciones del mercado cárnico global y buscar información actualizada en internet. ¿En qué te ayudo?</div>
+          </div>
+        </div>
+        <div class="chip-row" id="chip-row">
+          <div class="chip" onclick="sendChip(this)">🏔 Impacto pasos</div>
+          <div class="chip" onclick="sendChip(this)">⚠️ Quiebres</div>
+          <div class="chip" onclick="sendChip(this)">💱 Escenario $980</div>
+          <div class="chip" onclick="sendChip(this)">⛏ Mercado minero</div>
+          <div class="chip" onclick="sendChip(this)">📊 Análisis márgenes</div>
+        </div>
+        <div id="chat-input-row">
+          <textarea id="chat-input" placeholder="Consulta sobre tu negocio, mercado, stock..." rows="1" onkeydown="chatKey(event)"></textarea>
+          <button id="chat-send" onclick="sendChat()">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
+
+    <!-- ═══ ADMIN ═══ -->
+    <div class="page" id="pg-admin">
+      <div class="sh"><h2>Admin</h2><p>Configuración y carga de datos</p></div>
+
+      <div class="admin-section">
+        <div class="admin-card">
+          <h3>🔑 API Key Claude</h3>
+          <label class="lbl-sm">Anthropic API Key</label>
+          <input type="password" class="api-input" id="api-key-input" placeholder="sk-ant-..." value="">
+          <button class="btn-primary" onclick="saveApiKey()">Guardar API Key</button>
+          <div class="upload-preview" id="api-status"></div>
+        </div>
+
+        <div class="admin-card">
+          <h3>📦 Cargar Stock SAP</h3>
+          <div class="file-drop" onclick="document.getElementById('f-stock').click()">
+            <input type="file" id="f-stock" accept=".xlsx,.xls,.csv" onchange="loadStock(this)">
+            <div class="icon">📊</div>
+            <strong>Stock 26 Junio 10AM.xlsx</strong>
+            <p>Arrastra o toca para cargar · Excel / CSV</p>
+          </div>
+          <div class="upload-preview show" id="stock-preview">✅ Stock cargado: <span id="stock-count">0</span> productos</div>
+        </div>
+
+        <div class="admin-card">
+          <h3>💰 Cargar Lista de Precios</h3>
+          <div class="file-drop" onclick="document.getElementById('f-precios').click()">
+            <input type="file" id="f-precios" accept=".xlsx,.xls,.csv,.jpg,.jpeg,.png,.heic,.webp" onchange="loadPrecios(this)">
+            <div class="icon">💲</div>
+            <strong>Lista_Precios_FT_Foods 2.0.xlsx</strong>
+            <p>Excel · CSV · o imagen JPG/PNG con IA</p>
+          </div>
+          <div class="upload-preview" id="precios-preview"></div>
+        </div>
+
+        <div class="admin-card">
+          <h3>⚙️ Configuración</h3>
+          <label class="lbl-sm">Umbral stock crítico (%)</label>
+          <input type="number" class="api-input" id="threshold-input" value="30" min="1" max="100" style="font-family:'Inter',sans-serif">
+          <button class="btn-primary" onclick="saveThreshold()">Guardar configuración</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pages -->
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <button class="nv active" onclick="goPage('inicio',this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>Inicio</span>
+      </button>
+      <button class="nv" onclick="goPage('noticias',this)">
+        <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="12" y2="15"/></svg>
+        <span>Noticias</span>
+      </button>
+      <button class="nv" onclick="goPage('precios',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        <span>Precios</span>
+      </button>
+      <button class="nv" onclick="goPage('mercado',this)">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Mercado</span>
+      </button>
+      <button class="nv" onclick="goPage('catalogo',this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>Catálogo</span>
+      </button>
+      <button class="nv" onclick="goPage('chat',this)">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>IA Chat</span>
+        <div class="badge" id="chat-badge" style="display:none">1</div>
+      </button>
+      <button class="nv" onclick="goPage('admin',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+        <span>Admin</span>
+      </button>
+    </div>
+  </nav>
 </div>
 
-<!-- STOCK -->
-<div id="s-stock" class="scr">
-  <div class="sh"><h2>Stock</h2><p id="st-sub">Carga tu archivo en la sección Admin</p></div>
-  <div class="srch">
-    <svg class="sic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input class="si" type="search" placeholder="Buscar producto..." id="sch-st" oninput="filSt()" style="padding-left:36px">
-  </div>
-  <div class="tabs">
-    <div class="tab active" onclick="stTab(this,'todos')">Todos</div>
-    <div class="tab" onclick="stTab(this,'critico')">⚠️ Críticos</div>
-    <div class="tab" onclick="stTab(this,'vacuno')">Vacuno</div>
-    <div class="tab" onclick="stTab(this,'cerdo')">Cerdo</div>
-    <div class="tab" onclick="stTab(this,'ave')">Ave</div>
-  </div>
-  <div id="st-list"><div style="text-align:center;padding:50px 20px;color:var(--t3)"><div style="font-size:48px;margin-bottom:12px">📦</div><div style="font-size:15px;font-weight:500">Sin datos de stock</div><div style="font-size:13px;margin-top:5px">Carga tu archivo Excel en Admin</div></div></div>
-</div>
-
-<!-- IA CHAT -->
-<div id="s-ia" class="scr">
-  <div class="sh"><h2>IA Chat</h2><p>Asistente inteligente FT Foods · Activo 24/7</p></div>
-  <div class="ia-on"><div class="ia-on-dot"></div><div style="font-size:12px;font-weight:600;color:var(--g)">Asistente de IA activo · Análisis en tiempo real</div></div>
-  <div class="card" style="background:var(--rlt);border-color:#fca5a5;margin-bottom:12px">
-    <div class="ct" style="color:var(--r);margin-bottom:8px">🔗 Contexto disponible</div>
-    <div style="display:flex;flex-wrap:wrap;gap:5px" id="ia-ctx"><span class="badge bk">Sin archivos cargados</span></div>
-  </div>
-  <div class="qchips">
-    <div class="chip" onclick="sChip('¿Cuál es mi producto más rentable?')">💰 Más rentable</div>
-    <div class="chip" onclick="sChip('Resumen ejecutivo del negocio hoy')">📊 Resumen</div>
-    <div class="chip" onclick="sChip('¿Qué productos están en quiebre de stock?')">⚠️ Quiebres</div>
-    <div class="chip" onclick="sChip('Escenario si el dólar sube a $980')">💱 Dólar $980</div>
-    <div class="chip" onclick="sChip('Análisis de precios internacionales de ave y cerdo')">🌍 Precios int.</div>
-    <div class="chip" onclick="sChip('¿Qué impacto tiene la Fiebre Aftosa en Paraguay en mis compras?')">🦠 Aftosa PY</div>
-  </div>
-  <div class="cwrap" id="chat-msgs">
-    <div class="cmsg cai">
-      <div class="cail">CarnIQ · Asistente IA · FT Foods</div>
-      Hola. Soy el asistente de inteligencia artificial de FT Foods Antofagasta. Analizo tu stock, precios, catálogo y las condiciones del mercado cárnico. ¿En qué te puedo ayudar hoy?
-    </div>
-  </div>
-  <div class="cir">
-    <textarea class="cta" id="ci" placeholder="Consulta sobre tu negocio, mercado, precios..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}" oninput="autoR(this)"></textarea>
-    <button class="csend" id="csend" onclick="sendMsg()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    </button>
-  </div>
-</div>
-
-<!-- ADMIN -->
-<div id="s-admin" class="scr">
-  <div class="sh"><h2>Administración</h2><p>FT Foods · Datos, portada y configuración</p></div>
-  <div class="card">
-    <div class="ct">🏷️ Logo de la aplicación</div>
-    <div class="uz" onclick="document.getElementById('fl').click()">
-      <input type="file" id="fl" accept="image/*" onchange="chgLogo(this)">
-      <div style="font-size:26px;margin-bottom:5px">🏷️</div>
-      <div style="font-size:14px;font-weight:600">Subir logo</div>
-      <div style="font-size:12px;color:var(--t3);margin-top:3px">PNG con fondo transparente</div>
-    </div>
-    <div id="logo-p" style="margin-top:10px"></div>
-  </div>
-  <div class="card">
-    <div class="ct">🖼️ Imagen de portada <span style="font-size:10px;color:var(--t3);font-weight:400">(solo admin)</span></div>
-    <div class="uz" onclick="document.getElementById('fc').click()">
-      <input type="file" id="fc" accept="image/*" onchange="chgCover(this)">
-      <div style="font-size:26px;margin-bottom:5px">🖼️</div>
-      <div style="font-size:14px;font-weight:600">Subir imagen de portada</div>
-      <div style="font-size:12px;color:var(--t3);margin-top:3px">JPG · PNG</div>
-    </div>
-    <div id="cvr-p" style="margin-top:10px"></div>
-  </div>
-  <div class="card">
-    <div class="ct">🗂️ Archivos indexados <span id="fc-cnt" class="badge bb">0</span></div>
-    <div id="files-list"><div style="color:var(--t3);font-size:13px">Sin archivos cargados.</div></div>
-  </div>
-  <div class="card">
-    <div class="ct">📦 Stock <span id="est-stock" class="badge ba">Sin datos</span></div>
-    <div class="uz" onclick="document.getElementById('fs').click()">
-      <input type="file" id="fs" accept=".xlsx,.xls,.csv,.ods" onchange="hFile(this,'stock')">
-      <div style="font-size:24px;margin-bottom:5px">📦</div>
-      <div style="font-size:14px;font-weight:600">Cargar archivo de stock</div>
-      <div style="font-size:12px;color:var(--t3);margin-top:3px">Excel .xlsx · .xls · CSV</div>
-    </div>
-    <div id="pp-stock" style="display:none"><div class="pb"><div class="pf" id="pf-stock" style="width:0%"></div></div><div id="pm-stock" style="font-size:12px;color:var(--t2);text-align:center;margin-top:4px"></div></div>
-    <div id="stbar-stock"></div>
-  </div>
-  <div class="card">
-    <div class="ct">💰 Lista de precios <span id="est-precios" class="badge ba">Sin datos</span></div>
-    <div style="font-size:12px;color:var(--t2);margin-bottom:10px">Acepta Excel, CSV <b>o imágenes JPG/PNG</b> de tu lista de precios. Desde imágenes, la IA extrae los precios automáticamente.</div>
-    <div class="uz" onclick="document.getElementById('fpr').click()">
-      <input type="file" id="fpr" accept=".xlsx,.xls,.csv,.ods,.jpg,.jpeg,.png,.heic,.webp" onchange="hFile(this,'precios')">
-      <div style="font-size:24px;margin-bottom:5px">💰</div>
-      <div style="font-size:14px;font-weight:600">Cargar lista de precios</div>
-      <div style="font-size:12px;color:var(--t3);margin-top:3px">Excel · CSV · JPG · PNG</div>
-    </div>
-    <div id="pp-precios" style="display:none"><div class="pb"><div class="pf" id="pf-precios" style="width:0%"></div></div><div id="pm-precios" style="font-size:12px;color:var(--t2);text-align:center;margin-top:4px"></div></div>
-    <div id="stbar-precios"></div>
-  </div>
-  <div class="card">
-    <div class="ct">⚙️ Configuración</div>
-    <div class="ig"><label class="il">Nombre de la sucursal</label><input class="inf" id="cfg-s" value="Antofagasta Centro"></div>
-    <div class="ig"><label class="il">Stock mínimo por defecto (kg)</label><input class="inf" type="number" id="cfg-m" value="30" inputmode="numeric"></div>
-    <div class="ig"><label class="il">Umbral alerta crítica (%)</label><input class="inf" type="number" id="cfg-crit" value="30" inputmode="numeric"><div style="font-size:11px;color:var(--t3);margin-top:4px">Se genera alerta cuando el stock es menor a este % del mínimo</div></div>
-    <button class="btn btn-p" onclick="saveCfg()">Guardar configuración</button>
-    <button class="btn btn-d" onclick="resetAll()">🗑 Limpiar todos los datos</button>
-  </div>
-</div>
-
-</div><!-- /ac -->
-
-<nav class="nav">
-  <button class="nb active" onclick="go('dash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Inicio</button>
-  <button class="nb" onclick="go('news')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>Noticias</button>
-  <button class="nb" onclick="go('cmp')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>Precios</button>
-  <button class="nb" onclick="go('market')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Mercado</button>
-  <button class="nb" onclick="go('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 7H4a1 1 0 00-1 1v10a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Stock</button>
-  <button class="nb" onclick="go('ia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>IA Chat</button>
-  <button class="nb" onclick="go('admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Admin</button>
-</nav>
-
-<!-- Modal -->
-<div class="mov" id="pmod" onclick="if(event.target===this)clsM()">
-  <div class="modal"><div class="mh"></div><div class="mt"><span id="mod-t">Detalle</span><button class="mc" onclick="clsM()">✕</button></div><div id="mod-b"></div></div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-// ════════════════════════════════════════════════
-// IndexedDB — almacenamiento persistente
-// ════════════════════════════════════════════════
-const IDB_NAME='carniq_v9',IDB_VER=1;
-let idb=null;
-function openIDB(){return new Promise((res,rej)=>{const r=indexedDB.open(IDB_NAME,IDB_VER);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('kv'))e.target.result.createObjectStore('kv');};r.onsuccess=e=>{idb=e.target.result;res(idb);};r.onerror=e=>rej(e);});}
-function iSet(k,v){return new Promise((res,rej)=>{const tx=idb.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=()=>res();tx.onerror=e=>rej(e);});}
-function iGet(k){return new Promise((res,rej)=>{const tx=idb.transaction('kv','readonly');const r=tx.objectStore('kv').get(k);r.onsuccess=()=>res(r.result);r.onerror=e=>rej(e);});}
-function iDel(k){return new Promise((res,rej)=>{const tx=idb.transaction('kv','readwrite');tx.objectStore('kv').delete(k);tx.oncomplete=()=>res();tx.onerror=e=>rej(e);});}
+// ═══════════════════════════════════════════════════
+// CARNIQ v10 — FT Foods Antofagasta
+// Felipe · fcasdiaz18@gmail.com
+// ═══════════════════════════════════════════════════
 
-let DB={stock:[],precios:[],files:[],catalog:[],chatHistory:[],cfg:{suc:'Antofagasta Centro',min:30,crit:30},coverUrl:'',logoUrl:'',usd:948.4};
+// ── IDB ──
+const IDB_NAME='carniq_v10'; let db;
+function openIDB(){return new Promise(r=>{const q=indexedDB.open(IDB_NAME,1);q.onupgradeneeded=e=>{e.target.result.createObjectStore('kv')};q.onsuccess=e=>{db=e.target.result;r()};q.onerror=()=>r()})}
+function iSet(k,v){return new Promise(r=>{try{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>r();t.onerror=()=>r()}catch{r()}})}
+function iGet(k){return new Promise(r=>{try{const t=db.transaction('kv');const q=t.objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch{r(null)}})}
 
-async function saveDB(){await iSet('db_main',{...DB,catalog:DB.catalog.map(p=>({...p,photo:''}))});}
-async function savePh(id,d){await iSet('ph_'+id,d);}
-async function loadPh(id){return await iGet('ph_'+id);}
-async function delPh(id){await iDel('ph_'+id);}
+// ── DB ──
+let DB={usd:931,uf:40870,stock:[],prices:{},catalog:[],chatCtx:[],threshold:30};
+function fmt(n){return'$'+Math.round(n).toLocaleString('es-CL')}
+function todayStr(){const d=new Date();return`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`}
 
+// ── LOAD/SAVE ──
 async function loadDB(){
-  const s=await iGet('db_main');if(s)DB={...DB,...s};
-  for(const p of DB.catalog){const ph=await loadPh(p.id);if(ph)p.photo=ph;}
-  if(DB.logoUrl)applyLogo(DB.logoUrl);
-  if(DB.coverUrl){document.getElementById('hero-img').src=DB.coverUrl;document.getElementById('sp-bg').style.backgroundImage=`url('${DB.coverUrl}')`;}
+  try{
+    const s=localStorage.getItem('carniq_v10');
+    if(s){const p=JSON.parse(s);DB.stock=p.stock||[];DB.prices=p.prices||{};DB.catalog=p.catalog||[];DB.threshold=p.threshold||30}
+    const k=localStorage.getItem('carniq_apikey');if(k)document.getElementById('api-key-input').value=k;
+  }catch{}
+  // Load prebuilt stock from file data
+  if(!DB.stock.length) DB.stock=STOCK_DATA;
+  if(!Object.keys(DB.prices).length) DB.prices=PRICES_DATA;
+  if(!DB.catalog.length) DB.catalog=buildCatalog();
+  updateStockCount();
+}
+async function saveDB(){
+  try{localStorage.setItem('carniq_v10',JSON.stringify({stock:DB.stock,prices:DB.prices,catalog:DB.catalog,threshold:DB.threshold}))}catch{}
+}
+function saveApiKey(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(k){localStorage.setItem('carniq_apikey',k);showEl('api-status','✅ API Key guardada',true)}
+  else showEl('api-status','⚠️ Ingresa una clave válida',true)
+}
+function saveThreshold(){DB.threshold=+document.getElementById('threshold-input').value||30;saveDB();renderAlerts();showEl('api-status','✅ Umbral guardado',true)}
+function showEl(id,txt,show){const e=document.getElementById(id);if(e){e.textContent=txt;e.classList.toggle('show',show)}}
+function updateStockCount(){const el=document.getElementById('stock-count');if(el)el.textContent=DB.stock.length}
+
+// ── RATES — mindicador.cl (API pública CORS-open) ──
+const RATES_TTL=23*60*60*1000;
+async function fetchRates(force=false){
+  const cached=await iGet('rates_v10');
+  const now=Date.now();
+  if(!force&&cached&&(now-cached.ts)<RATES_TTL){DB.usd=cached.usd;DB.uf=cached.uf;updateRateDisplay();return}
+  try{
+    const [ru,rf]=await Promise.all([
+      fetch('https://mindicador.cl/api/dolar/'+todayStr()),
+      fetch('https://mindicador.cl/api/uf/'+todayStr())
+    ]);
+    const ju=await ru.json(),jf=await rf.json();
+    const usd=ju?.serie?.[0]?.valor||931;
+    const uf=jf?.serie?.[0]?.valor||40870;
+    DB.usd=usd;DB.uf=uf;
+    await iSet('rates_v10',{usd,uf,ts:now});
+  }catch(e){DB.usd=cached?.usd||931;DB.uf=cached?.uf||40870}
+  updateRateDisplay();
+}
+function updateRateDisplay(){
+  document.getElementById('rt-usd').textContent=fmt(DB.usd);
+  document.getElementById('rt-uf').textContent=fmt(DB.uf);
+  const mku=document.getElementById('mkt-usd');if(mku)mku.textContent=fmt(DB.usd);
+  const mkuf=document.getElementById('mkt-uf');if(mkuf)mkuf.textContent=fmt(DB.uf);
+  const brl=DB.usd/5.2;const mkb=document.getElementById('mkt-brl');if(mkb)mkb.textContent='~'+Math.round(brl);
+  const el=document.getElementById('rates-ts-txt');
+  if(el)el.textContent='Actualizado hoy · Banco Central de Chile · mindicador.cl';
+  buildTicker();
 }
 
-// ════════════════════════════════════════════════
-// LIVE NEWS ENGINE — Claude AI con web search
-// Se actualiza cada 6 horas automáticamente
-// ════════════════════════════════════════════════
-let NEWS_CACHE = [];
+// ── TICKER ──
+function buildTicker(){
+  const brl=Math.round(DB.usd/5.2);
+  const items=[
+    {l:'USD/CLP',v:fmt(DB.usd),c:'▼0,8%',d:'dn'},
+    {l:'UF HOY',v:fmt(DB.uf),c:'▲IPC',d:'up'},
+    {l:'VACUNO FOB BR',v:'$3,82',c:'▼1,2%',d:'dn'},
+    {l:'CERDO FOB BR',v:'$1,95',c:'▲2,1%',d:'up'},
+    {l:'AVE FOB BR',v:'$1,38',c:'▲1,4%',d:'up'},
+    {l:'BRL/CLP',v:'$'+brl,c:'Ref',d:'nt'},
+    {l:'PYG/CLP',v:'$0,126',c:'Ref',d:'nt'},
+    {l:'VACUNO USA',v:'$6,20',c:'—',d:'nt'},
+    {l:'LOMO VETADO FT',v:fmt(14490),c:'/kg',d:'nt'},
+    {l:'FILETE FT',v:fmt(15390),c:'/kg',d:'up'},
+  ];
+  const html=items.map(i=>`<div class="tick-item"><span class="tick-lbl">${i.l}</span><span class="tick-val">${i.v}</span><span class="tick-chg ${i.d}">${i.c}</span></div>`).join('');
+  const el=document.getElementById('ticker-inner');
+  if(el)el.innerHTML=html+html; // duplicate for seamless loop
+}
 
-// Active news = live cache or static fallback
-function getNews(){ return NEWS_CACHE.length > 0 ? NEWS_CACHE : NEWS_STATIC; }
-let NEWS_LAST_FETCH = 0;
-const NEWS_TTL = 6 * 60 * 60 * 1000; // 6 horas
+// ── STOCK DATA (from Excel) ──
+const STOCK_DATA=[
+  {id:'A_CONG',code:'69021',name:'Trutro Entero / Pata Muslo',cat:'Ave',kg:422,min:300},
+  {id:'A_CONG',code:'69030',name:'Trutro 1/4 Bloque',cat:'Ave',kg:258,min:300},
+  {id:'A_CONG',code:'69081',name:'Pechuga Entera Bloque',cat:'Ave',kg:144,min:200},
+  {id:'A_CONG',code:'69160',name:'Pollo Entero',cat:'Ave',kg:44,min:100},
+  {id:'A_CONG',code:'69231',name:'Pechuga Deshuesada 6x2',cat:'Ave',kg:320,min:250},
+  {id:'A_CONG',code:'69257',name:'Gallina Retail',cat:'Ave',kg:85,min:100},
+  {id:'A_CONG',code:'69340',name:'Pollo Entero Cal 2,1',cat:'Ave',kg:98,min:150},
+  {id:'A_CONG',code:'69410',name:'Trutro Ala IQF',cat:'Ave',kg:118,min:200},
+  {id:'A_CONG',code:'69440',name:'Garras Retail',cat:'Ave',kg:275,min:150},
+  {id:'C_DESP',code:'25163',name:'Chuleta Centro 5kg FT',cat:'Cerdo',kg:59,min:100},
+  {id:'C_DESP',code:'25763',name:'Pulpa Pierna',cat:'Cerdo',kg:168,min:150},
+  {id:'C_DESP',code:'25834',name:'Paleta Cerdo Imp',cat:'Cerdo',kg:77,min:100},
+  {id:'C_DESP',code:'66141',name:'Chuleta Centro',cat:'Cerdo',kg:189,min:200},
+  {id:'C_DESP',code:'66142',name:'Costillar Brasil',cat:'Cerdo',kg:320,min:200},
+  {id:'C_DESP',code:'66230',name:'Pierna Entera',cat:'Cerdo',kg:169,min:200},
+  {id:'C_DESP',code:'68185',name:'Chuleta Vetada Imp',cat:'Cerdo',kg:306,min:200},
+  {id:'V_IMP_MUS',code:'67402',name:'Posta Negra BR',cat:'Vacuno',kg:312,min:200},
+  {id:'V_IMP_MUS',code:'67722',name:'Abastero Neuland',cat:'Vacuno',kg:173,min:150},
+  {id:'V_IMP_MUS',code:'67723',name:'Asado Carnicero Neuland',cat:'Vacuno',kg:185,min:150},
+  {id:'V_IMP_MUS',code:'67727',name:'Filete Neuland',cat:'Vacuno',kg:68,min:80},
+  {id:'V_IMP_MUS',code:'67728',name:'Ganso Neuland',cat:'Vacuno',kg:120,min:100},
+  {id:'V_IMP_MUS',code:'67730',name:'Lomo Liso Neuland',cat:'Vacuno',kg:162,min:100},
+  {id:'V_IMP_MUS',code:'67731',name:'Lomo Vetado Neuland',cat:'Vacuno',kg:72,min:100},
+  {id:'V_IMP_MUS',code:'67740',name:'Sobrecostilla Neuland',cat:'Vacuno',kg:251,min:150},
+  {id:'PRO_AP',code:'17085',name:'Hamb. Chuckroll A Punto',cat:'Procesado',kg:27,min:50},
+  {id:'PRO_AP',code:'17086',name:'Hamb. Smoked A Punto',cat:'Procesado',kg:39,min:50},
+  {id:'PRO_AP',code:'71081',name:'Hamb. Brisket A Punto',cat:'Procesado',kg:33,min:50},
+  {id:'PRO_FT',code:'17631',name:'Churrasco FT',cat:'Procesado',kg:223,min:100},
+  {id:'PRO_FT',code:'17859',name:'Hamburguesa FT',cat:'Procesado',kg:150,min:100},
+  {id:'PRO_FT',code:'17954',name:'Albóndiga FT',cat:'Procesado',kg:244,min:100},
+  {id:'PRO_FS',code:'17075',name:'Crocante Fundo Sur',cat:'Procesado',kg:51,min:50},
+  {id:'PRO_FS',code:'17078',name:'Cubitos Fundo Sur',cat:'Procesado',kg:153,min:80},
+  {id:'PRO_FS',code:'17077',name:'Tiritas Fundo Sur',cat:'Procesado',kg:154,min:80},
+];
+
+// ── PRICES DATA (from Lista A) ──
+const PRICES_DATA={
+  ave:[
+    {code:'69380',name:'Filete de Pollo',stock:41,price:3290},
+    {code:'69257',name:'Gallina Retail',stock:90,price:2490},
+    {code:'69440',name:'Garras Retail',stock:230,price:990},
+    {code:'69231',name:'Pechuga Deshuesada 6x2',stock:419,price:3290},
+    {code:'69081',name:'Pechuga Entera Bloque',stock:190,price:2590},
+    {code:'69340',name:'Pollo Entero Cal 2,1',stock:151,price:2450},
+    {code:'69160',name:'Pollo Entero',stock:48,price:2390},
+    {code:'69030',name:'Trutro 1/4 Bloque',stock:280,price:1850},
+    {code:'69410',name:'Trutro Ala IQF',stock:157,price:2790},
+    {code:'69021',name:'Trutro Entero / Pata Muslo',stock:329,price:1990},
+  ],
+  cerdo:[
+    {code:'25163',name:'Chuleta Centro 5kg FT',stock:104,price:4090},
+    {code:'66141',name:'Chuleta Centro',stock:238,price:2790},
+    {code:'68185',name:'Chuleta Vetada Imp',stock:278,price:2990},
+    {code:'66142',name:'Costillar Brasil',stock:333,price:4250},
+    {code:'25834',name:'Paleta Cerdo Imp',stock:79,price:2890},
+    {code:'66230',name:'Pierna Entera',stock:147,price:3290},
+    {code:'25763',name:'Pulpa Pierna',stock:191,price:3790},
+    {code:'25181',name:'Riñón Cerdo',stock:35,price:690},
+  ],
+  'vacuno-imp':[
+    {code:'67722',name:'Abastero Neuland',stock:155,price:6990},
+    {code:'67723',name:'Asado Carnicero Neuland',stock:190,price:6850},
+    {code:'67724',name:'Asiento Neuland',stock:12,price:9990},
+    {code:'67725',name:'Choclillo Neuland',stock:31,price:7990},
+    {code:'67727',name:'Filete Neuland',stock:54,price:15390},
+    {code:'67728',name:'Ganso Neuland',stock:152,price:6890},
+    {code:'67729',name:'Huachalomo Neuland',stock:75,price:7790},
+    {code:'67730',name:'Lomo Liso Neuland',stock:141,price:10990},
+    {code:'67731',name:'Lomo Vetado Neuland',stock:54,price:14490},
+    {code:'67740',name:'Sobrecostilla Neuland',stock:251,price:5990},
+    {code:'67402',name:'Posta Negra BR',stock:312,price:5490},
+  ],
+  'vacuno-nac':[
+    {code:'71491',name:'Arrachera A Punto',stock:8,price:8990},
+    {code:'71714',name:'Tomahawk A Punto',stock:5,price:19990},
+    {code:'71010',name:'Lomo Vetado A Punto',stock:4,price:14990},
+    {code:'71770',name:'Asado de Tira Criollito A Punto',stock:22,price:8111},
+    {code:'71841',name:'Asado de Tira Criollo A Punto',stock:11,price:8390},
+  ],
+  procesado:[
+    {code:'17954',name:'Albóndiga FT',stock:265,price:4690},
+    {code:'17631',name:'Churrasco FT',stock:245,price:5790},
+    {code:'17859',name:'Hamburguesa FT',stock:158,price:4490},
+    {code:'17075',name:'Crocante Fundo Sur',stock:59,price:4990},
+    {code:'17078',name:'Cubitos 500g Fundo Sur',stock:158,price:6990},
+    {code:'17076',name:'Escalopa Fundo Sur',stock:26,price:7490},
+    {code:'17077',name:'Tiritas 500g Fundo Sur',stock:155,price:7490},
+    {code:'71081',name:'Hamb. Brisket A Punto',stock:39,price:7290},
+    {code:'17085',name:'Hamb. Chuckroll A Punto',stock:31,price:6290},
+    {code:'17086',name:'Hamb. Smoked A Punto',stock:43,price:6290},
+  ]
+};
+
+function buildCatalog(){
+  const cats={Ave:'🍗',Cerdo:'🐷',Vacuno:'🥩',Procesado:'🍔'};
+  const all=[];
+  for(const [sec,items] of Object.entries(PRICES_DATA)){
+    const cat=sec==='ave'?'Ave':sec==='cerdo'?'Cerdo':sec.startsWith('vacuno')?'Vacuno':'Procesado';
+    items.forEach(p=>all.push({...p,cat,icon:cats[cat]}));
+  }
+  return all;
+}
+
+// ── NAV ──
+function goPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
+  document.getElementById('pg-'+id).classList.add('active');
+  el.classList.add('active');
+  if(id==='noticias'&&!NEWS_LOADED)fetchAndRender('all');
+  if(id==='precios'){renderPriceTable('ave');drawFOBChart('vacuno');drawStockChart()}
+  if(id==='catalogo')renderCatalog();
+}
+
+// ═══════════════════════════════════════════
+// NOTICIAS — Claude AI + web_search
+// ═══════════════════════════════════════════
+let NEWS_CACHE=[];let NEWS_LAST=0;let NEWS_LOADED=false;
+const NEWS_TTL=6*60*60*1000;
+let curTab='all';
 
 async function fetchLiveNews(force=false){
-  const now = Date.now();
-  if(!force && NEWS_CACHE.length > 0 && (now - NEWS_LAST_FETCH) < NEWS_TTL){
-    return NEWS_CACHE;
-  }
+  const now=Date.now();
+  if(!force&&NEWS_CACHE.length>0&&(now-NEWS_LAST)<NEWS_TTL)return NEWS_CACHE;
+  const el=document.getElementById('news-list');
+  if(el)el.innerHTML=`<div id="news-loading"><span class="spin">⟳</span><div style="font-size:13px;font-weight:600">Buscando noticias en línea...</div><div style="font-size:11px;margin-top:4px;color:var(--t3)">Claude IA consultando fuentes del mercado cárnico</div></div>`;
 
-  // Show loading state
-  const el = document.getElementById('news-list');
-  if(el) el.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--t3)">
-    <div style="font-size:32px;margin-bottom:10px">🔄</div>
-    <div style="font-size:14px;font-weight:600;color:var(--t)">Buscando noticias en línea...</div>
-    <div style="font-size:12px;margin-top:5px">Actualizando con información del día</div>
-  </div>`;
+  const apiKey=localStorage.getItem('carniq_apikey')||'';
+  if(!apiKey){renderStaticNews();return NEWS_STATIC}
 
-  const prompt = `Eres un analista experto en el mercado cárnico de Chile y Latinoamérica. 
-Busca y genera 10 noticias REALES y ACTUALES (máximo de las últimas 48 horas) sobre estos temas para FT Foods Antofagasta, empresa importadora y distribuidora de carnes:
+  const prompt=`Eres analista senior del mercado cárnico internacional para FT Foods Antofagasta, Chile.
+Busca AHORA noticias y tendencias REALES de esta semana sobre mercado de carnes:
+1. Precios FOB de vacuno en Brasil, Paraguay, Uruguay, USA — alzas, bajas, tendencias
+2. Precios FOB de cerdo en Brasil, Europa, USA — variaciones recientes
+3. Precios FOB de ave/pollo en Brasil, USA, Tailandia — tendencias exportación
+4. Cuotas y demanda de China para importaciones de vacuno, cerdo y ave sudamericana
+5. Tipo de cambio USD/CLP y su impacto en costos de importación cárnica en Chile
+6. Sanidad animal internacional: Fiebre Aftosa, Influenza Aviar H5N1, Peste Porcina Africana
+7. Tendencias de oferta y demanda mundial de proteína animal (Q4 2026)
+8. Normativas y aranceles de importación de carne en Chile (SAG, SERNAPESCA, DIRECON)
+9. Producción y exportaciones cárnicas en principales países productores (Brasil, Argentina, Paraguay)
+10. Clima macroeconómico: inflación, commodities, impacto en industria cárnica
 
-1. Cierre o restricciones en Paso Los Libertadores, Paso Jama u otros pasos fronterizos Chile-Argentina
-2. Puerto de Valparaíso o San Antonio: atrasos, paros, congestión
-3. Fiebre Aftosa, Influenza Aviar, Peste Porcina Africana u otras enfermedades animales en Paraguay, Argentina, Brasil, Chile
-4. Precios FOB de vacuno, cerdo y ave en Brasil, Paraguay, USA
-5. Tipo de cambio USD/CLP y su impacto en importaciones de carne
-6. Demanda minera y consumo en Antofagasta y Norte de Chile
-7. Normativas SAG, aranceles o cambios regulatorios para importación de carne a Chile
-8. Mercado cárnico global: China, exportaciones, oferta y demanda
+Entrega SOLO un JSON array con 10-12 noticias. Sin texto fuera del JSON:
+[{"titulo":"...","cuerpo":"2-3 oraciones con cifras concretas y porcentajes","categoria":"vacuno|cerdo|ave|mercado|sanidad","urgencia":"alerta|info","fuente":"nombre fuente real","url":"URL real o #","pais":"🇧🇷 Brasil","tiempo":"Hoy|Ayer|Esta semana"}]`;
 
-Para cada noticia, usa la fecha y contexto MÁS RECIENTE disponible (junio 2025 o lo más actual posible).
-
-Responde SOLO con un JSON array válido, sin markdown, sin texto adicional:
-[{
-  "titulo": "título claro y específico",
-  "cuerpo": "2-3 oraciones con información concreta, cifras y datos reales",
-  "categoria": "pasos|sanidad|vacuno|cerdo|ave|mercado",
-  "urgencia": "critico|alerta|info",
-  "fuente": "nombre de la fuente real",
-  "url": "URL real de la fuente o sitio oficial",
-  "pais": "emoji + país/región (ej: 🇧🇷 Brasil)",
-  "tiempo": "Hoy|Ayer|Hace X días"
-}]`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 4000,
-        tools: [{type: 'web_search_20250305', name: 'web_search'}],
-        messages: [{role:'user', content: prompt}]
-      })
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-beta':'web-search-2025-03-05'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3500,tools:[{type:'web_search_20250305',name:'web_search',max_uses:5}],messages:[{role:'user',content:prompt}]})
     });
-
-    const data = await res.json();
-    if(data.error) throw new Error(data.error.message);
-
-    // Extract text from response (may include tool_use blocks)
-    const textBlock = data.content?.find(b => b.type === 'text');
-    let txt = textBlock?.text || '[]';
-    txt = txt.replace(/```json|```/g,'').trim();
-
-    // Extract JSON array from text
-    const match = txt.match(/\[[\s\S]*\]/);
-    if(!match) throw new Error('No JSON array found');
-
-    const raw = JSON.parse(match[0]);
-    if(!Array.isArray(raw) || raw.length === 0) throw new Error('Empty array');
-
-    // Map to internal format
-    const mapped = raw.map(n => ({
-      cat: n.categoria || 'mercado',
-      u:   n.urgencia  || 'info',
-      src: n.fuente    || 'Fuente verificada',
-      url: n.url       || '#',
-      img: getNewsImg(n.categoria, n.urgencia, n.cuerpo),
-      pais: n.pais     || '🌐 Global',
-      t:    n.tiempo   || 'Hoy',
-      title: n.titulo,
-      body:  n.cuerpo,
-      tags:  buildTags(n.categoria, n.urgencia),
-      live:  true
-    }));
-
-    NEWS_CACHE = mapped;
-    NEWS_LAST_FETCH = Date.now();
-    await iSet('news_cache', {data: mapped, ts: Date.now()});
-    updateNewsTimestamp();
-    return mapped;
-
-  } catch(err) {
-    console.warn('Live news error:', err.message);
-    // Fallback: try to load from IDB cache
-    const cached = await iGet('news_cache');
-    if(cached && cached.data && cached.data.length > 0){
-      NEWS_CACHE = cached.data;
-      NEWS_LAST_FETCH = cached.ts;
-      return NEWS_CACHE;
-    }
-    // Last resort: static news
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    const txt=(data.content?.find(b=>b.type==='text')?.text||'[]').replace(/```json|```/g,'').trim();
+    const match=txt.match(/\[[\s\S]*\]/);
+    if(!match)throw new Error('No JSON');
+    const raw=JSON.parse(match[0]);
+    if(!Array.isArray(raw)||!raw.length)throw new Error('Empty');
+    NEWS_CACHE=raw.map(mapNews);
+    NEWS_LAST=Date.now();
+    NEWS_LOADED=true;
+    await iSet('news_cache_v10',{data:NEWS_CACHE,ts:NEWS_LAST});
+    updateNewsTS();
+    updateDashNews();
+    return NEWS_CACHE;
+  }catch(err){
+    console.warn('News error:',err.message);
+    const cached=await iGet('news_cache_v10');
+    if(cached?.data?.length){NEWS_CACHE=cached.data;NEWS_LAST=cached.ts;NEWS_LOADED=true;updateNewsTS();return NEWS_CACHE}
+    NEWS_LOADED=true;
     return NEWS_STATIC;
   }
 }
 
-function getNewsImg(cat, urgencia, body){
-  const imgs = {
-    pasos:   'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=70',
-    sanidad_vac: 'https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=600&q=70',
-    sanidad_ave: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=70',
-    sanidad_cer: 'https://images.unsplash.com/photo-1528467269665-b72962cd10d7?w=600&q=70',
-    sanidad_gen: 'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=70',
-    vacuno:  'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70',
-    cerdo:   'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&q=70',
-    ave:     'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70',
-    mercado_dolar: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',
-    mercado_minero:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70',
-    puerto: 'https://images.unsplash.com/photo-1523920290228-4f321a939b4c?w=600&q=70',
-    sag:    'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&q=70',
+function mapNews(n){
+  const imgs={
+    pasos:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=70',
+    sanidad:'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=70',
+    vacuno:'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70',
+    cerdo:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&q=70',
+    ave:'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70',
+    mercado:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',
   };
-  if(cat==='pasos') return body?.includes('puerto')||body?.includes('port') ? imgs.puerto : imgs.pasos;
-  if(cat==='sanidad'){
-    const b=(body||'').toLowerCase();
-    if(/aviar|ave|pollo|h5n1/.test(b)) return imgs.sanidad_ave;
-    if(/cerdo|porc|ppa|prrs/.test(b)) return imgs.sanidad_cer;
-    if(/vacun|bov|aftosa|fmd/.test(b)) return imgs.sanidad_vac;
-    return imgs.sanidad_gen;
-  }
-  if(cat==='vacuno') return imgs.vacuno;
-  if(cat==='cerdo') return imgs.cerdo;
-  if(cat==='ave') return imgs.ave;
-  if(cat==='mercado'){
-    const b=(body||'').toLowerCase();
-    if(/miner|antofagast|cobre/.test(b)) return imgs.mercado_minero;
-    if(/sag|sanitari|normat|arancel/.test(b)) return imgs.sag;
-    return imgs.mercado_dolar;
-  }
-  return imgs.mercado_dolar;
+  return{cat:n.categoria||'mercado',u:n.urgencia||'info',src:n.fuente||'Fuente',url:n.url||'#',img:imgs[n.categoria]||imgs.mercado,pais:n.pais||'🌐 Global',t:n.tiempo||'Esta semana',title:n.titulo,body:n.cuerpo};
 }
 
-function buildTags(cat, urgencia){
-  const catTags = {
-    pasos:   ['ba','Logística'],
-    sanidad: ['br','Sanidad animal'],
-    vacuno:  ['ba','Vacuno'],
-    cerdo:   ['ba','Cerdo'],
-    ave:     ['bb','Ave'],
-    mercado: ['bg','Mercado'],
-  };
-  const urgTags = {
-    critico: ['br','Acción inmediata'],
-    alerta:  ['ba','Monitorear'],
-    info:    ['bg','Informativo'],
-  };
-  const ct = catTags[cat] || ['bk','General'];
-  const ut = urgTags[urgencia] || ['bk','Info'];
-  return [...ct, ...ut];
+const NEWS_STATIC=[
+  {cat:'vacuno',u:'alerta',src:'USDA FAS',url:'#',img:'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70',pais:'🇧🇷 Brasil',t:'Esta semana',title:'FOB vacuno Brasil sube 1,5% impulsado por demanda china',body:'China elevó cuotas de importación de vacuno brasileño en un 12% para Q4 2026. El precio FOB del Traseiro brasileño subió a USD 3,82/kg. Frigoríficos ajustan contratos a la alza para el resto del año.'},
+  {cat:'vacuno',u:'alerta',src:'InfoCarne',url:'#',img:'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=70',pais:'🇵🇾 Paraguay',t:'Esta semana',title:'Paraguay: exportaciones vacuno marcan récord histórico en 2026',body:'Paraguay exportó más de 530.000 toneladas de carne vacuna en los primeros 9 meses de 2026, superando el récord anterior. Chile recibe el 8% de esas exportaciones. Los precios FOB subieron un 4,2% interanual.'},
+  {cat:'mercado',u:'alerta',src:'Banco Central Chile',url:'#',img:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',pais:'🇨🇱 Chile',t:'Esta semana',title:'Dólar sobre $930 encarece importaciones cárnicas un 6%',body:'El tipo de cambio USD/CLP se mantiene entre $928 y $942, incrementando los costos de importación de carne en Chile. Importadores proyectan ajustes de listas de precios para noviembre. El efecto es mayor en vacuno y cerdo importado.'},
+  {cat:'cerdo',u:'alerta',src:'ABIPECS Brasil',url:'#',img:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600&q=70',pais:'🇧🇷 Brasil',t:'Esta semana',title:'Cerdo brasileño: FOB sube 2,3% por alta demanda asiática',body:'Las exportaciones de cerdo de Brasil crecieron un 18% en septiembre 2026 frente al año anterior. China, Filipinas y Vietnam lideran las compras. El precio FOB del pernil subió a USD 2,15/kg CIF China.'},
+  {cat:'ave',u:'info',src:'ABPA Brasil',url:'#',img:'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70',pais:'🇧🇷 Brasil',t:'Esta semana',title:'Brasil: récord de exportaciones de pollo en septiembre 2026',body:'Las exportaciones de pollo de Brasil alcanzaron 460.000 toneladas en septiembre 2026, máximo histórico mensual. El precio FOB se estabilizó en USD 1,38/kg. La influenza aviar H5N1 sigue controlada en las principales zonas productoras.'},
+  {cat:'sanidad',u:'alerta',src:'SENASAG Paraguay',url:'#',img:'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=70',pais:'🇵🇾 Paraguay',t:'Esta semana',title:'Alerta sanitaria: Fiebre Aftosa en zona norte de Paraguay',body:'Paraguay confirmó focos de Fiebre Aftosa en Concepción. SAG Chile intensificó controles de importación. Las exportaciones paraguayas con certificación sanitaria especial continúan hacia Chile sin interrupciones.'},
+  {cat:'mercado',u:'info',src:'ODEPA',url:'#',img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70',pais:'🇨🇱 Chile',t:'Esta semana',title:'ODEPA: consumo per cápita de carne en Chile sube a 98 kg/año',body:'Chile consolida uno de los consumos de carne per cápita más altos de América Latina con 98 kg/año. El pollo lidera con 47 kg, seguido de vacuno con 27 kg y cerdo con 24 kg. La tendencia al alza se mantiene en 2026.'},
+  {cat:'mercado',u:'info',src:'DIRECON Chile',url:'#',img:'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=70',pais:'🌎 Global',t:'Esta semana',title:'China aumenta cuotas de importación de carne sudamericana Q4',body:'El Ministerio de Comercio de China amplió las cuotas de importación de carne bovina y porcina para Q4 2026, beneficiando a Brasil, Argentina y Paraguay. Chile como importador de esas carnes verá presión alcista en precios FOB.'},
+];
+
+function nTab(el,cat){
+  curTab=cat;
+  document.querySelectorAll('#news-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const list=NEWS_CACHE.length?NEWS_CACHE:NEWS_STATIC;
+  renderNewsData(list,cat);
 }
 
-function updateNewsTimestamp(){
-  const el = document.getElementById('news-ts');
-  if(!el) return;
-  const d = new Date(NEWS_LAST_FETCH);
-  el.textContent = `Actualizado: ${d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})}`;
+function renderNewsData(list,cat){
+  const uc={critico:'ntag-warn',alerta:'ntag-warn',info:'ntag-info'};
+  const ul={alerta:'🟡 Tendencia a monitorear',info:'🔵 Informativa'};
+  let filtered=cat==='all'?list:list.filter(n=>n.cat===cat);
+  if(!filtered.length)filtered=list;
+  let html='';
+  if(cat==='all'){
+    const g={alerta:filtered.filter(n=>n.u==='alerta'||n.u==='critico'),info:filtered.filter(n=>n.u==='info')};
+    ['alerta','info'].filter(u=>g[u].length).forEach(u=>{
+      html+=`<div class="nul"><div class="nul-line"></div><div class="nul-txt" style="color:${u==='alerta'?'#f39c12':'#1565c0'}">${ul[u]}</div><div class="nul-line"></div></div>`;
+      g[u].forEach(n=>html+=newsHtml(n,uc[n.u]));
+    });
+  }else{filtered.forEach(n=>html+=newsHtml(n,uc[n.u]))}
+  document.getElementById('news-list').innerHTML=html||'<div class="empty"><span class="icon">📭</span><p>Sin noticias en esta categoría</p></div>';
 }
 
-// Schedule auto-refresh every 6 hours
-function scheduleNewsRefresh(){
-  // Check on focus (user returns to app)
-  document.addEventListener('visibilitychange', ()=>{
-    if(!document.hidden && Date.now() - NEWS_LAST_FETCH > NEWS_TTL) fetchAndRender('all');
-  });
-  // Interval check every 30 min
-  setInterval(()=>{
-    if(Date.now() - NEWS_LAST_FETCH > NEWS_TTL) fetchAndRender('all');
-  }, 30 * 60 * 1000);
+function newsHtml(n,cls){
+  return`<div class="news-card">
+    <img class="news-img" src="${n.img}" alt="" loading="lazy" onerror="this.style.display='none'">
+    <div class="news-body">
+      <div class="news-tags">
+        <span class="ntag ${cls}">${n.u==='alerta'||n.u==='critico'?'Alerta':'Informativo'}</span>
+        <span class="ntag ntag-cat">${n.cat}</span>
+        <span class="ntag ntag-cat">${n.pais}</span>
+      </div>
+      <div class="news-title">${n.title}</div>
+      <div class="news-text">${n.body}</div>
+      <div class="news-footer">
+        <a href="${n.url}" target="_blank" class="src-lnk">📎 ${n.src}</a>
+        <span class="news-time">${n.t}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function updateNewsTS(){
+  const el=document.getElementById('news-ts');
+  if(!el)return;
+  const d=new Date(NEWS_LAST);
+  el.textContent='Actualizado '+d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+}
+
+function updateDashNews(){
+  const list=NEWS_CACHE.length?NEWS_CACHE:NEWS_STATIC;
+  const crit=list.find(n=>n.u==='alerta')||list[0];
+  if(!crit)return;
+  const el=document.getElementById('dash-news');
+  if(el)el.innerHTML=`<div class="tag" style="background:#f39c12">Tendencia</div><h4>${crit.title}</h4><p>${crit.body}</p><br><a href="${crit.url}" target="_blank" class="src-lnk" style="margin-top:4px">📎 ${crit.src} →</a>`;
 }
 
 async function fetchAndRender(cat){
-  const data = await fetchLiveNews();
-  renderNewsData(data, cat);
+  const data=await fetchLiveNews();
+  renderNewsData(data,cat);
+  updateDashNews();
 }
 
-// ─── News images — curated per category ──────
-const NEWS_IMAGES = {
-  pasos:   'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=70', // mountain pass road
-  sanidad_aftosa: 'https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=600&q=70', // cows field
-  sanidad_aviar:  'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=70', // chickens farm
-  sanidad_cerdo:  'https://images.unsplash.com/photo-1528467269665-b72962cd10d7?w=600&q=70', // pigs
-  sanidad_gen:    'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=70', // lab/vet
-  vacuno:  'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70', // beef cuts
-  cerdo:   'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&q=70', // pork
-  ave:     'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70', // chicken
-  mercado_dolar:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70', // finance
-  mercado_minero:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70', // mining
-  puerto: 'https://images.unsplash.com/photo-1523920290228-4f321a939b4c?w=600&q=70', // port
-};
-
-const NEWS=[
-  {cat:'pasos',u:'critico',src:'Dirección de Vialidad MOP',url:'https://vialidad.cl/noticias',
-   img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=70',
-   pais:'🏔️ Los Libertadores',t:'Hoy 06:00',
-   title:'Paso Los Libertadores cerrado por viento blanco',
-   body:'Vialidad decretó cierre preventivo. Camiones refrigerados detenidos en Mendoza. Retraso estimado: 48–72 horas.',tags:['br','Cierre total','ba','Vacuno · Cerdo']},
-  {cat:'sanidad',u:'critico',src:'WOAH / OIE',url:'https://www.woah.org/es/',
-   img:'https://images.unsplash.com/photo-1548192746-dd526f154ed9?w=600&q=70',
-   pais:'🦠 OIE · Global',t:'Hoy 07:00',
-   title:'Foco de Fiebre Aftosa confirmado en Paraguay',
-   body:'Foco activo en el Departamento de Concepción. Chile activa protocolo en fronteras. Riesgo de restricción de importaciones.',tags:['br','Alerta roja','ba','Vacuno · Paraguay']},
-  {cat:'sanidad',u:'critico',src:'SENASA Argentina',url:'https://www.senasa.gob.ar',
-   img:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=70',
-   pais:'🦠 SENASA · Argentina',t:'Hoy 09:00',
-   title:'Influenza Aviar H5N1 en granjas del sur de Argentina',
-   body:'Brotes en Río Negro y Neuquén. Chile suspende importación de aves desde zonas afectadas.',tags:['br','H5N1','ba','Aves · Argentina']},
-  {cat:'pasos',u:'alerta',src:'Puerto de Valparaíso',url:'https://www.puertoav.com',
-   img:'https://images.unsplash.com/photo-1523920290228-4f321a939b4c?w=600&q=70',
-   pais:'🚢 Puerto Valparaíso',t:'Hoy 09:30',
-   title:'Retraso de 3 a 5 días en contenedores frigoríficos',
-   body:'Paro parcial portuario afecta la descarga de carga refrigerada. Anticipar próximas órdenes.',tags:['br','Retraso 3–5d','bb','Importados']},
-  {cat:'vacuno',u:'alerta',src:'ABIEC Brasil',url:'https://www.abiec.com.br',
-   img:'https://images.unsplash.com/photo-1504672281656-e4981d70414b?w=600&q=70',
-   pais:'🇧🇷 Brasil',t:'Hoy 08:30',
-   title:'Exportaciones de vacuno de Brasil suben 8% en junio',
-   body:'Mayor demanda de China eleva el precio FOB del trasero brasileño. Impacto esperado en 2–3 semanas.',tags:['ba','Riesgo de costo','bb','Vacuno']},
-  {cat:'cerdo',u:'alerta',src:'USDA FAS',url:'https://apps.fas.usda.gov',
-   img:'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=600&q=70',
-   pais:'🌐 Global',t:'Ayer',
-   title:'China amplía su cuota de importación de cerdo',
-   body:'Paraguay y Argentina redirigen stock hacia Asia. La oferta latinoamericana podría caer entre 5 y 8% en el Q3.',tags:['ba','Vigilar','bb','Cerdo · Global']},
-  {cat:'ave',u:'info',src:'ODEPA',url:'https://www.odepa.gob.cl',
-   img:'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70',
-   pais:'🇨🇱 Chile',t:'Hoy',
-   title:'Consumo de ave en Chile alcanza récord: 34,2 kg/persona en 2024',
-   body:'El pollo consolida su posición como la proteína más consumida en Chile. Oportunidad de ampliar la oferta.',tags:['bg','Positivo','bb','Ave · Chile']},
-  {cat:'mercado',u:'info',src:'Banco Central de Chile',url:'https://www.bcentral.cl',
-   img:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',
-   pais:'🇨🇱 Chile',t:'Hoy',
-   title:'El dólar baja un 0,8%: oportunidad para importadores de carne',
-   body:'CLP se aprecia. Rango estimado esta semana: $930–$960. Momento para cerrar contratos de importación.',tags:['bg','Oportunidad','bb','Importados']},
-  {cat:'mercado',u:'info',src:'Cochilco',url:'https://www.cochilco.cl',
-   img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70',
-   pais:'🏔️ Norte Chile',t:'Ayer',
-   title:'Temporada minera: la demanda en Antofagasta sube un 15%',
-   body:'Casinos industriales y restaurantes amplían pedidos. Oportunidad de cartera B2B para FT Foods.',tags:['bg','Oportunidad B2B','bb','Antofagasta']},
-];
-
-// Price data for comparator
-const PRICE_DATA = {
-  'Lomo liso':     {tipo:'Vacuno',local:'$12.400/kg',locals:[{shop:'FT Foods La Reserva',p:'$12.400'},{shop:'Santa Isabel',p:'$13.200'},{shop:'Jumbo',p:'$12.800'},{shop:'Lider',p:'$13.500'},{shop:'Unimarc',p:'$12.900'}],intl:{br:'$3,85',py:'$3,40',us:'N/D'}},
-  'Lomo vetado':   {tipo:'Vacuno',local:'$14.900/kg',locals:[{shop:'FT Foods La Reserva',p:'$14.900'},{shop:'Santa Isabel',p:'$15.800'},{shop:'Jumbo',p:'$15.200'},{shop:'Lider',p:'$16.100'},{shop:'Unimarc',p:'$15.500'}],intl:{br:'$5,20',py:'$4,80',us:'$7,50'}},
-  'Asado de tira': {tipo:'Vacuno',local:'$9.200/kg', locals:[{shop:'FT Foods La Reserva',p:'$9.200'},{shop:'Santa Isabel',p:'$9.800'},{shop:'Jumbo',p:'$9.400'},{shop:'Lider',p:'$10.100'},{shop:'Unimarc',p:'$9.600'}],intl:{br:'$4,10',py:'$3,75',us:'N/D'}},
-  'Posta negra':   {tipo:'Vacuno',local:'$8.400/kg', locals:[{shop:'FT Foods La Reserva',p:'$8.400'},{shop:'Santa Isabel',p:'$8.900'},{shop:'Jumbo',p:'$8.600'},{shop:'Lider',p:'$9.200'},{shop:'Unimarc',p:'$8.700'}],intl:{br:'$3,20',py:'$2,95',us:'N/D'}},
-  'Entraña':       {tipo:'Vacuno',local:'$13.500/kg',locals:[{shop:'FT Foods A Punto',p:'$13.500'},{shop:'Santa Isabel',p:'$14.200'},{shop:'Jumbo',p:'$13.800'},{shop:'Lider',p:'$14.800'},{shop:'Unimarc',p:'$14.100'}],intl:{br:'$4,50',py:'$4,10',us:'$6,20'}},
-  'Pierna de cerdo': {tipo:'Cerdo',local:'$6.200/kg',locals:[{shop:'FT Foods Fundo Sur',p:'$6.200'},{shop:'Santa Isabel',p:'$6.800'},{shop:'Jumbo',p:'$6.400'},{shop:'Lider',p:'$7.100'},{shop:'Unimarc',p:'$6.600'}],intl:{br:'$2,85',py:'$2,60',us:'$2,40'}},
-  'Costillar de cerdo': {tipo:'Cerdo',local:'$7.800/kg',locals:[{shop:'FT Foods Fundo Sur',p:'$7.800'},{shop:'Santa Isabel',p:'$8.400'},{shop:'Jumbo',p:'$8.000'},{shop:'Lider',p:'$8.700'},{shop:'Unimarc',p:'$8.200'}],intl:{br:'$3,20',py:'$2,95',us:'$2,75'}},
-  'Pechuga entera': {tipo:'Ave',local:'$3.400/kg',locals:[{shop:'FT Foods',p:'$3.400'},{shop:'Santa Isabel',p:'$3.900'},{shop:'Jumbo',p:'$3.600'},{shop:'Lider',p:'$4.100'},{shop:'Unimarc',p:'$3.750'}],intl:{br:'$1,85',py:'$1,72',us:'$2,10'}},
-  'Trutro largo':  {tipo:'Ave',local:'$2.800/kg',locals:[{shop:'FT Foods',p:'$2.800'},{shop:'Santa Isabel',p:'$3.200'},{shop:'Jumbo',p:'$2.950'},{shop:'Lider',p:'$3.400'},{shop:'Unimarc',p:'$3.100'}],intl:{br:'$1,20',py:'$1,15',us:'$1,45'}},
-  'Pollo entero':  {tipo:'Ave',local:'$3.200/kg',locals:[{shop:'FT Foods',p:'$3.200'},{shop:'Santa Isabel',p:'$3.600'},{shop:'Jumbo',p:'$3.350'},{shop:'Lider',p:'$3.800'},{shop:'Unimarc',p:'$3.500'}],intl:{br:'$1,55',py:'$1,48',us:'$1,80'}},
-};
-
-const SCREENS=['dash','news','cmp','market','stock','ia','admin'];
-
-// ════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════
-window.addEventListener('load',async()=>{
-  await openIDB();await loadDB();
-  setTimeout(()=>document.getElementById('splash').classList.add('hide'),1600);
-  renderNews('all');renderDash();updCtx();
-  updateRateDisplay();
-});
-
-function setFecha(){const d=new Date();return d.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
-
-// ─── Nav ──────────────────────────────────────
-function go(id){
-  SCREENS.forEach((s,i)=>{document.getElementById('s-'+s).classList.toggle('active',s===id);document.querySelectorAll('.nb')[i].classList.toggle('active',s===id);});
-  document.getElementById('ac').scrollTop=0;
-  if(id==='stock'){renSt('todos');}
-  if(id==='dash'){renderDash();}
-  if(id==='ia'){updCtx();}
+async function forceRefreshNews(){
+  NEWS_CACHE=[];NEWS_LAST=0;NEWS_LOADED=false;
+  await fetchAndRender(curTab);
 }
 
-// ─── Tabs ─────────────────────────────────────
-function nTab(el,cat){el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderNews(cat);}
-function mTab(el,id){el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');['mt','mc','mf','ml'].forEach(i=>document.getElementById(i).style.display=i===id?'block':'none');}
-function stTab(el,cat){el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renSt(cat);}
-function intlTab(el,id){el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');['intl-ave','intl-cerdo','intl-vacuno'].forEach(i=>document.getElementById(i).style.display=i===id?'block':'none');}
-
-// ─── USD rates ────────────────────────────────
-function updateRateDisplay(){
-  const usd=DB.usd||948.4;
-  document.getElementById('dash-usd').textContent=`1 USD = $${usd.toLocaleString('es-CL')} CLP`;
-  document.getElementById('tk-usd').textContent='$'+Math.round(usd).toLocaleString('es-CL');
-  const now=new Date();
-  document.getElementById('dash-usd-time').textContent=`Hoy ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-}
-function refreshRates(){
-  const rates=[948.4,950.2,945.8,947.1,952.0];
-  DB.usd=rates[Math.floor(Math.random()*rates.length)];
-  saveDB();updateRateDisplay();
-  document.getElementById('tk-usd').textContent='$'+Math.round(DB.usd);
+function scheduleNewsRefresh(){
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-NEWS_LAST>NEWS_TTL)fetchAndRender(curTab)});
+  setInterval(()=>{if(Date.now()-NEWS_LAST>NEWS_TTL)fetchAndRender(curTab)},30*60*1000);
 }
 
-// ─── News ─────────────────────────────────────
-function renderNews(cat){
-  const uc={critico:'#c0392b',alerta:'#9a6700',info:'#0969da'};
-  let list=cat==='all'?NEWS:cat==='critico'?NEWS.filter(n=>n.u==='critico'):NEWS.filter(n=>n.cat===cat);
-  if(cat==='all'){
-    const g={critico:list.filter(n=>n.u==='critico'),alerta:list.filter(n=>n.u==='alerta'),info:list.filter(n=>n.u==='info')};
-    const labels={critico:'🔴 Críticas — acción inmediata',alerta:'🟡 Alertas — monitorear',info:'🔵 Informativas — tendencias'};
-    document.getElementById('news-list').innerHTML=['critico','alerta','info'].filter(u=>g[u].length).map(u=>`<div style="margin-bottom:4px"><div class="nul"><div class="nul-line" style="background:${uc[u]}20"></div><div class="nul-txt" style="color:${uc[u]}">${labels[u]}</div><div class="nul-line" style="background:${uc[u]}20"></div></div>${g[u].map(n=>nHtml(n,uc[n.u])).join('')}</div>`).join('');
-  }else{document.getElementById('news-list').innerHTML=list.map(n=>nHtml(n,uc[n.u])).join('');}
-  const crit=NEWS.find(n=>n.u==='critico');
-  if(crit)document.getElementById('dash-np').innerHTML=`<div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:4px">${crit.title}</div><div style="font-size:12px;color:var(--t2);margin-bottom:6px">${crit.body}</div><a href="${crit.url}" target="_blank" class="src-lnk">📎 ${crit.src} →</a>`;
+// ═══════════════════════════════════════════
+// PRECIOS Y GRÁFICOS
+// ═══════════════════════════════════════════
+let curPriceTab='ave';
+
+function pTab(el,cat){
+  curPriceTab=cat;
+  document.querySelectorAll('#price-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderPriceTable(cat);
 }
 
-function nHtml(n,col){
-  return`<a class="ncard" href="${n.url}" target="_blank" rel="noopener">
-    ${n.img?`<div class="ncard-img-wrap"><img class="ncard-img" src="${n.img}" loading="lazy" onerror="this.style.display='none'"><div class="ncard-img-ov"></div><div class="ncard-img-badge"><span class="badge bb" style="font-size:10px;backdrop-filter:blur(4px)">${n.pais}</span></div><div class="ncard-img-time">${n.t}</div></div>`:''}
-    <div class="ncard-acc" style="background:${col}"></div>
-    <div class="ncard-b">
-      ${!n.img?`<div class="ncard-top"><span class="badge bb" style="font-size:10px">${n.pais}</span><span style="font-size:10px;color:var(--t3)">${n.t}</span></div>`:''}
-      <div class="ncard-tit">${n.title}</div>
-      <div class="ncard-txt">${n.body}</div>
-      <div class="ncard-ft">${n.tags.map((t,i)=>i%2===0?`<span class="badge ${t}">`:`${t}</span>`).join('')}</div>
-      <a href="${n.url}" target="_blank" class="src-lnk" onclick="event.stopPropagation()">📎 ${n.src} →</a>
-    </div>
-  </a>`;
-}
-
-// ─── Price Comparator ─────────────────────────
-function analyzePricePhoto(inp){
-  if(!inp.files[0])return;
-  const file=inp.files[0];
-  const url=URL.createObjectURL(file);
-  // Show preview with analyzing overlay
-  document.getElementById('cmp-upload-section').style.display='none';
-  document.getElementById('cmp-result-section').style.display='block';
-  document.getElementById('cmp-preview-wrap').innerHTML=`
-    <img src="${url}" class="photo-preview-img">
-    <div class="photo-analyzing" id="analyzing-ov">
-      <div class="analyzing-spinner"></div>
-      <div style="color:#fff;font-size:13px;font-weight:600">Analizando producto...</div>
-      <div style="color:rgba(255,255,255,.6);font-size:11px">Identificando corte y calidad</div>
-    </div>`;
-  // Use Claude API to identify the cut from the image
-  const reader=new FileReader();
-  reader.onload=async e=>{
-    const b64=e.target.result.split(',')[1];
-    try{
-      const res=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-6',max_tokens:300,
-          messages:[{role:'user',content:[
-            {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
-            {type:'text',text:'Identifica el corte de carne en esta imagen. Responde SOLO con un JSON así: {"corte":"nombre exacto","tipo":"Vacuno|Cerdo|Ave","calidad":"Premium|Estándar|Económico","confianza":"Alta|Media|Baja"}. Si no es carne, responde {"error":"no es carne"}.'}
-          ]}]
-        })
-      });
-      const data=await res.json();
-      const txt=data.content?.[0]?.text||'{}';
-      let result;
-      try{result=JSON.parse(txt.replace(/```json|```/g,'').trim());}catch{result={};}
-      if(result.error){showCmpError('No se detectó un corte de carne en la imagen. Intenta con otra foto.');return;}
-      showCmpResult(result.corte,result.tipo,result.calidad,result.confianza);
-    }catch(err){
-      // Fallback: detect by filename or show manual selection
-      showCmpError('No se pudo analizar automáticamente. Usa el selector manual de cortes.');
-    }
-  };
-  reader.readAsDataURL(file);
-}
-
-function showCmpResult(corte,tipo,calidad,confianza){
-  document.getElementById('analyzing-ov')?.remove();
-  // Find matching price data
-  const key=Object.keys(PRICE_DATA).find(k=>k.toLowerCase().includes((corte||'').toLowerCase().split(' ')[0]))||Object.keys(PRICE_DATA)[0];
-  const pd=PRICE_DATA[key]||PRICE_DATA['Lomo liso'];
-  const usd=DB.usd||948.4;
-  // Find FT Foods price (first in list = best local price)
-  const ftPrice=pd.locals[0];
-  // Build result HTML
-  const resultHtml=`
-    <div class="cmp-result-card">
-      <div class="cmp-result-header">
-        <div class="cmp-result-title">${corte||key}</div>
-        <div class="cmp-result-sub">${tipo||pd.tipo} · Calidad ${calidad||'Estándar'} · Confianza: ${confianza||'Media'}</div>
-      </div>
-      <div style="padding:14px 16px">
-        <div style="background:var(--gbg);border:1px solid #86efac;border-radius:var(--rsm);padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-          <div><div style="font-size:11px;color:var(--g);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Mejor precio local · Antofagasta</div><div style="font-size:18px;font-weight:700;color:var(--g)">${ftPrice.p}/kg</div><div style="font-size:11px;color:var(--t3)">${ftPrice.shop}</div></div>
-          <div style="font-size:24px">🏆</div>
-        </div>
-        <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Comparativo local (Antofagasta)</div>
-        <table class="cmp-table" style="margin-bottom:14px">
-          <thead><tr><th>Comercio</th><th>$/kg</th><th>vs FT</th></tr></thead>
-          <tbody>${pd.locals.map((l,i)=>{const myP=parseInt(pd.locals[0].p.replace(/\D/g,''));const thP=parseInt(l.p.replace(/\D/g,''));const diff=thP-myP;return`<tr><td ${i===0?'style="font-weight:700;color:var(--r)"':''}>${l.shop}</td><td ${i===0?'style="font-weight:700;color:var(--r)"':''}>${l.p}</td><td>${i===0?'<span class="badge bg">Tu precio</span>':diff>0?`<span class="badge br">+${diff.toLocaleString('es-CL')}</span>`:'<span class="badge bk">Igual</span>'}</td></tr>`;}).join('')}</tbody>
-        </table>
-        <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Referencia internacional (USD/kg)</div>
-        <table class="cmp-table">
-          <thead><tr><th>Origen</th><th>FOB USD/kg</th><th>CLP equiv.*</th></tr></thead>
-          <tbody>
-            <tr><td>🇧🇷 Brasil</td><td>${pd.intl.br}</td><td>${pd.intl.br!=='N/D'?'$'+Math.round(parseFloat(pd.intl.br.replace('$',''))*usd).toLocaleString('es-CL'):'N/D'}</td></tr>
-            <tr><td>🇵🇾 Paraguay</td><td>${pd.intl.py||'N/D'}</td><td>${pd.intl.py&&pd.intl.py!=='N/D'?'$'+Math.round(parseFloat((pd.intl.py||'0').replace('$',''))*usd).toLocaleString('es-CL'):'N/D'}</td></tr>
-            <tr><td>🇺🇸 EE.UU.</td><td>${pd.intl.us||'N/D'}</td><td>${pd.intl.us&&pd.intl.us!=='N/D'?'$'+Math.round(parseFloat((pd.intl.us||'0').replace('$',''))*usd).toLocaleString('es-CL'):'N/D'}</td></tr>
-          </tbody>
-        </table>
-        <div style="font-size:11px;color:var(--t3);margin-top:8px">*CLP estimado a $${Math.round(usd).toLocaleString('es-CL')}/USD. No incluye flete, aranceles ni IVA.</div>
-      </div>
-    </div>`;
-  document.getElementById('cmp-result-content').innerHTML=resultHtml;
-}
-
-function showCmpError(msg){
-  document.getElementById('analyzing-ov')?.remove();
-  document.getElementById('cmp-result-content').innerHTML=`<div style="background:var(--rbg);border:1px solid #fca5a5;border-radius:var(--rsm);padding:14px;margin-bottom:12px;color:var(--r);font-size:13px">⚠️ ${msg}</div>`;
-}
-
-function showManualComparison(){
-  const cut=document.getElementById('cmp-manual-cut').value;if(!cut)return;
-  document.getElementById('cmp-upload-section').style.display='none';
-  document.getElementById('cmp-result-section').style.display='block';
-  document.getElementById('cmp-preview-wrap').innerHTML='';
-  showCmpResult(cut,null,'Estándar','Alta');
-}
-
-function resetComparator(){
-  document.getElementById('cmp-upload-section').style.display='block';
-  document.getElementById('cmp-result-section').style.display='none';
-  document.getElementById('cmp-preview-wrap').innerHTML='';
-  document.getElementById('cmp-result-content').innerHTML='';
-  document.getElementById('cmp-photo').value='';
-  document.getElementById('cmp-manual-cut').value='';
-}
-
-// ─── Dashboard ────────────────────────────────
-function renderDash(){
-  const np=DB.precios.length||DB.stock.length||DB.catalog.length;
-  document.getElementById('kp').textContent=np||'—';
-  if(DB.stock.length){
-    const critPct=(DB.cfg.crit||30)/100;
-    const cr=DB.stock.filter(p=>p.stock<p.min*critPct);
-    const bj=DB.stock.filter(p=>p.stock>=p.min*critPct&&p.stock<=p.min);
-    document.getElementById('ka').textContent=cr.length+bj.length;
-    // Category bars
-    const cats={};DB.stock.forEach(p=>{cats[p.cat]=(cats[p.cat]||0)+1;});
-    const tot=DB.stock.length;
-    const cl={vacuno:'#c0392b',cerdo:'#6e40c9',ave:'#0969da',procesado:'#9a6700',otro:'#8c959f'};
-    document.getElementById('dash-cats').innerHTML=Object.entries(cats).map(([c,n])=>`<div class="br-row"><div class="bl" style="text-transform:capitalize">${c}</div><div class="btr"><div class="bfi" style="width:${Math.round(n/tot*100)}%;background:${cl[c]||'#8c959f'}"></div></div><div class="bv">${n}</div></div>`).join('');
-    // Critical alerts
-    let ah='';
-    cr.slice(0,5).forEach(p=>{
-      const pct=p.min>0?Math.round(p.stock/p.min*100):0;
-      const barCol=pct<15?'#c0392b':pct<30?'#e74c3c':'#f97316';
-      ah+=`<div class="alert-crit">
-        <div class="alert-crit-head">
-          <div><div class="alert-crit-name">${p.name}</div><div style="font-size:11px;color:var(--t2);margin-top:2px">${p.stock} ${p.unidad||'kg'} disponibles · Mín.: ${p.min}</div></div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><div class="alert-crit-code">${p.id}</div><div class="badge br">${pct}% del mín.</div></div>
-        </div>
-        <div class="alert-crit-bars"><div class="crit-bar-wrap"><div class="crit-bar" style="width:${pct}%;background:${barCol}"></div></div><div class="crit-pct" style="color:${barCol}">${pct}%</div></div>
-      </div>`;
-    });
-    bj.slice(0,3).forEach(p=>{
-      const pct=p.min>0?Math.round(p.stock/p.min*100):0;
-      ah+=`<div class="alert-warn"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:600;color:var(--am)">${p.name}</div><div style="font-size:11px;color:var(--t2);margin-top:2px">${p.stock} ${p.unidad||'kg'} · Stock bajo (${pct}%)</div></div><div class="alert-crit-code">${p.id}</div></div></div>`;
-    });
-    if(!ah)ah='<div style="color:var(--g);font-size:13px;padding:6px 0">✅ Todo el stock está en niveles normales.</div>';
-    document.getElementById('dash-alts').innerHTML='<div class="ct">⚡ Alertas de stock crítico · '+new Date().toLocaleDateString('es-CL')+'</div>'+ah;
-  }
-  if(DB.precios.length){const mg=DB.precios.filter(p=>p.mg>0);const avg=mg.length?mg.reduce((a,b)=>a+b.mg,0)/mg.length:0;document.getElementById('km').textContent=avg.toFixed(1)+'%';}
-  if(DB.files.length)document.getElementById('kv').textContent=DB.files.length+' arch.';
-}
-
-// ─── Logo / Cover ─────────────────────────────
-function applyLogo(url){
-  ['hdr-logo','sp-logo','hero-logo-w'].forEach(id=>{const el=document.getElementById(id);if(el){el.innerHTML=`<img src="${url}" style="width:${id==='hdr-logo'?'30':'80'}px;height:${id==='hdr-logo'?'30':'80'}px;object-fit:contain">`;}});
-  // Hero logo fix
-  const hl=document.getElementById('hero-logo-w');if(hl)hl.innerHTML=`<img src="${url}" style="width:42px;height:42px;object-fit:contain">`;
-}
-function chgLogo(inp){if(!inp.files[0])return;const r=new FileReader();r.onload=async e=>{DB.logoUrl=e.target.result;await iSet('logo',e.target.result);applyLogo(e.target.result);document.getElementById('logo-p').innerHTML=`<img src="${e.target.result}" style="width:72px;height:72px;object-fit:contain;border-radius:8px;border:1px solid var(--bd);padding:6px;background:#fff;margin-top:8px">`;};r.readAsDataURL(inp.files[0]);}
-function chgCover(inp){if(!inp.files[0])return;const r=new FileReader();r.onload=async e=>{document.getElementById('hero-img').src=e.target.result;document.getElementById('sp-bg').style.backgroundImage=`url('${e.target.result}')`;DB.coverUrl=e.target.result;await iSet('cover',e.target.result);document.getElementById('cvr-p').innerHTML=`<img src="${e.target.result}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-top:8px;pointer-events:none">`;};r.readAsDataURL(inp.files[0]);}
-
-// ─── Stock grouped by code+name ───────────────
-let stCat='todos';
-function filSt(){renSt(stCat);}
-function stTab(el,cat){el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renSt(cat);}
-
-function renSt(cat){
-  stCat=cat;
-  const q=(document.getElementById('sch-st').value||'').toLowerCase();
-  let list=[...DB.stock];
-  const critPct=(DB.cfg.crit||30)/100;
-  if(cat==='critico') list=list.filter(p=>p.stock<=p.min);
-  else if(cat!=='todos') list=list.filter(p=>p.cat===cat);
-  if(q) list=list.filter(p=>p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q));
-  if(!DB.stock.length){document.getElementById('st-list').innerHTML='<div style="text-align:center;padding:50px 20px;color:var(--t3)"><div style="font-size:48px;margin-bottom:12px">📦</div><div>Sin datos de stock</div></div>';return;}
-  if(!list.length){document.getElementById('st-list').innerHTML='<div style="text-align:center;padding:30px;color:var(--t3)">Sin resultados</div>';return;}
-
-  // Group by code (base code without lot suffix)
-  const groups={};
-  list.forEach(p=>{
-    const key=p.id.split('-')[0]+'|'+p.name.split('(')[0].trim();
-    if(!groups[key]) groups[key]={id:p.id.split('-')[0],name:p.name.split('(')[0].trim(),cat:p.cat,lots:[]};
-    groups[key].lots.push(p);
+function renderPriceTable(cat){
+  const items=PRICES_DATA[cat]||[];
+  const usd=DB.usd||931;
+  let html=`<div class="price-table-wrap"><table><thead><tr><th>Producto</th><th>Stock (cajas)</th><th>$/kg CLP</th><th>USD/kg</th></tr></thead><tbody>`;
+  items.forEach(p=>{
+    const usdPrice=(p.price/usd).toFixed(2);
+    const lowStock=p.stock<50;
+    html+=`<tr><td style="font-weight:500">${p.name}<br><span style="font-size:10px;color:var(--t3)">${p.code}</span></td><td style="color:${lowStock?'var(--r)':'var(--g)'};font-weight:700">${p.stock}</td><td style="font-weight:700">${fmt(p.price)}</td><td>$${usdPrice}</td></tr>`;
   });
-
-  const bg={vacuno:'#fff5f5',cerdo:'#faf5ff',ave:'#eff6ff',procesado:'#fffbeb',otro:'#f9fafb'};
-  const ic={vacuno:'🥩',cerdo:'🐷',ave:'🍗',procesado:'🥪',otro:'📦'};
-  const cl2={vacuno:'#c0392b',cerdo:'#6e40c9',ave:'#0969da',procesado:'#9a6700',otro:'#8c959f'};
-
-  document.getElementById('st-list').innerHTML=Object.entries(groups).map(([key,g])=>{
-    const total=g.lots.reduce((a,b)=>a+b.stock,0);
-    const minTotal=g.lots.reduce((a,b)=>a+b.min,0);
-    const pct=minTotal>0?Math.round(total/minTotal*100):100;
-    const sc=pct<30?'#c0392b':pct<100?'#9a6700':'#1a7f37';
-    const gId='g_'+key.replace(/\W/g,'_');
-    const multiLot=g.lots.length>1;
-
-    return`<div class="stock-group">
-      <div class="stock-group-header" onclick="toggleGroup('${gId}')">
-        <div class="stock-group-icon" style="background:${bg[g.cat]||'#f9fafb'}">${ic[g.cat]||'📦'}</div>
-        <div class="stock-group-info">
-          <div class="stock-group-name">${g.name}</div>
-          <div class="stock-group-meta">${g.id} · ${g.lots.length} lote${g.lots.length>1?'s':''} · ${g.lots[0].unidad||'kg'}</div>
-        </div>
-        <div class="stock-group-right">
-          <div class="stock-group-total" style="color:${sc}">${total.toLocaleString('es-CL')} ${g.lots[0].unidad||'kg'}</div>
-          <div class="badge" style="background:${sc}22;color:${sc};font-size:9px">${pct}%</div>
-        </div>
-        ${multiLot?`<div class="stock-group-chevron" id="chev_${gId}">▼</div>`:''}
-      </div>
-      ${multiLot?`<div class="stock-group-body" id="${gId}">
-        ${g.lots.map(l=>{
-          const lPct=l.min>0?Math.round(l.stock/l.min*100):100;
-          const lc=lPct<30?'#c0392b':lPct<100?'#9a6700':'#1a7f37';
-          return`<div class="lot-row">
-            <div class="lot-badge">${l.id}</div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:12px;color:var(--t2);margin-bottom:3px">${l.origen||'Chile'} · ${l.stock} ${l.unidad||'kg'}</div>
-              <div class="lot-bar"><div class="lot-bar-fill" style="width:${lPct}%;background:${lc}"></div></div>
-            </div>
-            <div style="font-size:11px;font-weight:700;color:${lc};width:35px;text-align:right">${lPct}%</div>
-          </div>`;
-        }).join('')}
-      </div>`:''}`+'</div>';
-  }).join('');
-
-  document.getElementById('st-sub').textContent=`${DB.stock.length} productos · ${Object.keys(groups).length} grupos`;
+  html+=`</tbody></table></div>`;
+  document.getElementById('price-list').innerHTML=html;
 }
 
-function toggleGroup(id){
-  const body=document.getElementById(id);
-  const chev=document.getElementById('chev_'+id);
-  if(!body)return;
-  const open=body.classList.toggle('open');
-  if(chev) chev.classList.toggle('open',open);
-}
-
-// ─── File Upload ──────────────────────────────
-function hFile(inp,type){if(inp.files[0])procFile(inp.files[0],type);}
-
-function procFile(file,type){
-  const ext=file.name.split('.').pop().toLowerCase();
-  const isImg=['jpg','jpeg','png','heic','webp','bmp'].includes(ext);
-
-  // If image uploaded for precios — use Claude vision to extract
-  if(isImg && type==='precios'){
-    procImagePrecios(file);
-    return;
+// FOB Chart data (USD/kg, ene-oct 2026)
+const FOB_DATA={
+  vacuno:{
+    labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct'],
+    series:[
+      {name:'Brasil 🇧🇷',color:'#2ecc71',data:[3.55,3.60,3.68,3.72,3.75,3.78,3.80,3.82,3.85,3.82]},
+      {name:'Paraguay 🇵🇾',color:'#3498db',data:[3.30,3.35,3.38,3.42,3.45,3.48,3.50,3.52,3.55,3.55]},
+      {name:'USA 🇺🇸',color:'#e74c3c',data:[5.90,5.95,6.00,6.05,6.10,6.12,6.15,6.18,6.20,6.20]},
+    ]
+  },
+  cerdo:{
+    labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct'],
+    series:[
+      {name:'Brasil 🇧🇷',color:'#2ecc71',data:[1.70,1.75,1.78,1.80,1.85,1.88,1.90,1.92,1.93,1.95]},
+      {name:'USA 🇺🇸',color:'#e74c3c',data:[1.90,1.95,1.98,2.00,2.05,2.08,2.10,2.12,2.15,2.15]},
+    ]
+  },
+  ave:{
+    labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct'],
+    series:[
+      {name:'Brasil 🇧🇷',color:'#2ecc71',data:[1.20,1.22,1.25,1.27,1.28,1.30,1.33,1.35,1.37,1.38]},
+      {name:'USA 🇺🇸',color:'#e74c3c',data:[1.45,1.48,1.50,1.52,1.55,1.57,1.58,1.60,1.62,1.62]},
+    ]
   }
+};
 
-  const pEl=document.getElementById('pp-'+type),pfEl=document.getElementById('pf-'+type),mEl=document.getElementById('pm-'+type),sbEl=document.getElementById('stbar-'+type);
-  pEl.style.display='block';pfEl.style.width='10%';mEl.textContent='Leyendo archivo...';
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
-      pfEl.style.width='55%';mEl.textContent='Procesando...';
-      const wb=ext==='csv'?XLSX.read(e.target.result,{type:'string'}):XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true,cellNF:false,cellText:false});
-      let best=[];wb.SheetNames.forEach(sn=>{const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:'',raw:false});if(rows.length>best.length)best=rows;});
-      pfEl.style.width='80%';
-      setTimeout(async()=>{
-        const rows=mapR(best,type);
-        if(!rows.length){mEl.textContent='⚠️ Sin filas válidas. Columnas detectadas: '+Object.keys(best[0]||{}).join(', ');return;}
-        DB[type]=rows;pfEl.style.width='100%';mEl.textContent='';
-        const el=document.getElementById('est-'+type);if(el){el.className='badge bg';el.textContent='✅ '+rows.length;}
-        if(sbEl)sbEl.innerHTML=`<div style="background:var(--gbg);border:1px solid #86efac;border-radius:var(--rsm);padding:8px 12px;font-size:12px;color:var(--g);margin-top:8px">✅ ${rows.length} registros de "${file.name}"</div>`;
-        addFI(file,type,rows.length);await saveDB();setTimeout(()=>pEl.style.display='none',2000);renderDash();updCtx();
-        if(type==='stock')renSt('todos');
-      },200);
-    }catch(err){mEl.textContent='❌ Error: '+err.message+'. Intenta exportar el archivo como CSV desde Excel.';pEl.style.display='none';}
-  };
-  ext==='csv'?r.readAsText(file,'utf-8'):r.readAsArrayBuffer(file);
+let curChart='vacuno';
+function showChart(el,cat){
+  curChart=cat;
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  drawFOBChart(cat);
 }
 
-async function procImagePrecios(file){
-  const pEl=document.getElementById('pp-precios'),pfEl=document.getElementById('pf-precios'),mEl=document.getElementById('pm-precios'),sbEl=document.getElementById('stbar-precios');
-  pEl.style.display='block';pfEl.style.width='20%';mEl.textContent='Analizando imagen con IA...';
-  const reader=new FileReader();
-  reader.onload=async e=>{
-    const b64=e.target.result.split(',')[1];
-    try{
-      pfEl.style.width='50%';mEl.textContent='Extrayendo precios...';
-      const res=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-6',max_tokens:2000,
-          messages:[{role:'user',content:[
-            {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
-            {type:'text',text:'Esta es una lista de precios de carnes. Extrae TODOS los productos con su precio. Responde ÚNICAMENTE con un JSON array sin explicaciones ni markdown:\n[{"nombre":"nombre producto","codigo":"código si existe","precio_venta":precio_número,"categoria":"Vacuno|Cerdo|Ave|Procesado"}]\nSi no hay código, usa "". Precios solo en números, sin símbolos. Si no ves lista de precios, responde [].'}
-          ]}]
-        })
-      });
-      const data=await res.json();
-      pfEl.style.width='85%';
-      let txt=data.content?.[0]?.text||'[]';
-      txt=txt.replace(/```json|```/g,'').trim();
-      let extracted=[];
-      try{extracted=JSON.parse(txt);}catch{extracted=[];}
-      if(!extracted.length){mEl.textContent='⚠️ No se pudieron extraer precios de la imagen. Verifica que sea una lista clara.';pEl.style.display='none';return;}
-      // Convert to our format
-      const rows=extracted.map((p,i)=>({
-        id:p.codigo||'P'+(i+1),
-        name:p.nombre||'',
-        cat:cat(p.categoria||p.nombre||''),
-        catDisplay:p.categoria||catDisplayFromCat(cat(p.categoria||p.nombre||'')),
-        costo:0,
-        venta:Number(p.precio_venta)||0,
-        mg:0,
-        origen:'Chile'
-      })).filter(p=>p.name&&p.venta>0);
-      DB.precios=rows;pfEl.style.width='100%';mEl.textContent='';
-      const el=document.getElementById('est-precios');if(el){el.className='badge bg';el.textContent='✅ '+rows.length;}
-      if(sbEl)sbEl.innerHTML=`<div style="background:var(--gbg);border:1px solid #86efac;border-radius:var(--rsm);padding:8px 12px;font-size:12px;color:var(--g);margin-top:8px">✅ ${rows.length} precios extraídos de la imagen con IA</div>`;
-      addFI(file,'precios',rows.length);await saveDB();setTimeout(()=>pEl.style.display='none',2000);renderDash();updCtx();
-    }catch(err){
-      mEl.textContent='❌ Error al procesar imagen. Intenta con un Excel o CSV.';
-      pEl.style.display='none';
-    }
-  };
-  reader.readAsDataURL(file);
+function drawFOBChart(cat){
+  const d=FOB_DATA[cat];if(!d)return;
+  const svg=document.getElementById('fob-chart');if(!svg)return;
+  const W=340,H=160,padL=32,padB=24,padT=10,padR=12;
+  const cW=W-padL-padR,cH=H-padT-padB;
+  const allVals=d.series.flatMap(s=>s.data);
+  const mn=Math.min(...allVals)*0.96,mx=Math.max(...allVals)*1.02;
+  const xStep=cW/(d.labels.length-1);
+  const yScale=v=>(1-(v-mn)/(mx-mn))*cH+padT;
+  const xScale=i=>padL+i*xStep;
+  let paths='';
+  d.series.forEach(s=>{
+    const pts=s.data.map((v,i)=>`${xScale(i)},${yScale(v)}`).join(' ');
+    const area='M'+s.data.map((v,i)=>`${xScale(i)},${yScale(v)}`).join(' L')+` L${xScale(s.data.length-1)},${padT+cH} L${padL},${padT+cH} Z`;
+    paths+=`<path d="${area}" fill="${s.color}22" stroke="none"/><polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round"/>`;
+    const last=s.data[s.data.length-1];
+    paths+=`<circle cx="${xScale(s.data.length-1)}" cy="${yScale(last)}" r="4" fill="${s.color}" stroke="white" stroke-width="1.5"/>`;
+  });
+  // Grid lines
+  let grid='';
+  [0.25,0.5,0.75,1].forEach(f=>{
+    const y=padT+cH*f;
+    const val=(mn+(mx-mn)*(1-f)).toFixed(2);
+    grid+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--brd)" stroke-width="1"/><text x="${padL-3}" y="${y+4}" text-anchor="end" fill="var(--t3)" font-size="8">$${val}</text>`;
+  });
+  // X labels
+  let xlbls='';
+  d.labels.forEach((l,i)=>{
+    if(i%2===0)xlbls+=`<text x="${xScale(i)}" y="${H-4}" text-anchor="middle" fill="var(--t3)" font-size="8">${l}</text>`;
+  });
+  svg.innerHTML=grid+paths+xlbls;
+  // Legend
+  const leg=document.getElementById('fob-legend');
+  if(leg)leg.innerHTML=d.series.map(s=>`<div class="leg-item"><div class="leg-dot" style="background:${s.color}"></div><span>${s.name}</span></div>`).join('');
 }
 
-function fc(row,c){const k=Object.keys(row).find(k=>c.some(x=>k.toLowerCase().replace(/[\s_.()áéíóúñ]/g,'').includes(x.toLowerCase().replace(/[\s_.()áéíóúñ]/g,''))));return k&&row[k]!==''&&row[k]!==null?row[k]:'';}
-function n(v){if(typeof v==='number')return v;const x=parseFloat(String(v).replace(/[^\d.,-]/g,'').replace(',','.'));return isNaN(x)?0:x;}
-function cat(s){s=(s||'').toLowerCase();if(/vacun|bov|lomo|asado|posta|paleta|plateada|filete|rib|entrana|tapapecho/.test(s))return'vacuno';if(/cerdo|chancho|pierna|pernil|costill.*cer|pork/.test(s))return'cerdo';if(/pollo|ave|pechuga|trutro|alita|pavo|chicken/.test(s))return'ave';if(/vienesa|mortadel|salami|jamon|embutid|chorizo|salchicha/.test(s))return'procesado';return'otro';}
-
-function mapR(raw,type){
-  if(type==='stock')return raw.map((r,i)=>{
-    const name=String(fc(r,['producto','descripcion','nombre','articulo','item','desc'])||'').trim();
-    if(!name)return null;
-    // Category: prefer explicit column, fallback to detect from name
-    const catCol=String(fc(r,['categoria','categ','tipo','familia','category','especie','rubro'])||'').trim();
-    const catVal=catCol?catFromCol(catCol):cat(name);
-    // Friendly display category from column value or name
-    const catDisplay=catCol?normalizeCat(catCol):catDisplayFromCat(catVal);
-    return{
-      id:String(fc(r,['codigo','cod','sku','id','ref','code','lote'])||'P'+(i+1)).trim(),
-      name,
-      cat:catVal,
-      catDisplay,
-      stock:n(fc(r,['stock','cantidad','kilos','kg','existencia','saldo','cant','qty','disponible','cajas','kgs'])||0),
-      min:n(fc(r,['minimo','min','stockmin','stock min','reposicion','minimum'])||DB.cfg.min),
-      origen:String(fc(r,['origen','pais','procedencia','origin','country'])||'Chile').trim(),
-      unidad:String(fc(r,['unidad','und','medida','unit'])||'kg').trim()
-    };
-  }).filter(Boolean);
-  if(type==='precios')return raw.map((r,i)=>{
-    const name=String(fc(r,['producto','descripcion','nombre','articulo','item','desc'])||'').trim();
-    if(!name)return null;
-    const costo=n(fc(r,['costo','precio costo','pcosto','compra','neto','cost','p.costo'])||0);
-    const venta=n(fc(r,['venta','precio venta','pventa','precio','pvp','price','p.venta','valor'])||0);
-    let mg=n(fc(r,['margen','margin','utilidad','%','mg','markup'])||0);
-    if(mg===0&&costo>0&&venta>0)mg=(venta-costo)/venta*100;
-    const catCol=String(fc(r,['categoria','categ','tipo','especie'])||'').trim();
-    return{
-      id:String(fc(r,['codigo','cod','sku','id','ref','code'])||'P'+(i+1)).trim(),
-      name,
-      cat:catCol?catFromCol(catCol):cat(name),
-      catDisplay:catCol?normalizeCat(catCol):catDisplayFromCat(catCol?catFromCol(catCol):cat(name)),
-      costo,venta,mg,
-      origen:String(fc(r,['origen','pais','procedencia'])||'Chile').trim()
-    };
-  }).filter(Boolean);
-  return raw.map(r=>({producto:String(fc(r,['producto','descripcion','item','nombre'])||''),venta:n(fc(r,['venta','total','monto','ingreso'])||0)})).filter(r=>r.producto||r.venta);
+function drawStockChart(){
+  const cats={Ave:0,Cerdo:0,Vacuno:0,Procesado:0};
+  DB.stock.forEach(p=>{if(cats[p.cat]!==undefined)cats[p.cat]+=p.kg});
+  const svg=document.getElementById('stock-chart');if(!svg)return;
+  const W=340,H=140,padL=70,padB=20,padT=10,padR=12;
+  const labels=Object.keys(cats),vals=Object.values(cats);
+  const max=Math.max(...vals)*1.1;
+  const colors=['#2ecc71','#e74c3c','#f39c12','#3498db'];
+  const barH=(H-padT-padB-labels.length*6)/labels.length;
+  let bars='';
+  labels.forEach((l,i)=>{
+    const y=padT+i*(barH+6);
+    const bw=(vals[i]/max)*(W-padL-padR);
+    bars+=`<rect x="${padL}" y="${y}" width="${bw}" height="${barH}" rx="4" fill="${colors[i]}"/>`;
+    bars+=`<text x="${padL-6}" y="${y+barH/2+4}" text-anchor="end" fill="var(--t2)" font-size="11" font-weight="600">${l}</text>`;
+    bars+=`<text x="${padL+bw+5}" y="${y+barH/2+4}" fill="var(--t2)" font-size="10">${Math.round(vals[i]).toLocaleString('es-CL')} kg</text>`;
+  });
+  svg.innerHTML=bars;
 }
 
-// Category from explicit column value
-function catFromCol(s){
-  s=(s||'').toLowerCase();
-  if(/vacun|bov|res|vaca|carne.*vac/.test(s))return'vacuno';
-  if(/cerdo|chancho|porc|pork/.test(s))return'cerdo';
-  if(/ave|pollo|poultr|bird|gall/.test(s))return'ave';
-  if(/proces|embutid|salchicha|vienesa|mortadel|jamon/.test(s))return'procesado';
-  if(/congel/.test(s))return'congelado';
-  return cat(s); // fallback to name detection
+// ═══════════════════════════════════════════
+// ALERTAS
+// ═══════════════════════════════════════════
+function renderAlerts(){
+  const threshold=DB.threshold||30;
+  const critical=DB.stock.filter(p=>(p.kg/p.min)*100<threshold).sort((a,b)=>(a.kg/a.min)-(b.kg/b.min));
+  const warn=DB.stock.filter(p=>{const pct=(p.kg/p.min)*100;return pct>=threshold&&pct<100}).slice(0,4);
+  const el=document.getElementById('alert-list');if(!el)return;
+  let html='';
+  critical.forEach(p=>{
+    const pct=Math.round((p.kg/p.min)*100);
+    html+=`<div class="alert-card crit"><div class="alert-inner"><div class="alert-top"><span class="alert-name">${p.name}</span><span class="alert-code">${p.code}</span></div><div class="alert-meta">${p.kg} kg disponibles · Mín.: ${p.min} kg</div><div class="bar-wrap"><div class="bar-fill bar-crit" style="width:${Math.min(pct,100)}%"></div></div><div class="alert-pct" style="color:var(--r)">${pct}% del mínimo</div></div></div>`;
+  });
+  warn.forEach(p=>{
+    const pct=Math.round((p.kg/p.min)*100);
+    html+=`<div class="alert-card warn"><div class="alert-inner"><div class="alert-top"><span class="alert-name">${p.name}</span><span class="alert-code">${p.code}</span></div><div class="alert-meta">${p.kg} kg · Stock bajo (${pct}%)</div></div></div>`;
+  });
+  if(!html)html=`<div style="margin:0 max(16px,env(safe-area-inset-left,0px));padding:16px;background:var(--g2);border-radius:var(--rad);border:1px solid var(--g)"><div style="font-size:14px;font-weight:700;color:var(--g)">✅ Sin alertas críticas</div><div style="font-size:12px;color:var(--t2);margin-top:4px">Stock dentro de niveles normales.</div></div>`;
+  el.innerHTML=html;
+  const d=document.getElementById('alert-date');if(d)d.textContent=new Date().toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const d2=document.getElementById('dash-date');if(d2)d2.textContent=new Date().toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
 
-// Normalize category to display name
-function normalizeCat(s){
-  const lc=(s||'').toLowerCase();
-  if(/vacun|bov|res/.test(lc))return'Vacuno';
-  if(/cerdo|chancho|porc/.test(lc))return'Cerdo';
-  if(/ave|pollo|poultr/.test(lc))return'Ave';
-  if(/proces|embutid/.test(lc))return'Procesado';
-  if(/congel/.test(lc))return'Congelado';
-  // Return original with first letter uppercase if no match
-  return s.charAt(0).toUpperCase()+s.slice(1).toLowerCase();
+// ═══════════════════════════════════════════
+// CATÁLOGO
+// ═══════════════════════════════════════════
+let curCatFilter='all',catSearch='';
+function catTab(el,cat){
+  curCatFilter=cat;
+  document.querySelectorAll('#pg-catalogo .tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderCatalog();
+}
+function filterCatalog(q){catSearch=q.toLowerCase();renderCatalog()}
+function renderCatalog(){
+  let items=DB.catalog.length?DB.catalog:buildCatalog();
+  if(curCatFilter!=='all')items=items.filter(p=>p.cat===curCatFilter);
+  if(catSearch)items=items.filter(p=>p.name.toLowerCase().includes(catSearch)||p.code.includes(catSearch));
+  const el=document.getElementById('cat-grid');if(!el)return;
+  if(!items.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1"><span class="icon">🔍</span><p>Sin resultados</p></div>`;return}
+  el.innerHTML=items.map(p=>`<div class="cat-card-item"><div class="cat-card-img">${p.icon}</div><div class="cat-card-body"><div class="cat-card-name">${p.name}</div><span class="cat-card-tag">${p.cat}</span><div class="cat-card-price">${fmt(p.price)}/kg</div></div></div>`).join('');
 }
 
-function catDisplayFromCat(c){
-  const map={vacuno:'Vacuno',cerdo:'Cerdo',ave:'Ave',procesado:'Procesado',otro:'Otro',congelado:'Congelado'};
-  return map[c]||c;
-}
+// ═══════════════════════════════════════════
+// IA CHAT — Claude API + web_search
+// ═══════════════════════════════════════════
+let isTyping=false;
+function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}}
+function sendChip(el){document.getElementById('chat-input').value=el.textContent.replace(/^[^\w]+/,'').trim();sendChat()}
 
-function addFI(file,type,rows){
-  const icons={stock:'📦',precios:'💰',full:'📊',doc:'📄'};
-  DB.files.push({id:Date.now(),name:file.name,size:file.size,type,rows:rows||0,date:new Date().toLocaleString('es-CL')});
-  document.getElementById('files-list').innerHTML=DB.files.map(f=>`<div class="fi"><div class="fic">${icons[f.type]||'📄'}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.name}</div><div style="font-size:11px;color:var(--t3)">${f.date} · ${(f.size/1024).toFixed(0)} KB${f.rows?' · '+f.rows+' filas':''}</div></div><button style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:4px" onclick="rmFile(${f.id})">✕</button></div>`).join('');
-  document.getElementById('fc-cnt').textContent=DB.files.length;
-}
-async function rmFile(id){DB.files=DB.files.filter(f=>f.id!==id);await saveDB();document.getElementById('files-list').innerHTML=DB.files.length?'<div style="color:var(--t3);font-size:13px">...</div>':'<div style="color:var(--t3);font-size:13px">Sin archivos.</div>';document.getElementById('fc-cnt').textContent=DB.files.length;}
+async function sendChat(){
+  if(isTyping)return;
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim();if(!msg)return;
+  input.value='';
+  appendMsg('user',msg);
+  const chips=document.getElementById('chip-row');if(chips)chips.style.display='none';
+  isTyping=true;
+  appendTyping();
 
-// ─── IA Chat ──────────────────────────────────
-function updCtx(){
-  const b=[];
-  if(DB.stock.length)b.push(`<span class="badge bg">📦 ${DB.stock.length} en stock</span>`);
-  if(DB.precios.length)b.push(`<span class="badge bg">💰 ${DB.precios.length} precios</span>`);
-  if(DB.catalog.length)b.push(`<span class="badge bg">🛍️ ${DB.catalog.length} catálogo</span>`);
-  DB.files.forEach(f=>b.push(`<span class="badge bb">📄 ${f.name.slice(0,14)}</span>`));
-  document.getElementById('ia-ctx').innerHTML=b.length?b.join(''):'<span class="badge bk">Sin archivos cargados</span>';
-}
+  const apiKey=localStorage.getItem('carniq_apikey')||'';
+  if(!apiKey){removeTyping();appendMsg('bot','⚠️ <b>API Key no configurada.</b> Ve a Admin → API Key para agregar tu clave de Anthropic. Sin ella, no puedo conectarme a Claude AI.<br><br>Puedes obtener una en <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>');isTyping=false;return}
 
-function buildCtx(){
-  const usd=DB.usd||948.4;
-  let c=`Eres el asistente experto de CarnIQ para FT Foods Antofagasta (distribuidora de carnes premium: FT Foods, La Reserva, A Punto, Fundo Sur). Responde siempre en español, directo y orientado a decisiones.\n\nFecha: ${setFecha()}\nUSD/CLP: $${usd.toLocaleString('es-CL')} (▼0,8%)\n\n`;
-  if(DB.stock.length){const cr=DB.stock.filter(p=>p.stock<p.min*(DB.cfg.crit||30)/100);c+=`Stock: ${DB.stock.length} productos. Quiebres críticos: ${cr.length}.\n`;if(cr.length)c+='Quiebres: '+cr.slice(0,5).map(p=>`${p.name}(${p.stock}${p.unidad})`).join(',')+'\n';}
-  if(DB.precios.length){const mg=DB.precios.filter(p=>p.mg>0);const avg=mg.length?mg.reduce((a,b)=>a+b.mg,0)/mg.length:0;c+=`Precios: ${DB.precios.length} productos. Margen prom: ${avg.toFixed(1)}%\n`;}
-  c+=`\nAlertas mercado:\n🔴 Paso Los Libertadores CERRADO 48-72h\n🔴 Fiebre Aftosa Paraguay (WOAH)\n🔴 H5N1 aves sur Argentina (SENASA)\n🟡 FOB vacuno Brasil +8% (ABIEC)\n🟢 Demanda minera Antofagasta +15% (Cochilco)\n🟢 Dólar bajo → oportunidad importación\n\nPrecios FOB referencia (USD/kg): Lomo liso BR$3,85 PY$3,40 · Pierna cerdo BR$2,85 PY$2,60 US$2,40 · Pechuga ave BR$1,85 PY$1,72 US$2,10\n`;
-  return c;
-}
+  // Build context
+  const critAlerts=DB.stock.filter(p=>(p.kg/p.min)*100<(DB.threshold||30)).map(p=>p.name).join(', ')||'ninguno';
+  const systemPrompt=`Eres el asistente de inteligencia artificial de FT Foods Antofagasta, Chile.
+Empresa: Distribuidora de carnes (Frigorífico Temuco). Marcas: La Reserva, A Punto, Fundo Sur.
+Clientes: casinos mineros y restaurantes del norte de Chile.
+USD/CLP hoy: $${DB.usd}. UF hoy: $${DB.uf}.
+Stock crítico actual: ${critAlerts}.
+Tienes acceso a búsqueda web en tiempo real. Úsala para responder con información actualizada sobre mercado cárnico, precios FOB, tipo de cambio, sanidad animal, logística, etc.
+Responde siempre en español, con datos concretos y orientados al negocio de FT Foods.`;
 
-async function sendMsg(){
-  const inp=document.getElementById('ci');const msg=inp.value.trim();if(!msg)return;
-  inp.value='';inp.style.height='36px';document.getElementById('csend').disabled=true;
-  addCMsg(msg,'user');DB.chatHistory.push({role:'user',content:msg});
-  const tid='t'+Date.now();addTyping(tid);
+  DB.chatCtx.push({role:'user',content:msg});
+  if(DB.chatCtx.length>12)DB.chatCtx=DB.chatCtx.slice(-12);
+
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,system:buildCtx(),messages:DB.chatHistory.slice(-14)})});
-    const data=await res.json();removeTyping(tid);
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-beta':'web-search-2025-03-05'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:systemPrompt,tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],messages:DB.chatCtx})
+    });
+    const data=await res.json();
     if(data.error)throw new Error(data.error.message);
-    const reply=data.content?.[0]?.text||'Sin respuesta.';
-    DB.chatHistory.push({role:'assistant',content:reply});addCMsg(reply,'ai');
+    const reply=data.content?.find(b=>b.type==='text')?.text||'No pude obtener respuesta.';
+    removeTyping();
+    appendMsg('bot',reply.replace(/\n/g,'<br>'));
+    DB.chatCtx.push({role:'assistant',content:reply});
   }catch(err){
-    removeTyping(tid);
-    const reply=smartReply(msg);DB.chatHistory.push({role:'assistant',content:reply});addCMsg(reply,'ai');
-  }finally{document.getElementById('csend').disabled=false;}
+    removeTyping();
+    if(err.message.includes('401'))appendMsg('bot','❌ <b>API Key inválida.</b> Ve a Admin y verifica tu clave de Anthropic.');
+    else appendMsg('bot',`⚠️ <b>Error de conexión:</b> ${err.message}<br><br>Verifica tu conexión a internet y la API Key en Admin.`);
+  }
+  isTyping=false;
 }
 
-function smartReply(q){
-  q=q.toLowerCase();const usd=DB.usd||948.4;
-  if(/quiebre|critico|sin stock|agot|falta/.test(q)){const c=DB.stock.filter(p=>p.stock<p.min*(DB.cfg.crit||30)/100);if(!DB.stock.length)return'No hay datos de stock. Carga tu archivo Excel en Admin.';if(!c.length)return'✅ Sin quiebres críticos. Todo el stock está sobre el umbral establecido.';return`⚠️ **${c.length} producto(s) en quiebre crítico:**\n\n${c.map(p=>{const pct=p.min>0?Math.round(p.stock/p.min*100):0;return`• **${p.name}** [${p.id}]: ${p.stock} ${p.unidad||'kg'} (${pct}% del mínimo)`;}).join('\n')}\n\n→ Emitir órdenes de compra hoy.`;}
-  if(/rentable|margen|utilidad|ganancia/.test(q)){if(!DB.precios.length)return'Carga tu lista de precios en Admin.';const top=[...DB.precios].filter(p=>p.mg>0).sort((a,b)=>b.mg-a.mg).slice(0,5);return`📊 **Top 5 por margen:**\n\n${top.map((p,i)=>`${i+1}. ${p.name}: **${p.mg.toFixed(1)}%**`).join('\n')}\n\nMargen promedio: ${(top.reduce((a,b)=>a+b.mg,0)/top.length).toFixed(1)}%`;}
-  if(/dolar|980|tipo.*cambio/.test(q))return`💱 **Escenario USD $980** (+3,3% sobre $${Math.round(usd).toLocaleString('es-CL')}):\n\n• Costo de importados sube ~3,3%\n• Pechuga ave PY: de $${Math.round(1.72*usd/1000)}K → $${Math.round(1.72*980/1000)}K/kg\n• Pierna cerdo US: de $${Math.round(2.40*usd/1000)}K → $${Math.round(2.40*980/1000)}K/kg\n• Lomo liso BR: de $${Math.round(3.85*usd/1000)}K → $${Math.round(3.85*980/1000)}K/kg\n\n→ Anticipar compras **esta semana** mientras el dólar sigue bajo.`;
-  if(/paso|libertadores|argentina|atraso|frontera/.test(q))return`🏔️ **Paso Los Libertadores CERRADO**\n(Fuente: Vialidad MOP)\n\n• Retraso: 48–72 horas\n• Afecta: vacuno y cerdo argentino\n• Camiones detenidos en Mendoza\n\n**Acciones:**\n1. Confirmar órdenes con proveedores AR\n2. Revisar stock de cortes importados\n3. Notificar a clientes B2B`;
-  if(/minero|mineria|casino|b2b|antofagasta/.test(q))return`⛏️ **Mercado Minero Antofagasta** +15%\n(Fuente: Cochilco)\n\n• Casinos industriales (mayor volumen)\n• Empresas contratistas\n• Servicios alimentación en faenas\n\n**Más demandados:** asado de tira, posta negra, pechuga, pierna de cerdo\n\n→ Ampliar contratos B2B para Q3 2025.`;
-  if(/aftosa|fmd|paraguay|fiebre/.test(q))return`🦠 **Fiebre Aftosa Paraguay** (Fuente: WOAH/OIE)\n\n**Situación:** Foco activo en Dpto. Concepción. SAG activa protocolo fronterizo.\n\n**Impacto para FT Foods:**\n• 🔴 Corto plazo: Posible suspensión importaciones vacuno PY\n• Paraguay FOB lomo liso: $3,40/USD → riesgo de quedarse sin oferta\n• 🟡 Mediano: Brasil suple pero FOB ya subió +8%\n• 🟢 Vacuno nacional gana demanda relativa\n\n**Acciones:** Revisar órdenes PY, diversificar hacia Brasil/Chile, comunicar clientes B2B.`;
-  if(/precio.*int|brasil|paraguay|usa|eeuu|import|fob/.test(q))return`🌍 **Precios internacionales clave** (USD/kg · FOB)\n\n**Pechuga de ave:**\n🇧🇷 Brasil: $1,85 → CLP $${Math.round(1.85*usd/1000)}K\n🇵🇾 Paraguay: $1,72 → CLP $${Math.round(1.72*usd/1000)}K ← **Mejor precio**\n🇺🇸 EE.UU.: $2,10 → CLP $${Math.round(2.10*usd/1000)}K\n\n**Pierna de cerdo:**\n🇧🇷 $2,85 · 🇵🇾 $2,60 · 🇺🇸 $2,40 ← **Mejor precio**\n\n**Lomo liso vacuno:**\n🇧🇷 $3,85 · 🇵🇾 $3,40 ← **Mejor precio** · 🇺🇸 N/D\n\n*No incluye flete, aranceles ni IVA. USD=$${Math.round(usd).toLocaleString('es-CL')} CLP.*`;
-  if(/resumen|ejecutivo|estado|hoy/.test(q)){const cr=DB.stock.filter(p=>p.stock<p.min*(DB.cfg.crit||30)/100).length;const avg=DB.precios.filter(p=>p.mg>0).length?DB.precios.filter(p=>p.mg>0).reduce((a,b)=>a+b.mg,0)/DB.precios.filter(p=>p.mg>0).length:0;return`📊 **Resumen Ejecutivo · FT Foods Antofagasta**\n\n**Stock:** ${DB.stock.length} productos — **${cr} en quiebre crítico**\n**Margen promedio:** ${avg>0?avg.toFixed(1)+'%':'Sin datos (carga precios)'}\n**USD/CLP:** $${Math.round(usd).toLocaleString('es-CL')}\n\n**Alertas:**\n🔴 Paso Los Libertadores cerrado 48-72h\n🔴 Fiebre Aftosa activa en Paraguay\n🟡 FOB vacuno Brasil +8% en 2-3 semanas\n🟢 Demanda minera Antofagasta +15%\n🟢 Dólar bajo → comprar ahora\n\n**Acción #1:** ${cr>0?`Reponer ${cr} producto(s) en quiebre`:'Evaluar contratos de importación'}`;} 
-  return`Tengo acceso a ${DB.stock.length} productos en stock, ${DB.precios.length} en lista de precios y ${DB.catalog.length} en catálogo.\n\nPuedo analizar: quiebres de stock, rentabilidad, impacto del dólar, precios internacionales (Brasil, Paraguay, EE.UU.), alertas de sanidad animal, pasos fronterizos y oportunidades B2B. ¿Qué necesitas?`;
+function appendMsg(role,html){
+  const el=document.getElementById('chat-msgs');
+  const div=document.createElement('div');
+  div.className=`msg ${role}`;
+  div.innerHTML=`${role==='bot'?'<div class="msg-hdr">CarnIQ IA · Claude AI · FT Foods</div>':''}<div class="msg-body">${html}</div>`;
+  el.appendChild(div);
+  el.scrollTop=el.scrollHeight;
+}
+function appendTyping(){
+  const el=document.getElementById('chat-msgs');
+  const div=document.createElement('div');
+  div.className='msg bot';div.id='typing-ind';
+  div.innerHTML='<div class="msg-hdr">CarnIQ IA · Claude AI</div><div class="msg-body"><div class="typing"><span></span><span></span><span></span></div></div>';
+  el.appendChild(div);el.scrollTop=el.scrollHeight;
+}
+function removeTyping(){const e=document.getElementById('typing-ind');if(e)e.remove()}
+
+// ═══════════════════════════════════════════
+// FILE LOAD
+// ═══════════════════════════════════════════
+function loadStock(input){
+  if(!input.files.length)return;
+  const f=input.files[0];
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+      DB.stock=rows.filter(r=>r.Descripción||r.descripcion||r.Material).map(r=>({
+        id:String(r['Grupo Articulo']||r.grupo||'GEN'),
+        code:String(r.Material||r.material||''),
+        name:String(r.Descripción||r.descripcion||r.Material||''),
+        cat:guessCategory(String(r['Grupo Articulo']||'')),
+        kg:parseFloat(String(r.Total||r.total||r.Stock||0).replace(',','.'))||0,
+        min:30
+      })).filter(r=>r.kg>0);
+      saveDB();renderAlerts();updateStockCount();
+      showEl('stock-preview',`✅ Stock cargado: ${DB.stock.length} productos`,true);
+    }catch(err){showEl('stock-preview','❌ Error: '+err.message,true)}
+  };
+  reader.readAsArrayBuffer(f);
+}
+function guessCategory(grp){
+  const g=grp.toLowerCase();
+  if(g.includes('_cong')||g.includes('a_cong'))return'Ave';
+  if(g.includes('c_desp')||g.startsWith('c_'))return'Cerdo';
+  if(g.startsWith('v_'))return'Vacuno';
+  if(g.startsWith('pro_'))return'Procesado';
+  return'General';
+}
+function loadPrecios(input){
+  if(!input.files.length)return;
+  const f=input.files[0];
+  if(f.type.startsWith('image/')){
+    // Vision AI
+    const reader=new FileReader();
+    reader.onload=async e=>{
+      showEl('precios-preview','🔄 Extrayendo precios con IA...',true);
+      const apiKey=localStorage.getItem('carniq_apikey')||'';
+      if(!apiKey){showEl('precios-preview','⚠️ Configura API Key primero',true);return}
+      try{
+        const b64=e.target.result.split(',')[1];
+        const res=await fetch('https://api.anthropic.com/v1/messages',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+          body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:f.type,data:b64}},{type:'text',text:'Extrae la lista de precios de esta imagen como JSON [{nombre,precio_clp,categoria}]. Solo JSON sin markdown.'}]}]})
+        });
+        const data=await res.json();
+        const txt=data.content?.[0]?.text||'[]';
+        const match=txt.match(/\[[\s\S]*\]/);
+        if(match){const items=JSON.parse(match[0]);showEl('precios-preview',`✅ ${items.length} precios extraídos con IA`,true)}
+        else showEl('precios-preview','✅ Procesado por IA',true);
+      }catch(err){showEl('precios-preview','❌ '+err.message,true)}
+    };
+    reader.readAsDataURL(f);
+  }else{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      try{
+        const wb=XLSX.read(e.target.result,{type:'array'});
+        const count=wb.SheetNames.length;
+        showEl('precios-preview',`✅ Lista de precios cargada: ${count} hoja(s)`,true);
+      }catch(err){showEl('precios-preview','❌ '+err.message,true)}
+    };
+    reader.readAsArrayBuffer(f);
+  }
 }
 
-function sChip(msg){document.getElementById('ci').value=msg;sendMsg();go('ia');}
-function addCMsg(text,role){const w=document.getElementById('chat-msgs');const d=document.createElement('div');d.className='cmsg '+(role==='user'?'cu':'cai');if(role==='ai')d.innerHTML='<div class="cail">CarnIQ · Asistente IA · FT Foods</div>'+text.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');else d.textContent=text;w.appendChild(d);d.scrollIntoView({behavior:'smooth',block:'end'});}
-function addTyping(id){const w=document.getElementById('chat-msgs');const d=document.createElement('div');d.className='cmsg cai';d.id=id;d.innerHTML='<div class="cail">CarnIQ IA</div><div class="typing"><span></span><span></span><span></span></div>';w.appendChild(d);d.scrollIntoView({behavior:'smooth',block:'end'});}
-function removeTyping(id){const el=document.getElementById(id);if(el)el.remove();}
-function autoR(el){el.style.height='36px';el.style.height=Math.min(el.scrollHeight,100)+'px';}
-
-// ─── Config ───────────────────────────────────
-async function saveCfg(){
-  DB.cfg.suc=document.getElementById('cfg-s').value;
-  DB.cfg.min=parseFloat(document.getElementById('cfg-m').value)||30;
-  DB.cfg.crit=parseFloat(document.getElementById('cfg-crit').value)||30;
-  await saveDB();
-  const b=document.querySelector('#s-admin .btn-p');const o=b.textContent;b.textContent='✅ Guardado';b.style.background='var(--g)';setTimeout(()=>{b.textContent=o;b.style.background='';},2000);
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+async function init(){
+  await openIDB();
+  await loadDB();
+  // Try cached news immediately
+  const cn=await iGet('news_cache_v10');
+  if(cn?.data?.length){NEWS_CACHE=cn.data;NEWS_LAST=cn.ts;NEWS_LOADED=true;updateNewsTS();updateDashNews()}
+  await fetchRates();
+  renderAlerts();
+  buildTicker();
+  renderCatalog();
+  renderPriceTable('ave');
+  drawFOBChart('vacuno');
+  drawStockChart();
+  // Fetch live news in background
+  fetchLiveNews().then(data=>{renderNewsData(data,curTab);updateDashNews()});
+  scheduleNewsRefresh();
+  setTimeout(()=>document.getElementById('splash').classList.add('hide'),1800);
 }
-async function resetAll(){
-  if(!confirm('¿Limpiar todos los datos? Esta acción no se puede deshacer.'))return;
-  const tx=idb.transaction('kv','readwrite');tx.objectStore('kv').clear();await new Promise(r=>tx.oncomplete=r);
-  DB={stock:[],precios:[],files:[],catalog:[],chatHistory:[],cfg:{suc:'Antofagasta Centro',min:30,crit:30},coverUrl:'',logoUrl:'',usd:948.4};
-  ['stock','precios','full'].forEach(t=>{const el=document.getElementById('est-'+t);if(el){el.className='badge ba';el.textContent='Sin datos';}});
-  document.getElementById('files-list').innerHTML='<div style="color:var(--t3);font-size:13px">Sin archivos.</div>';
-  document.getElementById('fc-cnt').textContent='0';
-  renderDash();updCtx();
-}
-function clsM(){document.getElementById('pmod').classList.remove('open');}
+init();
 </script>
-</body>
-</html>
