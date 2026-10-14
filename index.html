@@ -114,15 +114,16 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 .px{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
 /* NAV */
-#nav{background:var(--nav);border-top:1px solid var(--brd);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px)}
-.nav-inner{display:flex;justify-content:space-around;padding:2px 0}
-.nv{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 4px;min-height:56px;border-radius:10px;cursor:pointer;transition:all .15s;position:relative;flex:1;border:none;background:none;color:var(--t2);-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-.nv svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.nv span{font-size:10px;font-weight:600;letter-spacing:.1px;line-height:1}
+#nav{background:var(--nav);border-top:2px solid var(--brd);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav-inner{display:flex;justify-content:space-around;padding:0}
+.nv{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 2px;min-height:64px;border-radius:0;cursor:pointer;transition:color .15s,background .15s;position:relative;flex:1;border:none;background:none;color:var(--t2);-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none}
+.nv svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;transition:stroke-width .15s}
+.nv span{font-size:11px;font-weight:700;letter-spacing:.1px;line-height:1}
 .nv.active{color:var(--r)}
-.nv.active svg{stroke-width:2.2}
-.nv:active{background:var(--brd);transform:scale(.95)}
-.nv .badge{position:absolute;top:6px;right:calc(50% - 18px);background:var(--r);color:#fff;font-size:9px;font-weight:700;border-radius:8px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.nv.active svg{stroke-width:2.3}
+.nv.active::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2.5px;background:var(--r);border-radius:0 0 3px 3px}
+.nv:active{background:var(--r3);transform:scale(.93)}
+.nv .badge{position:absolute;top:8px;right:calc(50% - 20px);background:var(--r);color:#fff;font-size:9px;font-weight:700;border-radius:8px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
 
 /* TABS */
 .tabs{display:flex;gap:5px;overflow-x:auto;padding:0 max(12px,env(safe-area-inset-left,0px)) 8px;scrollbar-width:none}
@@ -610,13 +611,38 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       </div>
 
       <div class="mkt-card">
-        <div class="mkt-hdr"><h3>Mercado Chile</h3><span>2026</span></div>
+        <div class="mkt-hdr"><h3>Consumo Cárnico Chile</h3><span>2024 · ChileCarne / ODEPA</span></div>
         <div class="mkt-body">
-          <div class="mkt-row"><span class="item">Consumo per cápita vacuno</span><span class="price">18,4 kg/año</span><span class="chg chg-up">▲ 1,2%</span></div>
-          <div class="mkt-row"><span class="item">Consumo per cápita cerdo</span><span class="price">28,1 kg/año</span><span class="chg chg-up">▲ 0,8%</span></div>
-          <div class="mkt-row"><span class="item">Consumo per cápita ave</span><span class="price">42,3 kg/año</span><span class="chg chg-up">▲ 2,4%</span></div>
-          <div class="mkt-row"><span class="item">IMACEC Chile (últ. disponible)</span><span class="price">+2,1%</span><span class="chg chg-up">Jul 2026</span></div>
-          <div class="mkt-row"><span class="item">Demanda Norte Grande</span><span class="price">Sostenida</span><span class="chg chg-up">Minería activa</span></div>
+          <div class="mkt-row"><span class="item">🍗 Ave (per cápita)</span><span class="price">33,9 kg/año</span><span class="chg chg-up">▲ 2% · 41% del total</span></div>
+          <div class="mkt-row"><span class="item">🥩 Vacuno (per cápita)</span><span class="price">25,7 kg/año</span><span class="chg chg-up">▲ 2% · 31% del total</span></div>
+          <div class="mkt-row"><span class="item">🐷 Cerdo (per cápita)</span><span class="price">19,7 kg/año</span><span class="chg chg-up">▲ 9% · 24% del total</span></div>
+          <div class="mkt-row"><span class="item">📊 Total per cápita</span><span class="price">82,7 kg/año</span><span class="chg chg-up">▲ rec. histórico</span></div>
+          <div class="mkt-row" style="background:var(--am2);border-radius:6px;margin-top:4px"><span class="item" style="color:var(--am)">🔥 Mayor alza</span><span class="price" style="color:var(--am)">Cerdo +9%</span><span class="chg chg-up">Parrilla + Asia</span></div>
+        </div>
+      </div>
+
+      <div class="mkt-card">
+        <div class="mkt-hdr"><h3>Tendencias Consumo Masivo</h3><span>Kantar · T3 2025</span></div>
+        <div class="mkt-body">
+          <div class="mkt-row"><span class="item">🛒 Gasto hogares en alimentos</span><span class="price">50% del total</span><span class="chg chg-nt">vs. T3 2024</span></div>
+          <div class="mkt-row"><span class="item">📦 Volumen consumo masivo</span><span class="price">+0,7%</span><span class="chg chg-up">Impulsado por alimentos</span></div>
+          <div class="mkt-row"><span class="item">🥩 Cárnicos</span><span class="price">Top categoría</span><span class="chg chg-up">Canal tradicional</span></div>
+          <div class="mkt-row"><span class="item">📦 Formato pequeño</span><span class="price">Al alza</span><span class="chg chg-up">Hogar unipersonal</span></div>
+          <div class="mkt-row"><span class="item">🚚 Distribuidoras</span><span class="price">+11 pts</span><span class="chg chg-up">Fuera RM · ↑ regiones</span></div>
+          <div class="mkt-row"><span class="item">💻 E-commerce alimentos</span><span class="price">54% hogares</span><span class="chg chg-up">Cyber Day 13→19%</span></div>
+        </div>
+      </div>
+
+      <div class="mkt-card">
+        <div class="mkt-hdr"><h3>Región de Antofagasta</h3><span>Censo 2024 · BCN / CASEN</span></div>
+        <div class="mkt-body">
+          <div class="mkt-row"><span class="item">👥 Población región</span><span class="price">635.416</span><span class="chg chg-up">▲ 4,6% vs 2017</span></div>
+          <div class="mkt-row"><span class="item">🏙 Población comuna Antofagasta</span><span class="price">401.096</span><span class="chg chg-up">▲ 10,8% vs 2017</span></div>
+          <div class="mkt-row"><span class="item">🌍 Inmigración</span><span class="price">19,5%</span><span class="chg chg-up">Clientes diversos</span></div>
+          <div class="mkt-row"><span class="item">📉 Pobreza por ingresos</span><span class="price">16,4%</span><span class="chg chg-dn">Regional CASEN 2024</span></div>
+          <div class="mkt-row"><span class="item">🏗 Empresas comercio</span><span class="price">8.288</span><span class="chg chg-up">▲ vs 2022</span></div>
+          <div class="mkt-row"><span class="item">🍽 Alojamiento y comidas</span><span class="price">1.761 emp.</span><span class="chg chg-nt">5.861 trabajadores</span></div>
+          <div class="mkt-row" style="background:var(--b2);border-radius:6px;margin-top:4px"><span class="item" style="color:var(--b)">⛏ Minería activa</span><span class="price" style="color:var(--b)">Casinos · Resto.</span><span class="chg chg-up">Mercado B2B clave</span></div>
         </div>
       </div>
     </div>
@@ -1214,22 +1240,22 @@ const PROD_PHOTOS={
   '71714':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // tomahawk
   '71010':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // lomo vetado AP
   '71770':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // asado de tira
-  // Procesados — hamburguesas A Punto foto real
-  '17085':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb chuckroll
-  '17086':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb smoked
-  '71081':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb brisket
-  '17631':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // churrasco
-  '17859':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamburguesa
+  // Procesados — fotos reales productos A Punto (Jumbo.cl)
+  '17085':'https://jumbocl.vtexassets.com/arquivos/ids/374851-250-250/HAMBURGUESA-CHUCKROLL-A-PUNTO.jpg?v=638776801164370000', // hamb chuckroll
+  '17086':'https://jumbocl.vtexassets.com/arquivos/ids/374858-250-250/HAMBURGUESA-SMOKED-A-PUNTO.jpg?v=638776801192070000', // hamb smoked
+  '71081':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // hamb brisket
+  '17631':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000', // churrasco
+  '17859':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // hamburguesa
   '17954':'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=300&q=70', // albóndiga
-  '17075':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // crocante
+  '17075':'https://jumbocl.vtexassets.com/arquivos/ids/341215-250-250/Crocante-de-Vacuno-Fundo-Sur-100-g.jpg?v=638776441509300000', // crocante
   '17078':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // cubitos
   '17077':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // tiritas
-  // Fundo Sur adicionales
-  '17076':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // escalopa
-  '17858':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb fs
-  '17044':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // churrasco fs
-  '17964':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // nuggets
-  '71017':'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=300&q=70', // mechada
+  // Fundo Sur adicionales — fotos reales (Jumbo.cl)
+  '17076':'https://jumbocl.vtexassets.com/arquivos/ids/341215-250-250/Crocante-de-Vacuno-Fundo-Sur-100-g.jpg?v=638776441509300000', // escalopa/crocante
+  '17858':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // hamb fs
+  '17044':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000', // churrasco fs
+  '17964':'https://jumbocl.vtexassets.com/arquivos/ids/393617-250-250/NUGGET-FUNDO-SUR.jpg?v=639111766175300000', // nuggets (aprox)
+  '71017':'https://jumbocl.vtexassets.com/arquivos/ids/611741-250-250/MECHADA-FUNDO-SUR-400G.jpg?v=639111766175300000', // mechada
   '11258':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // osobuco
   '17129':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // asado tira
   '17128':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // costillas
@@ -1242,8 +1268,8 @@ const PROD_PHOTOS={
   '17124':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // bdj mini hamb
   '17125':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // bdj smash
   // La Reserva
-  '17088':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb lr
-  '17968':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // churrasco lr
+  '17088':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // hamb lr
+  '17968':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000', // churrasco lr
   // FT Excelencia
   '37345':'https://images.unsplash.com/photo-1543039625-14cbd3802e7d?w=300&q=70', // longaniza
   '37370':'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=300&q=70', // chorizo
@@ -1251,8 +1277,8 @@ const PROD_PHOTOS={
   '18182':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida fte 500
   '18372':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida fte 1kg
   // A Punto adicionales
-  '17997':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb brisket ap
-  '71083':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb smoked 185
+  '17997':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // hamb brisket ap
+  '71083':'https://jumbocl.vtexassets.com/arquivos/ids/374858-250-250/HAMBURGUESA-SMOKED-A-PUNTO.jpg?v=638776801192070000', // hamb smoked 185
 };
 // Fotos por defecto por categoría — imágenes reales catálogo FT Foods
 const CAT_DEFAULT_PHOTOS={
