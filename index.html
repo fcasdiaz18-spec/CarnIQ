@@ -115,12 +115,14 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 
 /* NAV */
 #nav{background:var(--nav);border-top:1px solid var(--brd);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px)}
-.nav-inner{display:flex;justify-content:space-around;padding:3px 0}
-.nv{display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 3px;border-radius:8px;cursor:pointer;transition:all .15s;position:relative;flex:1;border:none;background:none;color:var(--t3)}
-.nv svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.nv span{font-size:8px;font-weight:500;letter-spacing:.2px}
+.nav-inner{display:flex;justify-content:space-around;padding:2px 0}
+.nv{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 4px;min-height:56px;border-radius:10px;cursor:pointer;transition:all .15s;position:relative;flex:1;border:none;background:none;color:var(--t2);-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.nv svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.nv span{font-size:10px;font-weight:600;letter-spacing:.1px;line-height:1}
 .nv.active{color:var(--r)}
-.nv .badge{position:absolute;top:4px;right:calc(50% - 16px);background:var(--r);color:#fff;font-size:9px;font-weight:700;border-radius:8px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.nv.active svg{stroke-width:2.2}
+.nv:active{background:var(--brd);transform:scale(.95)}
+.nv .badge{position:absolute;top:6px;right:calc(50% - 18px);background:var(--r);color:#fff;font-size:9px;font-weight:700;border-radius:8px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
 
 /* TABS */
 .tabs{display:flex;gap:5px;overflow-x:auto;padding:0 max(12px,env(safe-area-inset-left,0px)) 8px;scrollbar-width:none}
@@ -1180,57 +1182,57 @@ const CATALOG_PRODUCTS=[
 
 // Fotos por código — Unsplash curado por corte
 const PROD_PHOTOS={
-  // Ave
-  '69021':'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=300&q=70', // trutro
-  '69030':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=300&q=70', // trutro 1/4
-  '69081':'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=300&q=70', // pechuga
-  '69160':'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=300&q=70', // pollo entero
-  '69231':'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=300&q=70', // pechuga desh
-  '69257':'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=300&q=70', // gallina
-  '69340':'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=300&q=70', // pollo cal
-  '69410':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=300&q=70', // trutro ala
-  '69440':'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=300&q=70', // garras
-  // Cerdo
-  '25163':'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=300&q=70', // chuleta
-  '25763':'https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=300&q=70', // pulpa pierna
-  '25834':'https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=300&q=70', // paleta
-  '66141':'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=300&q=70', // chuleta centro
-  '66142':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // costillar
-  '66230':'https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=300&q=70', // pierna entera
-  '68185':'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=300&q=70', // chuleta vetada
-  // Vacuno importado
-  '67402':'https://images.unsplash.com/photo-1558030006-450675393462?w=300&q=70', // posta negra
-  '67722':'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=300&q=70', // abastero
-  '67723':'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=300&q=70', // asado carnicero
-  '67727':'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70', // filete
-  '67728':'https://images.unsplash.com/photo-1558030006-450675393462?w=300&q=70', // ganso
-  '67730':'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70', // lomo liso
-  '67731':'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70', // lomo vetado
-  '67740':'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=300&q=70', // sobrecostilla
-  // Vacuno nacional A Punto
-  '71491':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // arrachera
-  '71714':'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70', // tomahawk
-  '71010':'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70', // lomo vetado AP
-  '71770':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // asado de tira
-  // Procesados
-  '17085':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb chuckroll
-  '17086':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb smoked
-  '71081':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb brisket
-  '17631':'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=300&q=70', // churrasco
-  '17859':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamburguesa
+  // Ave — foto real catálogo FT Foods
+  '69021':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // trutro
+  '69030':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // trutro 1/4
+  '69081':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // pechuga
+  '69160':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // pollo entero
+  '69231':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // pechuga desh
+  '69257':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // gallina
+  '69340':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // pollo cal
+  '69410':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // trutro ala
+  '69440':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // garras
+  // Cerdo — foto real catálogo FT Foods
+  '25163':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // chuleta
+  '25763':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // pulpa pierna
+  '25834':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // paleta
+  '66141':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // chuleta centro
+  '66142':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // costillar
+  '66230':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // pierna entera
+  '68185':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // chuleta vetada
+  // Vacuno importado — foto real catálogo FT Foods
+  '67402':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // posta negra
+  '67722':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // abastero
+  '67723':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // asado carnicero
+  '67727':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg',       // filete
+  '67728':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // ganso
+  '67730':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg',       // lomo liso
+  '67731':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg',       // lomo vetado
+  '67740':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // sobrecostilla
+  // Vacuno nacional A Punto — foto real catálogo FT Foods
+  '71491':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // arrachera
+  '71714':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // tomahawk
+  '71010':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // lomo vetado AP
+  '71770':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // asado de tira
+  // Procesados — hamburguesas A Punto foto real
+  '17085':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb chuckroll
+  '17086':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb smoked
+  '71081':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb brisket
+  '17631':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // churrasco
+  '17859':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamburguesa
   '17954':'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=300&q=70', // albóndiga
   '17075':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // crocante
   '17078':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // cubitos
   '17077':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // tiritas
   // Fundo Sur adicionales
   '17076':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // escalopa
-  '17858':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb fs
-  '17044':'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=300&q=70', // churrasco fs
+  '17858':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb fs
+  '17044':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // churrasco fs
   '17964':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // nuggets
   '71017':'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=300&q=70', // mechada
-  '11258':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // osobuco
-  '17129':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // asado tira
-  '17128':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // costillas
+  '11258':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // osobuco
+  '17129':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // asado tira
+  '17128':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // costillas
   '18512':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida 250
   '18513':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida 125
   '17121':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // bdj tiritas
@@ -1240,8 +1242,8 @@ const PROD_PHOTOS={
   '17124':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // bdj mini hamb
   '17125':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // bdj smash
   // La Reserva
-  '17088':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb lr
-  '17968':'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=300&q=70', // churrasco lr
+  '17088':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb lr
+  '17968':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // churrasco lr
   // FT Excelencia
   '37345':'https://images.unsplash.com/photo-1543039625-14cbd3802e7d?w=300&q=70', // longaniza
   '37370':'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=300&q=70', // chorizo
@@ -1249,15 +1251,15 @@ const PROD_PHOTOS={
   '18182':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida fte 500
   '18372':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida fte 1kg
   // A Punto adicionales
-  '17997':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb brisket ap
-  '71083':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb smoked 185
+  '17997':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb brisket ap
+  '71083':'https://catalogo.ftfoods.cl/ambiente/apunto-familia.jpg', // hamb smoked 185
 };
-// Fotos por defecto por categoría
+// Fotos por defecto por categoría — imágenes reales catálogo FT Foods
 const CAT_DEFAULT_PHOTOS={
-  Ave:'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=300&q=70',
-  Cerdo:'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=300&q=70',
-  Vacuno:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=70',
-  Procesado:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70',
+  Ave:'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg',
+  Cerdo:'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg',
+  Vacuno:'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg',
+  Procesado:'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg',
 };
 
 function buildCatalog(){
