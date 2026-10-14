@@ -236,15 +236,44 @@ svg.chart{width:100%;overflow:visible}
 .catalog-search svg{color:var(--t3);flex-shrink:0;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
 .catalog-search input{flex:1;border:none;background:none;font-size:14px;color:var(--t);outline:none}
 .catalog-search input::placeholder{color:var(--t3)}
-#cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:10px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.cat-card-item{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);overflow:hidden;cursor:pointer;transition:all .15s}
-.cat-card-item:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.cat-card-img{height:100px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:36px;position:relative;overflow:hidden}
-.cat-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.cat-card-body{padding:10px}
-.cat-card-name{font-size:12px;font-weight:700;color:var(--t);line-height:1.3;margin-bottom:4px}
-.cat-card-tag{font-size:9px;font-weight:600;background:var(--r3);color:var(--r);border-radius:4px;padding:2px 6px;display:inline-block}
-.cat-card-price{font-size:13px;font-weight:800;color:var(--r);margin-top:4px}
+#cat-grid{padding:8px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* Accordion subcategoría */
+.acc-cat{margin-bottom:4px}
+.acc-sub-header{display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--card);border:1px solid var(--brd);border-radius:var(--rad);cursor:pointer;user-select:none;transition:background .15s}
+.acc-sub-header:active,.acc-sub-header:hover{background:var(--g2)}
+.acc-sub-icon{font-size:18px;flex-shrink:0}
+.acc-sub-title{flex:1;font-size:13px;font-weight:700;color:var(--t)}
+.acc-sub-count{font-size:11px;color:var(--t2);font-weight:500}
+.acc-arrow{font-size:10px;color:var(--t3)}
+.acc-sub-body{border:1px solid var(--brd);border-top:none;border-radius:0 0 var(--rad) var(--rad);overflow:hidden;margin-bottom:6px}
+/* Fila de producto */
+.prod-row{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;background:var(--card);border-bottom:1px solid var(--brd);transition:background .12s}
+.prod-row:last-child{border-bottom:none}
+.prod-row:active,.prod-row:hover{background:var(--g2)}
+.prod-row--open{background:var(--r3)!important}
+.prod-row-img{width:40px;height:40px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--g2);display:flex;align-items:center;justify-content:center;font-size:18px;position:relative}
+.prod-row-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.prod-row-info{flex:1;min-width:0}
+.prod-row-name{font-size:13px;font-weight:600;color:var(--t);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-row-meta{font-size:11px;color:var(--t2);margin-top:2px;display:flex;gap:6px;align-items:center}
+.prod-row-price{color:var(--r);font-weight:700;font-size:12px}
+.prod-row-chevron{font-size:10px;color:var(--t3);flex-shrink:0}
+/* Panel de detalle expandido */
+.prod-detail{display:flex;gap:12px;padding:14px;background:var(--bg);border-bottom:1px solid var(--brd)}
+.prod-detail:last-child{border-bottom:none}
+.prod-detail-img{width:80px;height:80px;border-radius:10px;overflow:hidden;flex-shrink:0;background:var(--g2);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative}
+.prod-detail-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.prod-detail-body{flex:1;min-width:0}
+.prod-detail-name{font-size:14px;font-weight:800;color:var(--t);line-height:1.3;margin-bottom:2px}
+.prod-detail-brand{font-size:11px;color:var(--r);font-weight:600;margin-bottom:8px}
+.prod-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pd-item{display:flex;flex-direction:column;gap:1px}
+.pd-item--price{grid-column:1/-1}
+.pd-lbl{font-size:10px;color:var(--t3);font-weight:500;text-transform:uppercase;letter-spacing:.4px}
+.pd-val{font-size:12px;font-weight:700;color:var(--t)}
+.price-val{font-size:14px;color:var(--r);font-weight:800}
+/* compat - legacy classes no longer needed */
+.cat-card-item,.cat-card-img,.cat-card-body,.cat-card-name,.cat-card-tag,.cat-card-price{}
 
 /* ═══ IA CHAT ═══ */
 #chat-area{display:flex;flex-direction:column;height:calc(100vh - 160px)}
@@ -863,6 +892,118 @@ const PRICES_DATA={
   ]
 };
 
+// ═══════════════════════════════════════════
+// CATÁLOGO COMPLETO — Datos del PDF FT Foods 2026
+// ═══════════════════════════════════════════
+const CATALOG_PRODUCTS=[
+  // ── A PUNTO PROCESADOS ──
+  {code:'17997',name:'Hamburguesa Brisket 125g',brand:'A Punto',pesoKg:4.5,unid:36,cat:'Procesado',sub:'A Punto'},
+  {code:'17085',name:'Hamburguesa Chuck Roll 125g',brand:'A Punto',pesoKg:4.5,unid:36,cat:'Procesado',sub:'A Punto'},
+  {code:'17086',name:'Hamburguesa Smoked 125g',brand:'A Punto',pesoKg:4.5,unid:36,cat:'Procesado',sub:'A Punto'},
+  {code:'71081',name:'Hamburguesa Brisket 185g',brand:'A Punto',pesoKg:4.5,unid:24,cat:'Procesado',sub:'A Punto'},
+  {code:'71083',name:'Hamburguesa Smoked 185g',brand:'A Punto',pesoKg:4.5,unid:24,cat:'Procesado',sub:'A Punto'},
+  {code:'71131',name:'Churrasco Posta 120g',brand:'A Punto',pesoKg:4.3,unid:36,cat:'Procesado',sub:'A Punto'},
+  // ── A PUNTO CORTES VACUNO ENVASADOS ──
+  {code:'',name:'Filete Vacuno Envasado',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Lomo Liso Envasado',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Lomo Vetado Envasado',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Palanca Envasada',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Arrachera Envasada',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Punta de Ganso Envasada',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Punta Paleta (Flat Iron)',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Punta Picana Envasada',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Tomahawk Envasado',brand:'A Punto',pesoKg:14,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Entrecot Envasado',brand:'A Punto',pesoKg:14,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Asado de Tira Criollo',brand:'A Punto',pesoKg:15,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Asado de Tira Criollito',brand:'A Punto',pesoKg:15,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Pollo Barriga Envasado',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Arañita Envasada',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Entraña Envasada',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Plateada Envasada',brand:'A Punto',pesoKg:18,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Mollejas Envasadas',brand:'A Punto',pesoKg:5,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  {code:'',name:'Criadillas Envasadas',brand:'A Punto',pesoKg:6,unid:null,cat:'Vacuno',sub:'A Punto Nacional'},
+  // ── FUNDO SUR PROCESADOS ──
+  {code:'17075',name:'Crocante Vacuno 100g',brand:'Fundo Sur',pesoKg:5,unid:50,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17076',name:'Escalopa Kaiser 120g',brand:'Fundo Sur',pesoKg:5,unid:42,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17858',name:'Hamburguesa Vacuno 100g',brand:'Fundo Sur',pesoKg:2.8,unid:28,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17044',name:'Churrasco Vacuno 120g',brand:'Fundo Sur',pesoKg:4.3,unid:36,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17964',name:'Nuggets Vacuno 400g',brand:'Fundo Sur',pesoKg:4,unid:10,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'71017',name:'Mechada Vacuno 400g',brand:'Fundo Sur',pesoKg:3.2,unid:8,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17078',name:'Cubitos Vacuno 500g',brand:'Fundo Sur',pesoKg:4,unid:8,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17077',name:'Tiritas Vacuno 500g',brand:'Fundo Sur',pesoKg:4,unid:8,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'11258',name:'Osobuco Vacuno 1kg',brand:'Fundo Sur',pesoKg:12,unid:12,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17129',name:'Asado de Tira 1kg',brand:'Fundo Sur',pesoKg:12,unid:12,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17128',name:'Costillas Vacuno 1kg',brand:'Fundo Sur',pesoKg:12,unid:12,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'18512',name:'Molida Vacuno 250g',brand:'Fundo Sur',pesoKg:5,unid:20,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'18513',name:'Molida Vacuno 125g',brand:'Fundo Sur',pesoKg:5,unid:40,cat:'Procesado',sub:'Fundo Sur'},
+  // ── FUNDO SUR BANDEJAS ──
+  {code:'17121',name:'Bandeja Tiritas Vacuno',brand:'Fundo Sur',pesoKg:8,unid:20,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17120',name:'Bandeja Cubitos Vacuno',brand:'Fundo Sur',pesoKg:8,unid:20,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17122',name:'Bandeja Molida Familiar',brand:'Fundo Sur',pesoKg:8,unid:20,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17123',name:'Bandeja Hamburguesa 290g',brand:'Fundo Sur',pesoKg:5.8,unid:20,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17124',name:'Bandeja Mini Hamburguesa',brand:'Fundo Sur',pesoKg:6,unid:20,cat:'Procesado',sub:'Fundo Sur'},
+  {code:'17125',name:'Bandeja Smash Burger',brand:'Fundo Sur',pesoKg:10.8,unid:null,cat:'Procesado',sub:'Fundo Sur'},
+  // ── LA RESERVA ──
+  {code:'17088',name:'Hamburguesa La Reserva 100g',brand:'La Reserva',pesoKg:4,unid:40,cat:'Procesado',sub:'La Reserva'},
+  {code:'17968',name:'Churrasco La Reserva 120g',brand:'La Reserva',pesoKg:4.32,unid:36,cat:'Procesado',sub:'La Reserva'},
+  // ── FT EXCELENCIA PROCESADOS ──
+  {code:'17954',name:'Albóndigas 180g',brand:'FT Excelencia',pesoKg:3.2,unid:18,cat:'Procesado',sub:'FT Excelencia'},
+  {code:'17631',name:'Churrasco 90g',brand:'FT Excelencia',pesoKg:3.6,unid:40,cat:'Procesado',sub:'FT Excelencia'},
+  {code:'17859',name:'Hamburguesa 90g',brand:'FT Excelencia',pesoKg:2.88,unid:32,cat:'Procesado',sub:'FT Excelencia'},
+  {code:'37345',name:'Longaniza 1kg',brand:'FT Excelencia',pesoKg:5,unid:5,cat:'Procesado',sub:'FT Excelencia'},
+  {code:'37370',name:'Chorizo 500g',brand:'FT Excelencia',pesoKg:5,unid:10,cat:'Procesado',sub:'FT Excelencia'},
+  {code:'18383',name:'Molida Vacuno 250g',brand:'FT Excelencia',pesoKg:7,unid:28,cat:'Procesado',sub:'FT Excelencia'},
+  {code:'18182',name:'Molida Vacuno 500g',brand:'FT Excelencia',pesoKg:7.5,unid:15,cat:'Procesado',sub:'FT Excelencia'},
+  {code:'18372',name:'Molida Vacuno 1kg',brand:'FT Excelencia',pesoKg:8,unid:8,cat:'Procesado',sub:'FT Excelencia'},
+  // ── FT EXCELENCIA MENUDENCIAS (GRANEL) ──
+  {code:'',name:'Chunchules Granel',brand:'FT Excelencia',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Excelencia'},
+  {code:'',name:'Corazón Granel',brand:'FT Excelencia',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Excelencia'},
+  {code:'',name:'Guata Granel',brand:'FT Excelencia',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Excelencia'},
+  {code:'',name:'Hígado Granel',brand:'FT Excelencia',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Excelencia'},
+  {code:'',name:'Lengua Granel',brand:'FT Excelencia',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Excelencia'},
+  {code:'',name:'Patas Vacuno Granel',brand:'FT Excelencia',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Excelencia'},
+  // ── FT IMPORTADOS ──
+  {code:'',name:'Abastero Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Asado Carnicero Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Asiento de Picana Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Choclillo Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Entraña Importada',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Filete Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Ganso Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Huachalomo Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Lomo Liso Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Lomo Vetado Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Plateada Importada',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Pollo Ganso Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Posta Negra Importada',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Posta Paleta Importada',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Posta Rosada Importada',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Punta Picana Importada',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Punta Paleta Importada',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Sobrecostilla Importada',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Palanca Importada',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  {code:'',name:'Tapapecho Importado',brand:'FT Importados',pesoKg:18,unid:null,cat:'Vacuno',sub:'FT Importados'},
+  // ── FT MULTIMARCA AVE ──
+  {code:'',name:'Pechuga Entera',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Ave',sub:'FT Ave'},
+  {code:'',name:'Pechuga Deshuesada',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Ave',sub:'FT Ave'},
+  {code:'',name:'Trutro Entero',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Ave',sub:'FT Ave'},
+  {code:'',name:'Patas de Pollo',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Ave',sub:'FT Ave'},
+  {code:'',name:'Gallina',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Ave',sub:'FT Ave'},
+  {code:'',name:'Filetillo de Pollo IQF',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Ave',sub:'FT Ave'},
+  {code:'',name:'Trutro 1/4',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Ave',sub:'FT Ave'},
+  {code:'',name:'Trutro Ala',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Ave',sub:'FT Ave'},
+  // ── FT MULTIMARCA CERDO ──
+  {code:'',name:'Chuleta Vetada',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Cerdo',sub:'FT Cerdo'},
+  {code:'',name:'Chuleta Centro',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Cerdo',sub:'FT Cerdo'},
+  {code:'',name:'Pulpa Pierna Cerdo',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Cerdo',sub:'FT Cerdo'},
+  {code:'',name:'Patas de Cerdo',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Cerdo',sub:'FT Cerdo'},
+  {code:'',name:'Pernil Mano',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Cerdo',sub:'FT Cerdo'},
+  {code:'',name:'Costillar Cerdo',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Cerdo',sub:'FT Cerdo'},
+  {code:'',name:'Lomo Cerdo',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Cerdo',sub:'FT Cerdo'},
+  {code:'',name:'Paleta Cerdo',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Cerdo',sub:'FT Cerdo'},
+  {code:'',name:'Punta de Costilla Cerdo',brand:'FT Multimarca',pesoKg:18,unid:null,cat:'Cerdo',sub:'FT Cerdo'},
+];
+
 // Fotos por código — Unsplash curado por corte
 const PROD_PHOTOS={
   // Ave
@@ -907,6 +1048,35 @@ const PROD_PHOTOS={
   '17075':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // crocante
   '17078':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // cubitos
   '17077':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // tiritas
+  // Fundo Sur adicionales
+  '17076':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // escalopa
+  '17858':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb fs
+  '17044':'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=300&q=70', // churrasco fs
+  '17964':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // nuggets
+  '71017':'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=300&q=70', // mechada
+  '11258':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // osobuco
+  '17129':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // asado tira
+  '17128':'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=70', // costillas
+  '18512':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida 250
+  '18513':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida 125
+  '17121':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // bdj tiritas
+  '17120':'https://images.unsplash.com/photo-1562967914-608f82629710?w=300&q=70', // bdj cubitos
+  '17122':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // bdj molida
+  '17123':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // bdj hamb
+  '17124':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // bdj mini hamb
+  '17125':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // bdj smash
+  // La Reserva
+  '17088':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb lr
+  '17968':'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=300&q=70', // churrasco lr
+  // FT Excelencia
+  '37345':'https://images.unsplash.com/photo-1543039625-14cbd3802e7d?w=300&q=70', // longaniza
+  '37370':'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=300&q=70', // chorizo
+  '18383':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida fte 250
+  '18182':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida fte 500
+  '18372':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // molida fte 1kg
+  // A Punto adicionales
+  '17997':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb brisket ap
+  '71083':'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=70', // hamb smoked 185
 };
 // Fotos por defecto por categoría
 const CAT_DEFAULT_PHOTOS={
@@ -917,17 +1087,16 @@ const CAT_DEFAULT_PHOTOS={
 };
 
 function buildCatalog(){
-  const cats={Ave:'🍗',Cerdo:'🐷',Vacuno:'🥩',Procesado:'🍔'};
-  const all=[];
-  for(const [sec,items] of Object.entries(PRICES_DATA)){
-    const cat=sec==='ave'?'Ave':sec==='cerdo'?'Cerdo':sec.startsWith('vacuno')?'Vacuno':'Procesado';
-    items.forEach(p=>{
-      const photo=PROD_PHOTOS[p.code]||CAT_DEFAULT_PHOTOS[cat];
-      const imgHtml=`<img src="${photo}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">`;
-      all.push({...p,cat,icon:imgHtml});
-    });
+  // Merge CATALOG_PRODUCTS with PRICES_DATA prices (match by code)
+  const priceMap={};
+  for(const items of Object.values(PRICES_DATA)){
+    items.forEach(p=>{if(p.code)priceMap[p.code]=p.price;});
   }
-  return all;
+  return CATALOG_PRODUCTS.map(p=>{
+    const photo=PROD_PHOTOS[p.code]||CAT_DEFAULT_PHOTOS[p.cat]||CAT_DEFAULT_PHOTOS['Vacuno'];
+    const imgHtml=`<img src="${photo}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">`;
+    return {...p,price:priceMap[p.code]||null,icon:imgHtml,photo};
+  });
 }
 
 // ── NAV ──
@@ -1247,9 +1416,10 @@ function renderAlerts(){
 }
 
 // ═══════════════════════════════════════════
-// CATÁLOGO
+// CATÁLOGO — Acordeón por categoría
 // ═══════════════════════════════════════════
-let curCatFilter='all',catSearch='';
+let curCatFilter='all',catSearch='',catOpenSubs={},catOpenDetail=null;
+const CAT_ICONS={Ave:'🍗',Cerdo:'🐷',Vacuno:'🥩',Procesado:'🍔'};
 function catTab(el,cat){
   curCatFilter=cat;
   document.querySelectorAll('#pg-catalogo .tabs .tab').forEach(t=>t.classList.remove('active'));
@@ -1257,13 +1427,94 @@ function catTab(el,cat){
   renderCatalog();
 }
 function filterCatalog(q){catSearch=q.toLowerCase();renderCatalog()}
+
+function toggleCatSub(key){
+  catOpenSubs[key]=!catOpenSubs[key];
+  renderCatalog();
+}
+function showProdDetail(code,name){
+  catOpenDetail=catOpenDetail===code?null:code;
+  renderCatalog();
+  if(catOpenDetail){
+    setTimeout(()=>{
+      const el=document.getElementById('det-'+code);
+      if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },50);
+  }
+}
+
 function renderCatalog(){
   let items=DB.catalog.length?DB.catalog:buildCatalog();
   if(curCatFilter!=='all')items=items.filter(p=>p.cat===curCatFilter);
-  if(catSearch)items=items.filter(p=>p.name.toLowerCase().includes(catSearch)||p.code.includes(catSearch));
+  if(catSearch)items=items.filter(p=>
+    p.name.toLowerCase().includes(catSearch)||
+    (p.code&&p.code.includes(catSearch))||
+    (p.brand&&p.brand.toLowerCase().includes(catSearch))
+  );
   const el=document.getElementById('cat-grid');if(!el)return;
-  if(!items.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1"><span class="icon">🔍</span><p>Sin resultados</p></div>`;return}
-  el.innerHTML=items.map(p=>`<div class="cat-card-item"><div class="cat-card-img">${p.icon}</div><div class="cat-card-body"><div class="cat-card-name">${p.name}</div><span class="cat-card-tag">${p.cat}</span><div class="cat-card-price">${fmt(p.price)}/kg</div></div></div>`).join('');
+  if(!items.length){el.innerHTML=`<div class="empty"><span class="icon">🔍</span><p>Sin resultados</p></div>`;return}
+
+  // Group by cat then sub
+  const byCat={};
+  items.forEach(p=>{
+    if(!byCat[p.cat])byCat[p.cat]={};
+    const sub=p.sub||p.cat;
+    if(!byCat[p.cat][sub])byCat[p.cat][sub]=[];
+    byCat[p.cat][sub].push(p);
+  });
+
+  let html='';
+  const catOrder=['Ave','Cerdo','Vacuno','Procesado'];
+  catOrder.forEach(cat=>{
+    if(!byCat[cat])return;
+    html+=`<div class="acc-cat">`;
+    Object.entries(byCat[cat]).forEach(([sub,prods])=>{
+      const key=cat+'__'+sub;
+      const open=catOpenSubs[key]!==false; // default open
+      const arrow=open?'▲':'▼';
+      html+=`<div class="acc-sub-header" onclick="toggleCatSub('${key}')">
+        <span class="acc-sub-icon">${CAT_ICONS[cat]||'📦'}</span>
+        <span class="acc-sub-title">${sub}</span>
+        <span class="acc-sub-count">${prods.length} prod.</span>
+        <span class="acc-arrow">${arrow}</span>
+      </div>`;
+      if(open){
+        html+=`<div class="acc-sub-body">`;
+        prods.forEach(p=>{
+          const uid=p.code||(p.name.replace(/\s+/g,'_'));
+          const isOpen=catOpenDetail===uid;
+          const priceTxt=p.price?`<span class="prod-row-price">${fmt(p.price)}/kg</span>`:'';
+          html+=`<div class="prod-row ${isOpen?'prod-row--open':''}" onclick="showProdDetail('${uid}','${p.name.replace(/'/g,"\\'")}')">
+            <div class="prod-row-img">${p.icon}</div>
+            <div class="prod-row-info">
+              <div class="prod-row-name">${p.name}</div>
+              <div class="prod-row-meta">${p.brand}${p.code?` · #${p.code}`:''}${priceTxt}</div>
+            </div>
+            <span class="prod-row-chevron">${isOpen?'▲':'▼'}</span>
+          </div>`;
+          if(isOpen){
+            html+=`<div class="prod-detail" id="det-${uid}">
+              <div class="prod-detail-img">${p.icon}</div>
+              <div class="prod-detail-body">
+                <div class="prod-detail-name">${p.name}</div>
+                <div class="prod-detail-brand">${p.brand}</div>
+                <div class="prod-detail-grid">
+                  ${p.code?`<div class="pd-item"><span class="pd-lbl">Código</span><span class="pd-val">${p.code}</span></div>`:''}
+                  <div class="pd-item"><span class="pd-lbl">Categoría</span><span class="pd-val">${cat}</span></div>
+                  <div class="pd-item"><span class="pd-lbl">Peso caja</span><span class="pd-val">${p.pesoKg} kg</span></div>
+                  ${p.unid?`<div class="pd-item"><span class="pd-lbl">Unid/caja</span><span class="pd-val">${p.unid} unid</span></div>`:''}
+                  ${p.price?`<div class="pd-item pd-item--price"><span class="pd-lbl">Precio ref.</span><span class="pd-val price-val">${fmt(p.price)}/kg</span></div>`:''}
+                </div>
+              </div>
+            </div>`;
+          }
+        });
+        html+=`</div>`;
+      }
+    });
+    html+=`</div>`;
+  });
+  el.innerHTML=html;
 }
 
 // ═══════════════════════════════════════════
