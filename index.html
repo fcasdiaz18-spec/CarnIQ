@@ -669,9 +669,7 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <p>El motor IA está consultando fuentes en tiempo real.</p>
       </div>
 
-      <!-- Stock crítico -->
-      <div class="sec-title">⚠️ ALERTAS DE STOCK</div>
-      <div id="alert-list" style="margin-bottom:8px"></div>
+      <!-- Stock: sección eliminada por decisión operacional -->
     </div>
 
     <!-- ═══ NOTICIAS ═══ -->
@@ -704,28 +702,27 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
     <!-- ═══ PRECIOS ═══ -->
     <div class="page" id="pg-precios">
       <div class="sh">
-        <h2>Precios</h2>
-        <p>Lista A FT Foods · Vigencia sem. 29 jun – 3 jul 2026</p>
+        <h2>Indicadores</h2>
+        <p>Precios · FOB · Reposición · FT Foods Antofagasta</p>
       </div>
 
-      <!-- Gráfico de precios internacionales -->
-      <div class="chart-container">
-        <div class="chart-title">Evolución Precios FOB Internacionales</div>
-        <div class="chart-sub">USD/kg · Brasil · Paraguay · USA · Ene–Oct 2026</div>
-        <div class="chart-tabs">
-          <div class="ctab active" onclick="showChart(this,'vacuno')">🥩 Vacuno</div>
-          <div class="ctab" onclick="showChart(this,'cerdo')">🐷 Cerdo</div>
-          <div class="ctab" onclick="showChart(this,'ave')">🍗 Ave</div>
+      <!-- Gráficos: lado a lado -->
+      <div style="display:flex;gap:8px;margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));margin-bottom:10px">
+        <div class="chart-container" style="flex:1;min-width:0;margin:0;padding:10px">
+          <div class="chart-title" style="font-size:11px">FOB Internacional</div>
+          <div class="chart-tabs" style="margin-bottom:6px">
+            <div class="ctab active" onclick="showChart(this,'vacuno')" style="font-size:9px;padding:3px 7px">🥩</div>
+            <div class="ctab" onclick="showChart(this,'cerdo')" style="font-size:9px;padding:3px 7px">🐷</div>
+            <div class="ctab" onclick="showChart(this,'ave')" style="font-size:9px;padding:3px 7px">🍗</div>
+          </div>
+          <svg class="chart" id="fob-chart" viewBox="0 0 340 160" style="width:100%;height:auto;display:block"></svg>
+          <div class="chart-legend" id="fob-legend" style="font-size:9px;gap:6px;margin-top:4px"></div>
         </div>
-        <svg class="chart" id="fob-chart" viewBox="0 0 340 160" style="max-width:100%"></svg>
-        <div class="chart-legend" id="fob-legend"></div>
-      </div>
-
-      <!-- Gráfico disponibilidad de mercado -->
-      <div class="chart-container">
-        <div class="chart-title">Disponibilidad en Mercado Local</div>
-        <div class="chart-sub">Stock FT Foods Antofagasta · Cajas por categoría</div>
-        <svg class="chart" id="stock-chart" viewBox="0 0 340 140" style="max-width:100%"></svg>
+        <div class="chart-container" style="flex:1;min-width:0;margin:0;padding:10px">
+          <div class="chart-title" style="font-size:11px">Stock por Categoría</div>
+          <div class="chart-sub" style="font-size:9px;margin-bottom:6px">Cajas · FT Foods Antofagasta</div>
+          <svg class="chart" id="stock-chart" viewBox="0 0 340 140" style="width:100%;height:auto;display:block"></svg>
+        </div>
       </div>
 
       <div class="tabs" id="price-tabs">
@@ -951,6 +948,12 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
           <button class="btn-primary" onclick="saveThreshold()">Guardar configuración</button>
         </div>
 
+        <div class="admin-card">
+          <h3>🌐 Fuentes de Datos</h3>
+          <p style="font-size:12px;color:var(--t2);margin-bottom:10px">Estado de conexión de fuentes de inteligencia del mercado</p>
+          <button class="btn-primary" style="margin-top:0" onclick="goPage('fuentes',document.getElementById('nav-fuentes'))">Ver fuentes de datos →</button>
+        </div>
+
         <div class="admin-card" id="admin-log-card">
           <h3>📋 Registro de accesos</h3>
           <div id="admin-log-list" style="max-height:300px;overflow-y:auto"></div>
@@ -973,8 +976,8 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <span>Noticias</span>
       </button>
       <button class="nv" onclick="goPage('precios',this)">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        <span>Precios</span>
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Indicadores</span>
       </button>
       <button class="nv" onclick="goPage('mercado',this)">
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -993,7 +996,7 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         <span>Catálogo</span>
       </button>
-      <button class="nv" onclick="goPage('fuentes',this)">
+      <button class="nv" id="nav-fuentes" style="display:none" onclick="goPage('fuentes',this)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         <span>Fuentes</span>
       </button>
@@ -1241,41 +1244,7 @@ function buildTicker(){
 }
 
 // ── STOCK DATA (from Excel) ──
-const STOCK_DATA=[
-  {id:'A_CONG',code:'69021',name:'Trutro Entero / Pata Muslo',cat:'Ave',kg:422,min:300},
-  {id:'A_CONG',code:'69030',name:'Trutro 1/4 Bloque',cat:'Ave',kg:258,min:300},
-  {id:'A_CONG',code:'69081',name:'Pechuga Entera Bloque',cat:'Ave',kg:144,min:200},
-  {id:'A_CONG',code:'69160',name:'Pollo Entero',cat:'Ave',kg:44,min:100},
-  {id:'A_CONG',code:'69231',name:'Pechuga Deshuesada 6x2',cat:'Ave',kg:320,min:250},
-  {id:'A_CONG',code:'69257',name:'Gallina Retail',cat:'Ave',kg:85,min:100},
-  {id:'A_CONG',code:'69340',name:'Pollo Entero Cal 2,1',cat:'Ave',kg:98,min:150},
-  {id:'A_CONG',code:'69410',name:'Trutro Ala IQF',cat:'Ave',kg:118,min:200},
-  {id:'A_CONG',code:'69440',name:'Garras Retail',cat:'Ave',kg:275,min:150},
-  {id:'C_DESP',code:'25163',name:'Chuleta Centro 5kg FT',cat:'Cerdo',kg:59,min:100},
-  {id:'C_DESP',code:'25763',name:'Pulpa Pierna',cat:'Cerdo',kg:168,min:150},
-  {id:'C_DESP',code:'25834',name:'Paleta Cerdo Imp',cat:'Cerdo',kg:77,min:100},
-  {id:'C_DESP',code:'66141',name:'Chuleta Centro',cat:'Cerdo',kg:189,min:200},
-  {id:'C_DESP',code:'66142',name:'Costillar Brasil',cat:'Cerdo',kg:320,min:200},
-  {id:'C_DESP',code:'66230',name:'Pierna Entera',cat:'Cerdo',kg:169,min:200},
-  {id:'C_DESP',code:'68185',name:'Chuleta Vetada Imp',cat:'Cerdo',kg:306,min:200},
-  {id:'V_IMP_MUS',code:'67402',name:'Posta Negra BR',cat:'Vacuno',kg:312,min:200},
-  {id:'V_IMP_MUS',code:'67722',name:'Abastero Neuland',cat:'Vacuno',kg:173,min:150},
-  {id:'V_IMP_MUS',code:'67723',name:'Asado Carnicero Neuland',cat:'Vacuno',kg:185,min:150},
-  {id:'V_IMP_MUS',code:'67727',name:'Filete Neuland',cat:'Vacuno',kg:68,min:80},
-  {id:'V_IMP_MUS',code:'67728',name:'Ganso Neuland',cat:'Vacuno',kg:120,min:100},
-  {id:'V_IMP_MUS',code:'67730',name:'Lomo Liso Neuland',cat:'Vacuno',kg:162,min:100},
-  {id:'V_IMP_MUS',code:'67731',name:'Lomo Vetado Neuland',cat:'Vacuno',kg:72,min:100},
-  {id:'V_IMP_MUS',code:'67740',name:'Sobrecostilla Neuland',cat:'Vacuno',kg:251,min:150},
-  {id:'PRO_AP',code:'17085',name:'Hamb. Chuckroll A Punto',cat:'Procesado',kg:27,min:50},
-  {id:'PRO_AP',code:'17086',name:'Hamb. Smoked A Punto',cat:'Procesado',kg:39,min:50},
-  {id:'PRO_AP',code:'71081',name:'Hamb. Brisket A Punto',cat:'Procesado',kg:33,min:50},
-  {id:'PRO_FT',code:'17631',name:'Churrasco FT',cat:'Procesado',kg:223,min:100},
-  {id:'PRO_FT',code:'17859',name:'Hamburguesa FT',cat:'Procesado',kg:150,min:100},
-  {id:'PRO_FT',code:'17954',name:'Albóndiga FT',cat:'Procesado',kg:244,min:100},
-  {id:'PRO_FS',code:'17075',name:'Crocante Fundo Sur',cat:'Procesado',kg:51,min:50},
-  {id:'PRO_FS',code:'17078',name:'Cubitos Fundo Sur',cat:'Procesado',kg:153,min:80},
-  {id:'PRO_FS',code:'17077',name:'Tiritas Fundo Sur',cat:'Procesado',kg:154,min:80},
-];
+const STOCK_DATA=[];
 
 // ── PRICES DATA (from Lista A) ──
 const PRICES_DATA={
@@ -1833,6 +1802,8 @@ function renderAdminPage(){
   if(isAdmin()){
     locked.style.display='none';
     content.style.display='block';
+    const navF=document.getElementById('nav-fuentes');
+    if(navF)navF.style.display='';
     // User info
     const info=document.getElementById('admin-user-info');
     if(info&&CURRENT_USER)info.textContent=`${CURRENT_USER.name} · ${CURRENT_USER.email}`;
