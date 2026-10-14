@@ -571,11 +571,11 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="18" fill="#da532c"/><text x="18" y="24" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" fill="#fff">FT</text></svg>
       </div>
       <div class="login-title">CarnIQ · FT Foods</div>
-      <div class="login-sub">Identifícate para acceder al catálogo colaborativo</div>
-      <label class="lbl-sm" style="margin-top:14px">Tu nombre</label>
-      <input class="api-input" id="login-name" type="text" placeholder="Ej: Carlos Vega" autocomplete="name">
-      <label class="lbl-sm" style="margin-top:8px">Email corporativo</label>
-      <input class="api-input" id="login-email" type="email" placeholder="tu.nombre@ftfoods.cl" autocomplete="email">
+      <div class="login-sub">Acceso exclusivo para equipo FT Foods</div>
+      <label class="lbl-sm" style="margin-top:14px">Email corporativo</label>
+      <input class="api-input" id="login-email" type="email" placeholder="tu.nombre@ftfoods.cl" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('login-pw').focus()">
+      <label class="lbl-sm" style="margin-top:8px">Contraseña</label>
+      <input class="api-input" id="login-pw" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLogin()">
       <div id="login-err" style="font-size:11px;color:#da532c;min-height:14px;margin-top:4px"></div>
       <button class="btn-primary" style="margin-top:10px" onclick="submitLogin()">Ingresar</button>
     </div>
@@ -1089,6 +1089,20 @@ function iPhotoGetAll(){return new Promise(r=>{try{const t=db.transaction('photo
 
 // ── USUARIO ACTUAL ──
 const ADMIN_EMAIL='felipe.castillo@ftfoods.cl';
+// Credenciales de acceso (hash simple: btoa para ofuscación básica)
+const USERS_DB=[
+  {email:'viviangel.sanchez@ftfoods.cl',   pw:'Viviangel2026', name:'Viviangel Sánchez'},
+  {email:'hernan.angulo@ftfoods.cl',        pw:'Hernan2026',    name:'Hernán Angulo'},
+  {email:'apolonides.agurto@ftfoods.cl',    pw:'Apolo2026',     name:'Apolonides Agurto'},
+  {email:'carolina.aracena@ftfoods.cl',     pw:'Caro2026',      name:'Carolina Aracena'},
+  {email:'anibal.marin@ftfoods.cl',         pw:'Anibal2026',    name:'Aníbal Marín'},
+  {email:'helen.carreño@ftfoods.cl',        pw:'Helen2026',     name:'Helen Carreño'},
+  {email:'katherine.merino@ftfoods.cl',     pw:'Katherine2026', name:'Katherine Merino'},
+  {email:'marcela.cordero@ftfoods.cl',      pw:'Marce2026',     name:'Marcela Cordero'},
+  {email:'despacho.antofagasta@frigotemuco.cl', pw:'Ana2026',   name:'Despacho Antofagasta'},
+  {email:'maria.bendezu@ftfoods.cl',        pw:'Maria2026',     name:'María Bendezú'},
+  {email:'felipe.castillo@ftfoods.cl',      pw:'Ftfoods2026',   name:'Felipe Castillo'},
+];
 let CURRENT_USER=null;
 function getCurrentUser(){
   try{return JSON.parse(localStorage.getItem('carniq_user')||'null')}catch{return null}
@@ -1132,10 +1146,13 @@ function hideLoginModal(){
 }
 function submitLogin(){
   const email=(document.getElementById('login-email').value||'').trim().toLowerCase();
-  const name=(document.getElementById('login-name').value||'').trim();
-  if(!email||!email.includes('@')){document.getElementById('login-err').textContent='Ingresa un email válido';return}
-  if(!name){document.getElementById('login-err').textContent='Ingresa tu nombre';return}
-  const user={email,name,loginAt:new Date().toISOString()};
+  const pw=(document.getElementById('login-pw').value||'').trim();
+  const errEl=document.getElementById('login-err');
+  if(!email||!email.includes('@')){errEl.textContent='Ingresa un email válido';return}
+  if(!pw){errEl.textContent='Ingresa tu contraseña';return}
+  const match=USERS_DB.find(u=>u.email.toLowerCase()===email&&u.pw===pw);
+  if(!match){errEl.textContent='Email o contraseña incorrectos';return}
+  const user={email:match.email,name:match.name,loginAt:new Date().toISOString()};
   setCurrentUser(user);
   logAccess();
   updateUserBadge();
@@ -1197,8 +1214,11 @@ async function loadDB(){
   updateStockCount();
   // Cargar fotos desde IDB en el mapa global
   try{PHOTO_CACHE=await iPhotoGetAll();}catch{}
-  // Usuario / login
+  // Usuario / login — validar que la sesión guardada sea de un usuario registrado
   CURRENT_USER=getCurrentUser();
+  if(CURRENT_USER&&!USERS_DB.find(u=>u.email.toLowerCase()===CURRENT_USER.email.toLowerCase())){
+    localStorage.removeItem('carniq_user');CURRENT_USER=null;
+  }
   if(!CURRENT_USER){showLoginPrompt();}
   else{logAccess();updateUserBadge();}
 }
