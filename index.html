@@ -6,7 +6,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#c0392b">
+<meta name="theme-color" content="#da532c">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap">
@@ -18,9 +18,9 @@
    Layout: tab-based PWA, dark ticker + light cards
    ═══════════════════════════════════════════ */
 :root {
-  --r: #c0392b;       /* rojo FT */
-  --r2: #a93226;      /* rojo profundo */
-  --r3: #f9ebea;      /* rojo pálido bg */
+  --r: #da532c;       /* rojo-naranja FT Foods ftfoods.cl */
+  --r2: #b8451f;      /* rojo profundo */
+  --r3: #fdf0eb;      /* rojo pálido bg */
   --g: #1a7a4a;       /* verde positivo */
   --g2: #eafaf1;
   --am: #9a6700;      /* ámbar alerta */
@@ -46,7 +46,7 @@
     --t: #f0f0f8; --t2: #b8bcd0; --t3: #6668a0;
     --bg: #0f0f1a; --card: #1a1a2e; --brd: #2a2a4a;
     --nav: #12121f; --hdr: #12121f;
-    --r3: #2a0f0f; --g2: #0a1f14; --am2: #1f1600; --b2: #0a1228;
+    --r3: #2a1208; --g2: #0a1f14; --am2: #1f1600; --b2: #0a1228;
     --shadow: 0 2px 12px rgba(0,0,0,.4);
     color-scheme: dark;
   }
@@ -55,20 +55,21 @@
   --t: #f0f0f8; --t2: #b8bcd0; --t3: #6668a0;
   --bg: #0f0f1a; --card: #1a1a2e; --brd: #2a2a4a;
   --nav: #12121f; --hdr: #12121f;
-  --r3: #2a0f0f; --g2: #0a1f14; --am2: #1f1600; --b2: #0a1228;
+  --r3: #2a1208; --g2: #0a1f14; --am2: #1f1600; --b2: #0a1228;
   --shadow: 0 2px 12px rgba(0,0,0,.4);
   color-scheme: dark;
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:14px;background:var(--bg);color:var(--t);overflow:hidden}
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:13px;background:var(--bg);color:var(--t);overflow:hidden}
+@media (max-width:420px){html,body{font-size:12px}}
 
 /* SPLASH */
 #splash{position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease .1s}
 #splash.hide{opacity:0;pointer-events:none}
 #splash svg{width:72px;height:72px;margin-bottom:16px}
-#splash-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:#fff;letter-spacing:1px}
-#splash-sub{font-size:11px;color:#6668a0;letter-spacing:2px;margin-top:4px;text-transform:uppercase}
+#splash-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:#fff;letter-spacing:1px}
+#splash-sub{font-size:10px;color:#6668a0;letter-spacing:2px;margin-top:4px;text-transform:uppercase}
 #splash-loader{width:120px;height:3px;background:#1a1a2e;border-radius:2px;margin-top:24px;overflow:hidden}
 #splash-loader::after{content:'';display:block;height:100%;background:var(--r);animation:load 1.6s ease-in-out infinite;border-radius:2px}
 @keyframes load{0%{width:0;margin-left:0}50%{width:80%;margin-left:0}100%{width:0;margin-left:100%}}
@@ -76,25 +77,25 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:14px;ba
 /* LAYOUT */
 #app{display:flex;flex-direction:column;height:100%}
 #header{background:var(--hdr);border-bottom:1px solid var(--brd);flex-shrink:0;position:sticky;top:env(safe-area-inset-top,0px);z-index:100}
-.header-inner{display:flex;align-items:center;gap:10px;padding:10px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.header-inner{display:flex;align-items:center;gap:8px;padding:8px max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
 #logo-img{height:36px;object-fit:contain}
 .header-brand{flex:1;min-width:0}
-.header-brand h1{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--t);letter-spacing:.5px;line-height:1}
-.header-brand p{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px}
-.live-badge{display:flex;align-items:center;gap:5px;background:var(--g2);border:1px solid #1a7a4a40;border-radius:20px;padding:4px 10px}
-.live-dot{width:7px;height:7px;background:var(--g);border-radius:50%;animation:pulse 2s infinite}
-.live-badge span{font-size:11px;font-weight:600;color:var(--g)}
+.header-brand h1{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--t);letter-spacing:.5px;line-height:1}
+.header-brand p{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px}
+.live-badge{display:flex;align-items:center;gap:4px;background:var(--g2);border:1px solid #1a7a4a40;border-radius:20px;padding:3px 8px}
+.live-dot{width:6px;height:6px;background:var(--g);border-radius:50%;animation:pulse 2s infinite}
+.live-badge span{font-size:10px;font-weight:600;color:var(--g)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* TICKER */
-#ticker{background:var(--ticker);overflow:hidden;height:32px;flex-shrink:0}
+#ticker{background:var(--ticker);overflow:hidden;height:28px;flex-shrink:0}
 .ticker-track{display:flex;align-items:center;height:100%;animation:scroll-ticker 40s linear infinite;width:max-content;gap:0}
 .ticker-track:hover{animation-play-state:paused}
 @keyframes scroll-ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .tick-item{display:flex;align-items:center;gap:6px;padding:0 20px;border-right:1px solid #ffffff12;white-space:nowrap}
-.tick-lbl{font-size:9px;color:#ffffff55;text-transform:uppercase;letter-spacing:1px}
-.tick-val{font-size:12px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
-.tick-chg{font-size:10px;font-weight:600;border-radius:3px;padding:1px 4px}
+.tick-lbl{font-size:8px;color:#ffffff55;text-transform:uppercase;letter-spacing:.8px}
+.tick-val{font-size:11px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+.tick-chg{font-size:9px;font-weight:600;border-radius:3px;padding:1px 3px}
 .tick-chg.up{color:#2ecc71;background:#2ecc7115}
 .tick-chg.dn{color:#e74c3c;background:#e74c3c15}
 
@@ -105,8 +106,8 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:14px;ba
 
 /* SECTION HEADER */
 .sh{padding:16px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:8px}
-.sh h2{font-size:22px;font-weight:800;color:var(--t)}
-.sh p{font-size:12px;color:var(--t3);margin-top:2px}
+.sh h2{font-size:18px;font-weight:800;color:var(--t)}
+.sh p{font-size:11px;color:var(--t3);margin-top:2px}
 
 /* CARDS */
 .card{background:var(--card);border-radius:var(--rad);box-shadow:var(--shadow);border:1px solid var(--brd);overflow:hidden}
@@ -115,24 +116,24 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:14px;ba
 /* NAV */
 #nav{background:var(--nav);border-top:1px solid var(--brd);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px)}
 .nav-inner{display:flex;justify-content:space-around;padding:6px 0}
-.nv{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:10px;cursor:pointer;transition:all .15s;position:relative;flex:1;border:none;background:none;color:var(--t3)}
-.nv svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.nv span{font-size:9px;font-weight:500;letter-spacing:.3px}
+.nv{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 4px;border-radius:10px;cursor:pointer;transition:all .15s;position:relative;flex:1;border:none;background:none;color:var(--t3)}
+.nv svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nv span{font-size:8.5px;font-weight:500;letter-spacing:.2px}
 .nv.active{color:var(--r)}
 .nv .badge{position:absolute;top:4px;right:calc(50% - 16px);background:var(--r);color:#fff;font-size:9px;font-weight:700;border-radius:8px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
 
 /* TABS */
 .tabs{display:flex;gap:6px;overflow-x:auto;padding:0 max(16px,env(safe-area-inset-left,0px)) 12px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--brd);background:var(--card);color:var(--t2);transition:all .15s;white-space:nowrap}
+.tab{flex-shrink:0;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--brd);background:var(--card);color:var(--t2);transition:all .15s;white-space:nowrap}
 .tab.active{background:var(--r);color:#fff;border-color:var(--r)}
 
 /* ═══ INICIO ═══ */
-#rates-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.rate-tile{background:var(--card);border-radius:var(--rad-sm);border:1px solid var(--brd);padding:12px 14px;display:flex;flex-direction:column;gap:3px}
-.rate-tile .lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
-.rate-tile .val{font-size:20px;font-weight:800;color:var(--t);font-variant-numeric:tabular-nums;line-height:1}
-.rate-tile .sub{font-size:10px;color:var(--t3)}
+#rates-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
+.rate-tile{background:var(--card);border-radius:var(--rad-sm);border:1px solid var(--brd);padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.rate-tile .lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+.rate-tile .val{font-size:18px;font-weight:800;color:var(--t);font-variant-numeric:tabular-nums;line-height:1}
+.rate-tile .sub{font-size:9px;color:var(--t3)}
 #rates-status{font-size:10px;color:var(--t3);text-align:center;padding:0 16px 8px;display:flex;align-items:center;justify-content:center;gap:4px}
 
 .alert-card{margin:0 max(16px,env(safe-area-inset-left,0px));margin-right:max(16px,env(safe-area-inset-right,0px));margin-bottom:8px;border-radius:var(--rad);overflow:hidden;border:1.5px solid}
@@ -157,24 +158,25 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:14px;ba
 
 /* ═══ NOTICIAS ═══ */
 .news-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.news-hdr-left h2{font-size:22px;font-weight:800;color:var(--t)}
+.news-hdr-left h2{font-size:18px;font-weight:800;color:var(--t)}
 .news-hdr-left p{font-size:11px;color:var(--t3)}
 #news-ts{font-size:10px;color:var(--t3)}
 .btn-refresh{background:var(--r);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px}
 .btn-refresh svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5}
 
 .news-card{margin:0 max(16px,env(safe-area-inset-left,0px)) 10px;margin-right:max(16px,env(safe-area-inset-right,0px));background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);overflow:hidden;box-shadow:var(--shadow)}
-.news-img{width:100%;height:140px;object-fit:cover;display:block}
-.news-body{padding:14px}
+.news-img{width:100%;height:120px;object-fit:cover;display:block}
+.news-body{padding:12px}
 .news-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .ntag{font-size:9px;font-weight:700;border-radius:4px;padding:3px 8px;text-transform:uppercase;letter-spacing:.3px}
 .ntag-crit{background:#e74c3c;color:#fff} .ntag-warn{background:#f39c12;color:#fff}
 .ntag-info{background:var(--b2);color:var(--b)} .ntag-cat{background:var(--bg);color:var(--t2);border:1px solid var(--brd)}
-.news-title{font-size:14px;font-weight:700;color:var(--t);line-height:1.4;margin-bottom:6px}
-.news-text{font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px}
-.news-footer{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--brd)}
+.news-title{font-size:13px;font-weight:700;color:var(--t);line-height:1.4;margin-bottom:5px}
+.news-text{font-size:11.5px;color:var(--t2);line-height:1.55;margin-bottom:8px}
+.news-footer{display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid var(--brd);flex-wrap:wrap;gap:4px}
 .news-src{font-size:10px;color:var(--t3);font-weight:500}
 .news-time{font-size:10px;color:var(--t3);font-style:italic}
+.news-date{font-size:10px;color:var(--r);font-weight:600}
 
 .nul{display:flex;align-items:center;gap:10px;padding:14px max(16px,env(safe-area-inset-left,0px)) 8px;margin-right:max(16px,env(safe-area-inset-right,0px))}
 .nul-line{flex:1;height:1px;background:var(--brd)}
@@ -251,8 +253,8 @@ svg.chart{width:100%;overflow:visible}
 
 /* ═══ ADMIN ═══ */
 .admin-section{margin:0 max(16px,env(safe-area-inset-left,0px)) 12px;margin-right:max(16px,env(safe-area-inset-right,0px))}
-.admin-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);padding:16px;margin-bottom:10px}
-.admin-card h3{font-size:14px;font-weight:700;color:var(--t);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.admin-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);padding:14px;margin-bottom:8px}
+.admin-card h3{font-size:13px;font-weight:700;color:var(--t);margin-bottom:10px;display:flex;align-items:center;gap:7px}
 .file-drop{border:2px dashed var(--brd);border-radius:var(--rad-sm);padding:20px;text-align:center;cursor:pointer;transition:all .15s}
 .file-drop:hover{border-color:var(--r);background:var(--r3)}
 .file-drop input{display:none}
@@ -292,7 +294,7 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
   <div style="background:#fff;border-radius:20px;padding:18px 22px;margin-bottom:4px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.35)">
     <svg viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:52px;display:block">
       <!-- cuadrado rojo grande abajo-izquierda -->
-      <rect x="0" y="26" width="24" height="24" rx="2" fill="#c0392b"/>
+      <rect x="0" y="26" width="24" height="24" rx="2" fill="#da532c"/>
       <!-- cuadrado verde pequeño arriba-derecha del bloque -->
       <rect x="14" y="12" width="14" height="14" rx="1.5" fill="#4a7c3f"/>
       <!-- FT negro bold -->
@@ -314,7 +316,7 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       <!-- Logo real FT Foods — sobre píldora blanca para legibilidad en cualquier tema -->
       <div style="background:#fff;border-radius:10px;padding:4px 10px;display:flex;align-items:center">
         <svg viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg" style="height:34px;width:auto;display:block">
-          <rect x="0" y="22" width="20" height="20" rx="2" fill="#c0392b"/>
+          <rect x="0" y="22" width="20" height="20" rx="2" fill="#da532c"/>
           <rect x="12" y="10" width="12" height="12" rx="1.5" fill="#4a7c3f"/>
           <text x="28" y="34" font-family="Arial Black,Arial,Helvetica,sans-serif" font-weight="900" font-size="28" fill="#111111" letter-spacing="-1">FT</text>
           <text x="29" y="43" font-family="Arial,Helvetica,sans-serif" font-weight="400" font-size="11" fill="#666666" letter-spacing="2">foods</text>
@@ -844,8 +846,10 @@ Busca AHORA noticias y tendencias REALES de esta semana sobre mercado de carnes:
 9. Producción y exportaciones cárnicas en principales países productores (Brasil, Argentina, Paraguay)
 10. Clima macroeconómico: inflación, commodities, impacto en industria cárnica
 
+Busca específicamente en https://www.diariodelacarne.cl/ y https://chilecarne.cl/noticias/ para noticias reales de las últimas semanas.
+
 Entrega SOLO un JSON array con 10-12 noticias. Sin texto fuera del JSON:
-[{"titulo":"...","cuerpo":"2-3 oraciones con cifras concretas y porcentajes","categoria":"vacuno|cerdo|ave|mercado|sanidad","urgencia":"alerta|info","fuente":"nombre fuente real","url":"URL real o #","pais":"🇧🇷 Brasil","tiempo":"Hoy|Ayer|Esta semana"}]`;
+[{"titulo":"...","cuerpo":"2-3 oraciones con cifras concretas y porcentajes","categoria":"vacuno|cerdo|ave|mercado|sanidad","urgencia":"alerta|info","fuente":"nombre fuente real (ej: Diario de la Carne, ChileCarne, USDA, ABPA)","url":"URL real del artículo si está disponible, sino #","pais":"🇧🇷 Brasil","tiempo":"Hoy|Ayer|Esta semana","fecha":"fecha exacta de publicación ej: 7 oct 2026"}]`;
 
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
@@ -885,18 +889,18 @@ function mapNews(n){
     ave:'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70',
     mercado:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',
   };
-  return{cat:n.categoria||'mercado',u:n.urgencia||'info',src:n.fuente||'Fuente',url:n.url||'#',img:imgs[n.categoria]||imgs.mercado,pais:n.pais||'🌐 Global',t:n.tiempo||'Esta semana',title:n.titulo,body:n.cuerpo};
+  return{cat:n.categoria||'mercado',u:n.urgencia||'info',src:n.fuente||'Fuente',url:n.url||'#',img:imgs[n.categoria]||imgs.mercado,pais:n.pais||'🌐 Global',t:n.tiempo||'Esta semana',fecha:n.fecha||'',title:n.titulo,body:n.cuerpo};
 }
 
 const NEWS_STATIC=[
-  {cat:'vacuno',u:'alerta',src:'USDA FAS',url:'#',img:'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70',pais:'🇧🇷 Brasil',t:'Esta semana',title:'FOB vacuno Brasil sube 1,5% impulsado por demanda china',body:'China elevó cuotas de importación de vacuno brasileño en un 12% para Q4 2026. El precio FOB del Traseiro brasileño subió a USD 3,82/kg. Frigoríficos ajustan contratos a la alza para el resto del año.'},
-  {cat:'vacuno',u:'alerta',src:'InfoCarne',url:'#',img:'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=70',pais:'🇵🇾 Paraguay',t:'Esta semana',title:'Paraguay: exportaciones vacuno marcan récord histórico en 2026',body:'Paraguay exportó más de 530.000 toneladas de carne vacuna en los primeros 9 meses de 2026, superando el récord anterior. Chile recibe el 8% de esas exportaciones. Los precios FOB subieron un 4,2% interanual.'},
-  {cat:'mercado',u:'alerta',src:'Banco Central Chile',url:'#',img:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',pais:'🇨🇱 Chile',t:'Esta semana',title:'Dólar sobre $930 encarece importaciones cárnicas un 6%',body:'El tipo de cambio USD/CLP se mantiene entre $928 y $942, incrementando los costos de importación de carne en Chile. Importadores proyectan ajustes de listas de precios para noviembre. El efecto es mayor en vacuno y cerdo importado.'},
-  {cat:'cerdo',u:'alerta',src:'ABIPECS Brasil',url:'#',img:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600&q=70',pais:'🇧🇷 Brasil',t:'Esta semana',title:'Cerdo brasileño: FOB sube 2,3% por alta demanda asiática',body:'Las exportaciones de cerdo de Brasil crecieron un 18% en septiembre 2026 frente al año anterior. China, Filipinas y Vietnam lideran las compras. El precio FOB del pernil subió a USD 2,15/kg CIF China.'},
-  {cat:'ave',u:'info',src:'ABPA Brasil',url:'#',img:'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70',pais:'🇧🇷 Brasil',t:'Esta semana',title:'Brasil: récord de exportaciones de pollo en septiembre 2026',body:'Las exportaciones de pollo de Brasil alcanzaron 460.000 toneladas en septiembre 2026, máximo histórico mensual. El precio FOB se estabilizó en USD 1,38/kg. La influenza aviar H5N1 sigue controlada en las principales zonas productoras.'},
-  {cat:'sanidad',u:'alerta',src:'SENASAG Paraguay',url:'#',img:'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=70',pais:'🇵🇾 Paraguay',t:'Esta semana',title:'Alerta sanitaria: Fiebre Aftosa en zona norte de Paraguay',body:'Paraguay confirmó focos de Fiebre Aftosa en Concepción. SAG Chile intensificó controles de importación. Las exportaciones paraguayas con certificación sanitaria especial continúan hacia Chile sin interrupciones.'},
-  {cat:'mercado',u:'info',src:'ODEPA',url:'#',img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70',pais:'🇨🇱 Chile',t:'Esta semana',title:'ODEPA: consumo per cápita de carne en Chile sube a 98 kg/año',body:'Chile consolida uno de los consumos de carne per cápita más altos de América Latina con 98 kg/año. El pollo lidera con 47 kg, seguido de vacuno con 27 kg y cerdo con 24 kg. La tendencia al alza se mantiene en 2026.'},
-  {cat:'mercado',u:'info',src:'DIRECON Chile',url:'#',img:'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=70',pais:'🌎 Global',t:'Esta semana',title:'China aumenta cuotas de importación de carne sudamericana Q4',body:'El Ministerio de Comercio de China amplió las cuotas de importación de carne bovina y porcina para Q4 2026, beneficiando a Brasil, Argentina y Paraguay. Chile como importador de esas carnes verá presión alcista en precios FOB.'},
+  {cat:'mercado',u:'alerta',src:'Diario de la Carne',url:'https://www.diariodelacarne.cl/noticia/economia-y-mercados/2026/09/china-ya-no-sera-el-motor-de-la-demanda-mundial-de-carne-vacuna',img:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',pais:'🌏 China',t:'25 sep 2026',fecha:'25 sep 2026',title:'China ya no será el motor de la demanda mundial de carne vacuna',body:'Analistas del mercado advierten que China está reduciendo su dependencia de importaciones de carne bovina, impulsando producción local. Esta reorientación presionaría a la baja los precios FOB en Brasil y Uruguay en el mediano plazo.'},
+  {cat:'cerdo',u:'alerta',src:'ChileCarne',url:'https://chilecarne.cl/rabobank-mercado-mundial-de-carne-de-cerdo-se-vuelve-mas-fragmentado-y-competitivo/',img:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600&q=70',pais:'🌐 Global',t:'29 sep 2026',fecha:'29 sep 2026',title:'Rabobank: mercado mundial de carne de cerdo se vuelve más fragmentado y competitivo',body:'Según Rabobank, la producción mundial de cerdo se fragmenta entre más actores regionales, generando volatilidad en precios FOB. Brasil mantiene ventaja competitiva, pero Europa pierde participación en Asia. Impacto directo en costos de importación para Chile.'},
+  {cat:'vacuno',u:'alerta',src:'Diario de la Carne',url:'https://www.diariodelacarne.cl',img:'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70',pais:'🇧🇷 Brasil',t:'oct 2026',fecha:'oct 2026',title:'Producción de carne bovina cae 3,1% en agosto en Brasil',body:'La faena bovina en Brasil cayó 3,1% interanual en agosto 2026, generando ajustes al alza en precios FOB. Los frigoríficos brasileños reportan menor oferta de animales por condiciones climáticas. Precios del Traseiro NH suben a USD 3,82/kg.'},
+  {cat:'vacuno',u:'info',src:'Diario de la Carne',url:'https://www.diariodelacarne.cl',img:'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=70',pais:'🇨🇱 Chile',t:'1 oct 2026',fecha:'1 oct 2026',title:'Mesa Ganadera se reúne y ya cuenta con más de 40 propuestas para el sector cárnico',body:'La Mesa Ganadera de Chile, convocada por el Ministerio de Agricultura, sistematizó más de 40 propuestas para mejorar la competitividad del sector. Entre las medidas se incluyen incentivos a la producción nacional y revisión de aranceles de importación.'},
+  {cat:'cerdo',u:'info',src:'ChileCarne',url:'https://chilecarne.cl',img:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&q=70',pais:'🇨🇱 Chile',t:'25 sep 2026',fecha:'25 sep 2026',title:'ChileCarne avanza junto al Ministerio de Salud en proyecto de temperatura de congelación en carnes',body:'ChileCarne y el Ministerio de Salud avanzan en la actualización de normativas técnicas para la temperatura de congelación en carnes importadas. El proyecto busca elevar el estándar sanitario y alinear Chile con regulaciones internacionales del Codex Alimentarius.'},
+  {cat:'mercado',u:'alerta',src:'Banco Central Chile',url:'#',img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70',pais:'🇨🇱 Chile',t:'Esta semana',fecha:'Oct 2026',title:'Dólar sobre $930 encarece importaciones cárnicas hasta un 6%',body:'El tipo de cambio USD/CLP se mantiene entre $928 y $942, incrementando los costos de importación de carne en Chile. Importadores proyectan ajustes en listas de precios para noviembre. El efecto es mayor en vacuno y cerdo importado.'},
+  {cat:'ave',u:'info',src:'ABPA Brasil',url:'#',img:'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70',pais:'🇧🇷 Brasil',t:'Esta semana',fecha:'Oct 2026',title:'Brasil bate récord de exportaciones de pollo en septiembre 2026',body:'Las exportaciones de pollo de Brasil alcanzaron 460.000 toneladas en septiembre 2026, máximo histórico mensual. El precio FOB se estabilizó en USD 1,38/kg. La influenza aviar H5N1 sigue controlada en las principales zonas productoras.'},
+  {cat:'sanidad',u:'alerta',src:'SAG Chile',url:'#',img:'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=70',pais:'🇵🇾 Paraguay',t:'Esta semana',fecha:'Oct 2026',title:'SAG intensifica controles sanitarios a importaciones de carne desde Paraguay',body:'El Servicio Agrícola y Ganadero (SAG) reforzó los controles de importación de carnes desde Paraguay ante reportes de focos de Fiebre Aftosa en zona norte. Exportaciones con certificación sanitaria vigente continúan operando normalmente hacia Chile.'},
 ];
 
 function renderStaticNews(){
@@ -930,6 +934,7 @@ function renderNewsData(list,cat){
 }
 
 function newsHtml(n,cls){
+  const dateStr=n.fecha?`<span class="news-date">📅 ${n.fecha}</span>`:`<span class="news-time">${n.t}</span>`;
   return`<div class="news-card">
     <img class="news-img" src="${n.img}" alt="" loading="lazy" onerror="this.style.display='none'">
     <div class="news-body">
@@ -942,7 +947,7 @@ function newsHtml(n,cls){
       <div class="news-text">${n.body}</div>
       <div class="news-footer">
         <a href="${n.url}" target="_blank" class="src-lnk">📎 ${n.src}</a>
-        <span class="news-time">${n.t}</span>
+        ${dateStr}
       </div>
     </div>
   </div>`;
