@@ -428,6 +428,38 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 .source-row-val{font-size:10px;color:var(--t2);flex:1}
 .source-link{color:var(--b);font-size:10px;text-decoration:none;font-weight:600}
 .source-limit{font-size:10px;color:var(--am);background:var(--am2);border-radius:4px;padding:4px 8px;margin-top:6px}
+
+/* ═══ FASE 3 — REPOSICIÓN & TASAS ═══ */
+.rep-card{background:var(--card);border-radius:var(--rad);padding:16px max(16px,env(safe-area-inset-left,0px));margin:0 0 12px;box-shadow:var(--shadow)}
+.rep-title{font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px}
+.rep-sub{font-size:11px;color:var(--t3);margin-bottom:12px}
+.rep-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.rep-lbl{font-size:11px;color:var(--t2);min-width:120px;flex-shrink:0}
+.rep-inp{flex:1;min-width:80px;padding:6px 10px;border:1px solid var(--brd);border-radius:6px;font-size:13px;background:var(--bg);color:var(--t);font-family:'Inter',sans-serif}
+.rep-result{background:var(--r3);border:1px solid var(--r);border-radius:8px;padding:12px;margin-top:12px}
+.rep-result-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(218,83,44,.12)}
+.rep-result-row:last-child{border-bottom:none;font-weight:700;font-size:14px;color:var(--r)}
+.rep-result-lbl{color:var(--t2)}
+.rep-result-val{color:var(--t);font-weight:600}
+.rep-disclaimer{font-size:10px;color:var(--t3);margin-top:8px;line-height:1.4;font-style:italic}
+.rep-btn{background:var(--r);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;width:100%;font-family:'Inter',sans-serif}
+.rep-btn:active{background:var(--r2)}
+.rep-fob-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.rep-fob-btn{background:var(--bg);border:1px solid var(--brd);border-radius:6px;padding:8px 4px;text-align:center;cursor:pointer;font-size:11px;color:var(--t2);font-family:'Inter',sans-serif;transition:all .15s}
+.rep-fob-btn.sel{background:var(--r3);border-color:var(--r);color:var(--r);font-weight:700}
+.rep-fob-label{font-weight:700;display:block;font-size:13px;color:var(--t)}
+.sparkline-wrap{display:flex;align-items:center;gap:8px;margin-top:4px}
+.sparkline-label{font-size:10px;color:var(--t3)}
+/* ODEPA import table */
+.odepa-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
+.odepa-table th{background:var(--bg);color:var(--t2);font-weight:700;padding:6px 8px;text-align:left;border-bottom:1px solid var(--brd)}
+.odepa-table td{padding:5px 8px;border-bottom:1px solid var(--brd);color:var(--t)}
+.odepa-table tr:last-child td{border-bottom:none}
+.odepa-badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;background:var(--b2);color:var(--b);margin-left:4px}
+/* Historial tasas mini */
+.rate-history-card{background:var(--card);border-radius:var(--rad);padding:14px max(16px,env(safe-area-inset-left,0px));margin:8px 0 12px;box-shadow:var(--shadow)}
+.rate-history-title{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.rate-history-refresh{background:none;border:1px solid var(--brd);border-radius:5px;padding:3px 8px;font-size:10px;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif}
 </style>
 
 <!-- SPLASH -->
@@ -519,6 +551,7 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
           <div class="lbl">USD / CLP</div>
           <div class="val" id="rt-usd">—</div>
           <div class="sub">Dólar observado</div>
+          <div class="sparkline-wrap"><div id="usd-sparkline"></div><span class="sparkline-label" id="usd-7d-chg"></span></div>
         </div>
         <div class="rate-tile">
           <div class="lbl">UF hoy</div>
@@ -670,6 +703,7 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <div class="tab" onclick="pTab(this,'vacuno-imp')">🥩 Vacuno Imp.</div>
         <div class="tab" onclick="pTab(this,'vacuno-nac')">🇨🇱 Vacuno Nac.</div>
         <div class="tab" onclick="pTab(this,'procesado')">🍔 Procesados</div>
+        <div class="tab" onclick="pTab(this,'reposicion')">📦 Reposición</div>
       </div>
       <div id="price-list"></div>
     </div>
@@ -852,6 +886,18 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
             <p>Excel · CSV · o imagen JPG/PNG con IA</p>
           </div>
           <div class="upload-preview" id="precios-preview"></div>
+        </div>
+
+        <div class="admin-card">
+          <h3>📊 Importar precios ODEPA</h3>
+          <p style="font-size:12px;color:var(--t2);margin:0 0 10px">CSV descargado de <a href="https://www.odepa.gob.cl/mercados-y-estadisticas/estadisticas-de-mercado/informacion-de-mercados/precios-al-productor" target="_blank" style="color:var(--b)">odepa.gob.cl</a> · Precios al productor o mayorista</p>
+          <div class="file-drop" onclick="document.getElementById('f-odepa').click()">
+            <input type="file" id="f-odepa" accept=".csv,.xlsx,.xls" onchange="loadOdepaFile(this)">
+            <div class="icon">📈</div>
+            <strong>Precios_Productor_ODEPA.csv</strong>
+            <p>CSV o Excel descargado directamente de ODEPA</p>
+          </div>
+          <div class="upload-preview" id="odepa-preview"></div>
         </div>
 
         <div class="admin-card">
@@ -1086,7 +1132,10 @@ async function fetchRates(force=false){
     const usd=ju?.serie?.[0]?.valor||cached?.usd||931;
     const uf=jf?.serie?.[0]?.valor||cached?.uf||40870;
     DB.usd=usd;DB.uf=uf;
-    try{await iSet('rates_v10',{usd,uf,ts:now})}catch(e){}
+    try{
+      await iSet('rates_v10',{usd,uf,ts:now});
+      await appendRateHistory(usd,uf);
+    }catch(e){}
   }catch(e){
     DB.usd=cached?.usd||931;
     DB.uf=cached?.uf||40870;
@@ -1101,6 +1150,8 @@ function updateRateDisplay(){
   const brl=DB.usd/5.2;const mkb=document.getElementById('mkt-brl');if(mkb)mkb.textContent='~'+Math.round(brl);
   const el=document.getElementById('rates-ts-txt');
   if(el)el.textContent='Actualizado hoy · Banco Central de Chile · mindicador.cl';
+  // Render sparkline tendencia 7 días (async, no bloquea)
+  renderRateSparkline().catch(()=>{});
   buildTicker();
 }
 
@@ -1647,7 +1698,8 @@ function pTab(el,cat){
   curPriceTab=cat;
   document.querySelectorAll('#price-tabs .tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  renderPriceTable(cat);
+  if(cat==='reposicion'){renderReposicionTab();}
+  else{renderPriceTable(cat);}
 }
 
 function renderPriceTable(cat){
@@ -2323,6 +2375,310 @@ function toggleSource(id) {
 // ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
+// FASE 3 — HISTORIAL TASAS + ODEPA + REPOSICIÓN
+// ═══════════════════════════════════════════
+
+// ── Historial tasas: guarda serie diaria en IDB (últimos 30 días) ──
+const RATES_HISTORY_KEY='rates_history_v1';
+const RATES_HISTORY_MAX=30;
+
+async function appendRateHistory(usd,uf){
+  try{
+    const hoy=new Date().toISOString().slice(0,10); // YYYY-MM-DD
+    let hist=await iGet(RATES_HISTORY_KEY)||[];
+    // Evita duplicar mismo día
+    if(hist.length&&hist[hist.length-1].d===hoy){
+      hist[hist.length-1]={d:hoy,usd,uf};
+    }else{
+      hist.push({d:hoy,usd,uf});
+    }
+    if(hist.length>RATES_HISTORY_MAX)hist=hist.slice(-RATES_HISTORY_MAX);
+    await iSet(RATES_HISTORY_KEY,hist);
+    return hist;
+  }catch(e){return[]}
+}
+
+async function getRateHistory(){
+  try{return await iGet(RATES_HISTORY_KEY)||[]}catch{return[]}
+}
+
+// Sparkline SVG inline — serie de valores
+function sparklineSVG(vals,color='#da532c',w=80,h=24){
+  if(!vals||vals.length<2)return'';
+  const mn=Math.min(...vals),mx=Math.max(...vals);
+  const range=mx-mn||1;
+  const pts=vals.map((v,i)=>{
+    const x=(i/(vals.length-1))*(w-4)+2;
+    const y=h-2-((v-mn)/range)*(h-4);
+    return`${x},${y}`;
+  }).join(' ');
+  return`<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" style="display:block"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+async function renderRateSparkline(){
+  const hist=await getRateHistory();
+  if(hist.length<3)return;
+  const usds=hist.slice(-14).map(h=>h.usd);
+  const svg=sparklineSVG(usds,'#da532c',80,24);
+  const el=document.getElementById('usd-sparkline');
+  if(el)el.innerHTML=svg;
+  // Variación vs hace 7 días
+  if(hist.length>=8){
+    const prev=hist[hist.length-8].usd;
+    const curr=hist[hist.length-1].usd;
+    const pct=((curr-prev)/prev*100).toFixed(1);
+    const el2=document.getElementById('usd-7d-chg');
+    if(el2){
+      el2.textContent=(pct>=0?'▲':'▼')+Math.abs(pct)+'% 7d';
+      el2.style.color=pct>=0?'var(--am)':'var(--g)';
+    }
+  }
+}
+
+// ── ODEPA CSV/Excel import ──
+// Columnas esperadas: Producto | Mercado | Precio ($/kg) | Semana | Fecha
+// También acepta formato ODEPA directo con encabezados en fila variable
+const ODEPA_DATA_KEY='odepa_import_v1';
+let ODEPA_IMPORTED=[];
+
+async function loadOdepaFile(input){
+  const file=input?.files?.[0];
+  if(!file)return;
+  const prev=document.getElementById('odepa-preview');
+  if(prev){prev.textContent='⏳ Procesando...';prev.classList.add('show')}
+  try{
+    let rows=[];
+    const name=file.name.toLowerCase();
+    if(name.endsWith('.csv')){
+      rows=await parseCSV(file);
+    }else{
+      rows=await parseXLSXtoRows(file);
+    }
+    if(!rows.length)throw new Error('Archivo vacío o formato no reconocido');
+    // Detectar columnas — busca encabezados con palabras clave
+    const head=rows[0].map(c=>String(c).toLowerCase().trim());
+    const iProduct=head.findIndex(h=>h.includes('product')||h.includes('especie')||h.includes('rubro'));
+    const iMercado=head.findIndex(h=>h.includes('mercado')||h.includes('plaza')||h.includes('ciudad'));
+    const iPrecio=head.findIndex(h=>h.includes('precio')||h.includes('valor')||h.includes('$/kg')||h.includes('$'));
+    const iFecha=head.findIndex(h=>h.includes('fecha')||h.includes('semana')||h.includes('period'));
+    if(iProduct<0||iPrecio<0){
+      throw new Error(`No se encontraron columnas Producto/Precio.\nEncabezados detectados: ${head.slice(0,8).join(', ')}`);
+    }
+    const data=rows.slice(1).filter(r=>r[iProduct]&&r[iPrecio]).map(r=>({
+      producto:String(r[iProduct]).trim(),
+      mercado:iMercado>=0?String(r[iMercado]).trim():'—',
+      precio:parseFloat(String(r[iPrecio]).replace(/[^0-9,.]/g,'').replace(',','.'))||0,
+      fecha:iFecha>=0?String(r[iFecha]).trim():new Date().toISOString().slice(0,10),
+      fuente:'ODEPA',
+      importado:new Date().toISOString()
+    })).filter(r=>r.precio>0);
+    if(!data.length)throw new Error('No se extrajeron filas con precio válido');
+    ODEPA_IMPORTED=data;
+    await iSet(ODEPA_DATA_KEY,{data,importado:new Date().toISOString(),archivo:file.name});
+    if(prev){
+      prev.innerHTML=`✅ Importados <strong>${data.length}</strong> registros ODEPA de <em>${file.name}</em> · ${new Date().toLocaleDateString('es-CL')}<br><span style="font-size:10px;color:var(--t3)">Datos disponibles en análisis de reposición</span>`;
+      prev.classList.add('show');
+    }
+    input.value='';
+  }catch(e){
+    if(prev){prev.textContent='❌ Error: '+e.message;prev.classList.add('show')}
+  }
+}
+
+// Parsear CSV con soporte para separadores ; y ,
+async function parseCSV(file){
+  return new Promise(r=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const text=e.target.result;
+      const lines=text.split(/\r?\n/).filter(l=>l.trim());
+      if(!lines.length){r([]);return}
+      // Detectar separador
+      const sep=lines[0].includes(';')?';':',';
+      r(lines.map(l=>l.split(sep).map(c=>c.replace(/^"|"$/g,'').trim())));
+    };
+    reader.readAsText(file,'UTF-8');
+  });
+}
+
+// Parsear XLSX usando XLSX.js (ya cargado)
+async function parseXLSXtoRows(file){
+  return new Promise(r=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      try{
+        const wb=XLSX.read(e.target.result,{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        r(XLSX.utils.sheet_to_json(ws,{header:1,defval:''}));
+      }catch{r([])}
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+// Cargar ODEPA desde IDB al inicio
+async function loadOdepaFromIDB(){
+  try{
+    const saved=await iGet(ODEPA_DATA_KEY);
+    if(saved?.data?.length){
+      ODEPA_IMPORTED=saved.data;
+      const prev=document.getElementById('odepa-preview');
+      if(prev){
+        prev.innerHTML=`📊 Último import: <strong>${saved.data.length}</strong> registros · ${saved.archivo||'ODEPA'} · ${new Date(saved.importado).toLocaleDateString('es-CL')}`;
+        prev.classList.add('show');
+      }
+    }
+  }catch{}
+}
+
+// ── CALCULADORA DE REPOSICIÓN ──
+// Especie seleccionada actualmente
+let repEspecie='vacuno';
+const REP_FOB_REF={
+  vacuno:{fob:3.82,origen:'Brasil (NH)',especie:'Vacuno'},
+  cerdo:{fob:1.95,origen:'Brasil',especie:'Cerdo'},
+  ave:{fob:1.38,origen:'Brasil (frango)',especie:'Ave'}
+};
+
+function repSelectEspecie(especie){
+  repEspecie=especie;
+  document.querySelectorAll('.rep-fob-btn').forEach(b=>{
+    b.classList.toggle('sel',b.dataset.esp===especie);
+  });
+  calcReposicion();
+}
+
+function calcReposicion(){
+  const usd=DB.usd||931;
+  const esp=repEspecie;
+  const ref=REP_FOB_REF[esp]||REP_FOB_REF.vacuno;
+
+  // Leer inputs
+  const fobUSD=parseFloat(document.getElementById('rep-fob')?.value)||ref.fob;
+  const kg=parseFloat(document.getElementById('rep-kg')?.value)||1000;
+  const fletePct=parseFloat(document.getElementById('rep-flete')?.value)||12; // % sobre CIF
+  const arancelPct=parseFloat(document.getElementById('rep-arancel')?.value)||6; // % arancel promedio
+  const iva=0.19;
+
+  // Cálculo paso a paso
+  const fobCLP=fobUSD*usd;             // CLP/kg en origen
+  const fobTotal=fobCLP*kg;             // CLP total FOB
+  const fleteAbs=fobTotal*(fletePct/100);
+  const cifCLP=fobCLP*(1+fletePct/100); // CLP/kg CIF
+  const cifTotal=cifCLP*kg;
+  const arancelAbs=cifTotal*(arancelPct/100);
+  const baseImp=cifTotal+arancelAbs;
+  const ivaAbs=baseImp*iva;
+  const totalNeto=baseImp;              // precio sin IVA (B2B)
+  const totalConIva=baseImp+ivaAbs;
+  const costoKgNeto=totalNeto/kg;
+  const costoKgConIva=totalConIva/kg;
+
+  // Precio ODEPA mayorista de referencia para esa especie (si existe)
+  let odepaRef=null;
+  if(ODEPA_IMPORTED.length){
+    const term=esp==='vacuno'?['vacuno','bov']:esp==='cerdo'?['cerdo','porc']:['pollo','ave','pechuga'];
+    const match=ODEPA_IMPORTED.filter(r=>term.some(t=>r.producto.toLowerCase().includes(t)));
+    if(match.length){
+      odepaRef=match.reduce((a,b)=>a.precio+b.precio)/match.length;
+      if(typeof odepaRef==='number'&&isNaN(odepaRef)){
+        odepaRef=match[0].precio;
+      }
+    }
+  }
+
+  const res=document.getElementById('rep-result');
+  if(!res)return;
+
+  let odepaLine='';
+  if(odepaRef&&odepaRef>0){
+    const margen=((odepaRef-costoKgNeto)/costoKgNeto*100).toFixed(1);
+    odepaLine=`<div class="rep-result-row"><span class="rep-result-lbl">Precio ODEPA mayorista ref.</span><span class="rep-result-val" style="color:var(--b)">${fmt(Math.round(odepaRef))}/kg</span></div>
+    <div class="rep-result-row"><span class="rep-result-lbl">Margen estimado s/ ODEPA</span><span class="rep-result-val" style="color:${+margen>=0?'var(--g)':'var(--r)'}">${+margen>=0?'+':''}${margen}%</span></div>`;
+  }
+
+  res.innerHTML=`
+    <div class="rep-result-row"><span class="rep-result-lbl">FOB origen (${ref.origen})</span><span class="rep-result-val">${fobUSD.toFixed(3)} USD/kg = ${fmt(Math.round(fobCLP))}/kg</span></div>
+    <div class="rep-result-row"><span class="rep-result-lbl">Flete + seguro (${fletePct}%)</span><span class="rep-result-val">+${fmt(Math.round(fobCLP*(fletePct/100)))}/kg</span></div>
+    <div class="rep-result-row"><span class="rep-result-lbl">Precio CIF</span><span class="rep-result-val">${fmt(Math.round(cifCLP))}/kg</span></div>
+    <div class="rep-result-row"><span class="rep-result-lbl">Arancel (${arancelPct}%)</span><span class="rep-result-val">+${fmt(Math.round(cifCLP*(arancelPct/100)))}/kg</span></div>
+    <div class="rep-result-row"><span class="rep-result-lbl">IVA 19%</span><span class="rep-result-val">+${fmt(Math.round(baseImp/kg*iva))}/kg</span></div>
+    ${odepaLine}
+    <div class="rep-result-row"><span class="rep-result-lbl">Costo reposición neto (sin IVA)</span><span class="rep-result-val">${fmt(Math.round(costoKgNeto))}/kg</span></div>
+    <div class="rep-result-row"><span class="rep-result-lbl">Costo total con IVA · ${kg.toLocaleString('es-CL')} kg</span><span class="rep-result-val">${fmt(Math.round(totalConIva))}</span></div>`;
+  res.style.display='block';
+}
+
+function renderReposicionTab(){
+  const el=document.getElementById('price-list');
+  if(!el)return;
+  const usd=DB.usd||931;
+  const fobVac=REP_FOB_REF.vacuno.fob,fobCer=REP_FOB_REF.cerdo.fob,fobAve=REP_FOB_REF.ave.fob;
+  el.innerHTML=`
+  <div style="padding:0 max(16px,env(safe-area-inset-left,0px))">
+
+    <div class="rep-card">
+      <div class="rep-title">📦 Calculadora de Costo de Reposición</div>
+      <div class="rep-sub">Estima el costo FOB→CIF→bodega usando el USD actual del Banco Central · Los porcentajes de flete y arancel son configurables</div>
+
+      <div class="rep-fob-row">
+        <button class="rep-fob-btn sel" data-esp="vacuno" onclick="repSelectEspecie('vacuno')">
+          🥩<span class="rep-fob-label">${fobVac.toFixed(2)}</span>Vacuno BR
+        </button>
+        <button class="rep-fob-btn" data-esp="cerdo" onclick="repSelectEspecie('cerdo')">
+          🐷<span class="rep-fob-label">${fobCer.toFixed(2)}</span>Cerdo BR
+        </button>
+        <button class="rep-fob-btn" data-esp="ave" onclick="repSelectEspecie('ave')">
+          🍗<span class="rep-fob-label">${fobAve.toFixed(2)}</span>Ave BR
+        </button>
+      </div>
+
+      <div class="rep-row"><span class="rep-lbl">USD/CLP hoy (BCCh)</span><input class="rep-inp" style="max-width:100px;background:var(--g2);color:var(--g);font-weight:700" value="${fmt(usd)}" readonly></div>
+      <div class="rep-row"><span class="rep-lbl">Precio FOB (USD/kg)</span><input class="rep-inp" id="rep-fob" type="number" step="0.01" value="${fobVac}" oninput="calcReposicion()"></div>
+      <div class="rep-row"><span class="rep-lbl">Cantidad (kg)</span><input class="rep-inp" id="rep-kg" type="number" step="100" value="1000" oninput="calcReposicion()"></div>
+      <div class="rep-row"><span class="rep-lbl">Flete + seguro (%)</span><input class="rep-inp" id="rep-flete" type="number" step="0.5" value="12" oninput="calcReposicion()"></div>
+      <div class="rep-row"><span class="rep-lbl">Arancel promedio (%)</span><input class="rep-inp" id="rep-arancel" type="number" step="0.5" value="6" oninput="calcReposicion()"></div>
+
+      <div id="rep-result" style="display:none" class="rep-result"></div>
+      <button class="rep-btn" onclick="calcReposicion()">Calcular costo de reposición</button>
+
+      <div class="rep-disclaimer">
+        ⚠ Estimación referencial. FOB indicativo — verificar con proveedor antes de comprometer compra.
+        USD/CLP vía Banco Central (mindicador.cl). Flete estimado; arancel según TLC Chile vigente
+        (vacuno 0–6% según origen, cerdo 0%, ave 0–6%). Sin considerar gastos portuarios ni refrigeración en tránsito.
+        ${ODEPA_IMPORTED.length?`📊 Incluye ${ODEPA_IMPORTED.length} registros ODEPA importados para comparación de margen.`:'Sin datos ODEPA importados — sube CSV en Admin para comparar con precio mayorista.'}
+      </div>
+    </div>
+
+    <div class="rep-card" style="padding-bottom:8px">
+      <div class="rep-title">📊 FOB Internacionales de Referencia</div>
+      <div class="rep-sub">Estimaciones referenciales · Fuente: USDA FAS, ODEPA, ABIEC · Oct 2026</div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="border-bottom:1px solid var(--brd)">
+          <th style="text-align:left;padding:4px 0;color:var(--t2);font-weight:700">Especie</th>
+          <th style="text-align:right;padding:4px 0;color:var(--t2);font-weight:700">FOB USD/kg</th>
+          <th style="text-align:right;padding:4px 0;color:var(--t2);font-weight:700">CIF CLP/kg est.</th>
+        </tr></thead>
+        <tbody>
+          ${Object.entries(REP_FOB_REF).map(([k,v])=>{
+            const cif=Math.round(v.fob*usd*1.12);
+            const ico=k==='vacuno'?'🥩':k==='cerdo'?'🐷':'🍗';
+            return`<tr style="border-bottom:1px solid var(--brd)">
+              <td style="padding:5px 0;color:var(--t)">${ico} ${v.especie} (${v.origen})</td>
+              <td style="text-align:right;color:var(--t);font-weight:600">$${v.fob.toFixed(2)}</td>
+              <td style="text-align:right;color:var(--t2)">${fmt(cif)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      <div style="font-size:10px;color:var(--t3);margin-top:8px;font-style:italic">CIF estimado = FOB × USD × 1,12 (flete 12%). Dato referencial, no es cotización oficial.</div>
+    </div>
+
+  </div>`;
+  setTimeout(calcReposicion,50);
+}
+
+// ═══════════════════════════════════════════
 function hideSplash(){document.getElementById('splash').classList.add('hide')}
 
 // ═══════════════════════════════════════════
@@ -2393,6 +2749,7 @@ async function init(){
     // Render inmediato
     updatePasoStatus();
     renderDashGeoAlerts();
+    await loadOdepaFromIDB();
     buildTicker();
     renderCatalog();
     renderPriceTable('ave');
