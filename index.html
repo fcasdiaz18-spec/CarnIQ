@@ -1078,7 +1078,7 @@ function triggerPhotoUpload(uid){
 }
 
 // ── DB ──
-let DB={usd:931,uf:40870,stock:[],prices:{},catalog:[],chatCtx:[],threshold:30};
+let DB={usd:980.79,uf:38471.06,stock:[],prices:{},catalog:[],chatCtx:[],threshold:30};
 function fmt(n){return'$'+Math.round(n).toLocaleString('es-CL')}
 function todayStr(){const d=new Date();return`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`}
 
@@ -1114,7 +1114,11 @@ function showEl(id,txt,show){const e=document.getElementById(id);if(e){e.textCon
 function updateStockCount(){const el=document.getElementById('stock-count');if(el)el.textContent=DB.stock.length}
 
 // ── RATES — mindicador.cl (API pública CORS-open) ──
+// Fallback: dólar observado BCCh 14-Oct-2026 = $980,79 · UF 14-Oct-2026 = $38.471,06
+const RATES_FALLBACK_USD=980.79;
+const RATES_FALLBACK_UF=38471.06;
 const RATES_TTL=23*60*60*1000;
+
 async function fetchRates(force=false){
   let cached=null;
   try{cached=await iGet('rates_v10')}catch(e){}
@@ -1122,26 +1126,31 @@ async function fetchRates(force=false){
   if(!force&&cached&&(now-cached.ts)<RATES_TTL){DB.usd=cached.usd;DB.uf=cached.uf;updateRateDisplay();return}
   try{
     const ctrl=new AbortController();
-    const tid=setTimeout(()=>ctrl.abort(),5000);
+    const tid=setTimeout(()=>ctrl.abort(),6000);
+    // Pedir serie sin fecha — retorna los últimos ~30 valores; usamos el más reciente (serie[0])
+    // Más robusto que /api/dolar/DD-MM-YYYY: el dólar observado puede no estar aún publicado hoy
     const [ru,rf]=await Promise.all([
-      fetch('https://mindicador.cl/api/dolar/'+todayStr(),{signal:ctrl.signal}),
-      fetch('https://mindicador.cl/api/uf/'+todayStr(),{signal:ctrl.signal})
+      fetch('https://mindicador.cl/api/dolar',{signal:ctrl.signal}),
+      fetch('https://mindicador.cl/api/uf',{signal:ctrl.signal})
     ]);
     clearTimeout(tid);
     const ju=await ru.json(),jf=await rf.json();
-    const usd=ju?.serie?.[0]?.valor||cached?.usd||931;
-    const uf=jf?.serie?.[0]?.valor||cached?.uf||40870;
-    DB.usd=usd;DB.uf=uf;
+    const usd=ju?.serie?.[0]?.valor||cached?.usd||RATES_FALLBACK_USD;
+    const uf=jf?.serie?.[0]?.valor||cached?.uf||RATES_FALLBACK_UF;
+    const fechaUSD=ju?.serie?.[0]?.fecha||null;
+    const fechaUF=jf?.serie?.[0]?.fecha||null;
+    DB.usd=usd;DB.uf=uf;DB.rateDate={usd:fechaUSD,uf:fechaUF};
     try{
-      await iSet('rates_v10',{usd,uf,ts:now});
+      await iSet('rates_v10',{usd,uf,ts:now,fechaUSD,fechaUF});
       await appendRateHistory(usd,uf);
     }catch(e){}
   }catch(e){
-    DB.usd=cached?.usd||931;
-    DB.uf=cached?.uf||40870;
+    DB.usd=cached?.usd||RATES_FALLBACK_USD;
+    DB.uf=cached?.uf||RATES_FALLBACK_UF;
   }
   updateRateDisplay();
 }
+
 function updateRateDisplay(){
   document.getElementById('rt-usd').textContent=fmt(DB.usd);
   document.getElementById('rt-uf').textContent=fmt(DB.uf);
@@ -1149,7 +1158,15 @@ function updateRateDisplay(){
   const mkuf=document.getElementById('mkt-uf');if(mkuf)mkuf.textContent=fmt(DB.uf);
   const brl=DB.usd/5.2;const mkb=document.getElementById('mkt-brl');if(mkb)mkb.textContent='~'+Math.round(brl);
   const el=document.getElementById('rates-ts-txt');
-  if(el)el.textContent='Actualizado hoy · Banco Central de Chile · mindicador.cl';
+  if(el){
+    let ts='Banco Central de Chile · mindicador.cl';
+    if(DB.rateDate?.usd){
+      const fd=new Date(DB.rateDate.usd);
+      const dstr=fd.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
+      ts='Dólar observado '+dstr+' · BCCh · mindicador.cl';
+    }
+    el.textContent=ts;
+  }
   // Render sparkline tendencia 7 días (async, no bloquea)
   renderRateSparkline().catch(()=>{});
   buildTicker();
