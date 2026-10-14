@@ -491,6 +491,28 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 .impact-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
 .intel-disclaimer{font-size:9px;color:var(--t3);font-style:italic;padding:6px max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));margin-bottom:4px;border-top:1px solid var(--brd)}
 
+
+/* ── SCOPE FILTER BUTTONS ── */
+.scope-btn{flex:1;padding:7px 4px;border:1.5px solid var(--brd);border-radius:var(--rad-sm);background:var(--card);color:var(--t2);font-size:11px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s}
+.scope-btn.scope-active{background:var(--r);border-color:var(--r);color:#fff}
+
+/* ── COMPETITOR CARDS ── */
+.comp-card{background:var(--card);border:1px solid var(--brd);border-radius:var(--rad);padding:12px;box-shadow:var(--shadow)}
+.comp-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.comp-logo{font-size:28px;width:40px;text-align:center}
+.comp-info{flex:1;min-width:0}
+.comp-name{font-size:14px;font-weight:700;color:var(--t)}
+.comp-tipo{font-size:10px;color:var(--t3)}
+.comp-ambito{font-size:10px;background:var(--g2);color:var(--g);border-radius:4px;padding:2px 7px;font-weight:600}
+.comp-body{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+.comp-row{display:flex;gap:6px;font-size:10px;color:var(--t2);padding:4px 6px;border-radius:5px;background:var(--bg)}
+.comp-lbl{font-weight:600;color:var(--t3);min-width:80px;flex-shrink:0}
+.comp-strength{background:var(--g2)}
+.comp-weak{background:var(--am2)}
+.comp-strat{background:var(--b2)}
+.comp-rel{background:var(--r3)}
+.comp-footer{display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid var(--brd)}
+
 </style>
 
 <!-- SPLASH -->
@@ -699,46 +721,22 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       </div>
     </div>
 
-    <!-- ═══ PRECIOS ═══ -->
-    <div class="page" id="pg-precios">
-      <div class="sh">
-        <h2>Indicadores</h2>
-        <p>Precios · FOB · Reposición · FT Foods Antofagasta</p>
-      </div>
-
-      <!-- Gráficos: lado a lado -->
-      <div style="display:flex;gap:8px;margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));margin-bottom:10px">
-        <div class="chart-container" style="flex:1;min-width:0;margin:0;padding:10px">
-          <div class="chart-title" style="font-size:11px">FOB Internacional</div>
-          <div class="chart-tabs" style="margin-bottom:6px">
-            <div class="ctab active" onclick="showChart(this,'vacuno')" style="font-size:9px;padding:3px 7px">🥩</div>
-            <div class="ctab" onclick="showChart(this,'cerdo')" style="font-size:9px;padding:3px 7px">🐷</div>
-            <div class="ctab" onclick="showChart(this,'ave')" style="font-size:9px;padding:3px 7px">🍗</div>
-          </div>
-          <svg class="chart" id="fob-chart" viewBox="0 0 340 160" style="width:100%;height:auto;display:block"></svg>
-          <div class="chart-legend" id="fob-legend" style="font-size:9px;gap:6px;margin-top:4px"></div>
-        </div>
-        <div class="chart-container" style="flex:1;min-width:0;margin:0;padding:10px">
-          <div class="chart-title" style="font-size:11px">Stock por Categoría</div>
-          <div class="chart-sub" style="font-size:9px;margin-bottom:6px">Cajas · FT Foods Antofagasta</div>
-          <svg class="chart" id="stock-chart" viewBox="0 0 340 140" style="width:100%;height:auto;display:block"></svg>
-        </div>
-      </div>
-
-      <div class="tabs" id="price-tabs">
-        <div class="tab active" onclick="pTab(this,'ave')">🍗 Ave</div>
-        <div class="tab" onclick="pTab(this,'cerdo')">🐷 Cerdo</div>
-        <div class="tab" onclick="pTab(this,'vacuno-imp')">🥩 Vacuno Imp.</div>
-        <div class="tab" onclick="pTab(this,'vacuno-nac')">🇨🇱 Vacuno Nac.</div>
-        <div class="tab" onclick="pTab(this,'procesado')">🍔 Procesados</div>
-        <div class="tab" onclick="pTab(this,'reposicion')">📦 Reposición</div>
-      </div>
-      <div id="price-list"></div>
-    </div>
-
     <!-- ═══ MERCADO ═══ -->
     <div class="page" id="pg-mercado">
       <div class="sh"><h2>Mercado</h2><p>Indicadores globales · Actualización en vivo</p></div>
+
+      <!-- FOB Chart -->
+      <div class="chart-container" style="margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));margin-bottom:10px;padding:12px">
+        <div class="chart-title">FOB Internacional · USD/kg</div>
+        <div class="chart-tabs" style="margin-bottom:8px">
+          <div class="ctab active" onclick="showChart(this,'vacuno')">🥩 Vacuno</div>
+          <div class="ctab" onclick="showChart(this,'cerdo')">🐷 Cerdo</div>
+          <div class="ctab" onclick="showChart(this,'ave')">🍗 Ave</div>
+        </div>
+        <svg class="chart" id="fob-chart" viewBox="0 0 340 160" style="width:100%;height:auto;display:block"></svg>
+        <div class="chart-legend" id="fob-legend" style="font-size:9px;gap:6px;margin-top:4px"></div>
+        <div style="font-size:9px;color:var(--t3);margin-top:4px">Estimaciones referenciales basadas en USDA FAS · ABPA Brasil. No son cotizaciones vigentes.</div>
+      </div>
 
       <div class="mkt-card">
         <div class="mkt-hdr"><h3>FOB Internacional</h3><span>USD/kg · Oct 2026</span></div>
@@ -798,6 +796,29 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
           <div class="mkt-row" style="background:var(--b2);border-radius:6px;margin-top:4px"><span class="item" style="color:var(--b)">⛏ Minería activa</span><span class="price" style="color:var(--b)">Casinos · Resto.</span><span class="chg chg-up">Mercado B2B clave</span></div>
         </div>
       </div>
+
+      <!-- Communal data table -->
+      <div class="mkt-card">
+        <div class="mkt-hdr"><h3>Comunas Región de Antofagasta</h3><span>Censo 2024 · INE · CASEN · ODEPA</span></div>
+        <div style="overflow-x:auto">
+          <table id="communal-table" style="width:100%;border-collapse:collapse;font-size:10px;min-width:560px">
+            <thead>
+              <tr style="background:var(--r);color:#fff;text-align:left">
+                <th style="padding:7px 8px;font-weight:600">Comuna</th>
+                <th style="padding:7px 8px;font-weight:600;text-align:right">Población</th>
+                <th style="padding:7px 8px;font-weight:600;text-align:right">🍗 Ave</th>
+                <th style="padding:7px 8px;font-weight:600;text-align:right">🥩 Vacuno</th>
+                <th style="padding:7px 8px;font-weight:600;text-align:right">🐷 Cerdo</th>
+                <th style="padding:7px 8px;font-weight:600;text-align:right">PIB/fam.</th>
+              </tr>
+            </thead>
+            <tbody id="communal-tbody"></tbody>
+          </table>
+        </div>
+        <div style="font-size:9px;color:var(--t3);margin-top:8px;padding:0 4px">
+          ⚠️ Consumo per cápita estimado aplicando promedio nacional ODEPA 2024 (Ave 33,9 · Vacuno 25,7 · Cerdo 19,7 kg/año) a cada población. PIB/familia estimado en base al ingreso medio regional CASEN 2024 y tamaño promedio de hogar (3,1 personas). Datos son <em>estimaciones</em>, no estadísticas comunales directas. Fuentes: INE Censo 2024 · CASEN 2024 · ODEPA Consumo Cárnico 2024.
+        </div>
+      </div>
     </div>
 
     <!-- ═══ CATÁLOGO ═══ -->
@@ -821,7 +842,13 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
     <div class="page" id="pg-alertas">
       <div class="sh">
         <h2>Alertas</h2>
-        <p>Geopolítica · Sanidad · Mercado</p>
+        <p>Geopolítica · Sanidad · Mercado · Competencia</p>
+      </div>
+      <!-- Market scope filter -->
+      <div style="display:flex;gap:8px;padding:0 max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));margin-bottom:8px">
+        <button class="scope-btn scope-active" id="scope-todas" onclick="setScopeFilter('todas',this)">🌐 Todas</button>
+        <button class="scope-btn" id="scope-nacional" onclick="setScopeFilter('nacional',this)">🇨🇱 Nacional</button>
+        <button class="scope-btn" id="scope-internacional" onclick="setScopeFilter('internacional',this)">🌎 Internacional</button>
       </div>
       <div class="tabs" id="alert-tabs">
         <div class="tab active" onclick="aTab(this,'todas')">Todas</div>
@@ -830,7 +857,10 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <div class="tab" onclick="aTab(this,'comercial')">📊 Comercial</div>
         <div class="tab" onclick="aTab(this,'logistica')">🚢 Logística</div>
       </div>
-      <div id="geo-alerts-list" style="padding-bottom:16px"></div>
+      <div id="geo-alerts-list" style="padding-bottom:8px"></div>
+      <!-- Competitor intelligence section -->
+      <div class="sec-title" style="margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px))">🏢 INTELIGENCIA COMPETITIVA · Mercado Nacional</div>
+      <div id="competitor-intel" style="padding-bottom:16px"></div>
     </div>
 
     <!-- ═══ FUENTES ═══ -->
@@ -846,13 +876,22 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
     <!-- ═══ INTEL — Inteligencia Comercial ═══ -->
     <div class="page" id="pg-intel">
       <div class="sh"><h2>Inteligencia</h2><p>FT Foods vs. mercado · Márgenes · Escenarios</p></div>
-      <div class="tabs" id="intel-tabs">
-        <div class="tab active" onclick="intelTab(this,'comparador')">📊 Comparador</div>
-        <div class="tab" onclick="intelTab(this,'margenes')">💰 Márgenes</div>
-        <div class="tab" onclick="intelTab(this,'escenarios')">🔮 Escenarios</div>
-        <div class="tab" onclick="intelTab(this,'impacto')">⛏ Impacto Chile</div>
+      <!-- Bloqueo no-admin -->
+      <div id="intel-locked" style="padding:32px max(16px,env(safe-area-inset-left,0px));text-align:center">
+        <div style="font-size:40px;margin-bottom:12px">🔒</div>
+        <div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:6px">Acceso restringido</div>
+        <div style="font-size:12px;color:var(--t2);margin-bottom:16px">Esta sección es solo para <strong>felipe.castillo@ftfoods.cl</strong></div>
+        <button class="btn-primary" style="width:auto;padding:10px 24px" onclick="logoutUser()">Cambiar usuario</button>
       </div>
-      <div id="intel-content" style="padding-bottom:16px"></div>
+      <div id="intel-content-wrap" style="display:none">
+        <div class="tabs" id="intel-tabs">
+          <div class="tab active" onclick="intelTab(this,'comparador')">📊 Comparador</div>
+          <div class="tab" onclick="intelTab(this,'margenes')">💰 Márgenes</div>
+          <div class="tab" onclick="intelTab(this,'escenarios')">🔮 Escenarios</div>
+          <div class="tab" onclick="intelTab(this,'impacto')">⛏ Impacto Chile</div>
+        </div>
+        <div id="intel-content" style="padding-bottom:16px"></div>
+      </div>
     </div>
 
     <!-- ═══ IA CHAT ═══ -->
@@ -905,6 +944,19 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
           <input type="password" class="api-input" id="api-key-input" placeholder="sk-ant-..." value="">
           <button class="btn-primary" onclick="saveApiKey()">Guardar API Key</button>
           <div class="upload-preview" id="api-status"></div>
+        </div>
+
+        <div class="admin-card">
+          <h3>📰 Informe de Prensa Diario</h3>
+          <p style="font-size:12px;color:var(--t2);margin:0 0 10px">Sube el PDF del informe diario. CarnIQ extrae los enlaces y los publica como noticias en la pestaña Noticias.</p>
+          <div class="file-drop" onclick="document.getElementById('f-informe').click()">
+            <input type="file" id="f-informe" accept=".pdf" onchange="loadInformePDF(this)">
+            <div class="icon">📄</div>
+            <strong>Informe_de_Prensa_DD_MM.pdf</strong>
+            <p>PDF diario recibido por correo · Extrae enlaces automáticamente</p>
+          </div>
+          <div class="upload-preview" id="informe-preview"></div>
+          <div id="informe-links" style="margin-top:8px"></div>
         </div>
 
         <div class="admin-card">
@@ -975,10 +1027,6 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="12" y2="15"/></svg>
         <span>Noticias</span>
       </button>
-      <button class="nv" onclick="goPage('precios',this)">
-        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        <span>Indicadores</span>
-      </button>
       <button class="nv" onclick="goPage('mercado',this)">
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         <span>Mercado</span>
@@ -988,7 +1036,7 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <span>Alertas</span>
         <div class="badge" id="alert-badge" style="display:none">!</div>
       </button>
-      <button class="nv" onclick="goPage('intel',this)">
+      <button class="nv" id="nav-intel" style="display:none" onclick="goPage('intel',this)">
         <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         <span>Intel</span>
       </button>
@@ -1129,7 +1177,7 @@ function triggerPhotoUpload(uid){
 }
 
 // ── DB ──
-let DB={usd:980.79,uf:38471.06,stock:[],prices:{},catalog:[],chatCtx:[],threshold:30};
+let DB={usd:980.79,uf:41157.43,stock:[],prices:{},catalog:[],chatCtx:[],threshold:30};
 function fmt(n){return'$'+Math.round(n).toLocaleString('es-CL')}
 function todayStr(){const d=new Date();return`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`}
 
@@ -1167,7 +1215,7 @@ function updateStockCount(){const el=document.getElementById('stock-count');if(e
 // ── RATES — mindicador.cl (API pública CORS-open) ──
 // Fallback: dólar observado BCCh 14-Oct-2026 = $980,79 · UF 14-Oct-2026 = $38.471,06
 const RATES_FALLBACK_USD=980.79;
-const RATES_FALLBACK_UF=38471.06;
+const RATES_FALLBACK_UF=41157.43;
 const RATES_TTL=23*60*60*1000;
 
 async function fetchRates(force=false){
@@ -1518,9 +1566,9 @@ function goPage(id,el){
   document.getElementById('pg-'+id).classList.add('active');
   if(el)el.classList.add('active');
   if(id==='noticias'&&!NEWS_LOADED)fetchAndRender('all');
-  if(id==='precios'){renderPriceTable('ave');drawFOBChart('vacuno');drawStockChart()}
   if(id==='catalogo')renderCatalog();
-  if(id==='alertas')renderGeoAlerts();
+  if(id==='alertas'){renderGeoAlerts();renderCompetitorIntel();}
+  if(id==='mercado'){renderComunalData();drawFOBChart('vacuno');}
   if(id==='fuentes')renderSources();
   if(id==='intel')renderIntelPage();
   if(id==='admin')renderAdminPage();
@@ -1538,7 +1586,18 @@ function intelTab(el,cat){
   renderIntelContent();
 }
 
-function renderIntelPage(){renderIntelContent()}
+function renderIntelPage(){
+  const locked=document.getElementById('intel-locked');
+  const content=document.getElementById('intel-content-wrap');
+  if(isAdmin()){
+    if(locked)locked.style.display='none';
+    if(content)content.style.display='block';
+    renderIntelContent();
+  } else {
+    if(locked)locked.style.display='block';
+    if(content)content.style.display='none';
+  }
+}
 
 function renderIntelContent(){
   const el=document.getElementById('intel-content');
@@ -1929,9 +1988,34 @@ function nTab(el,cat){
   renderNewsData(list,cat);
 }
 
+function getPresNewsItems(cat) {
+  try {
+    const raw = JSON.parse(localStorage.getItem('carniq_press_news') || '[]');
+    return raw
+      .filter(n => cat === 'all' || n.especie === cat || n.especie === 'mercado')
+      .map(n => ({
+        u: 'info',
+        cat: n.especie || 'mercado',
+        pais: n.ambito === 'nacional' ? '🇨🇱 Chile' : '🌎 Internacional',
+        title: n.titulo,
+        body: 'Del Informe de Prensa · ' + n.fecha_publicacion,
+        url: n.url,
+        src: n.fuente || new URL(n.url).hostname.replace('www.',''),
+        t: n.fecha_publicacion,
+        img: '',
+        _press: true
+      }));
+  } catch { return []; }
+}
+
 function renderNewsData(list,cat){
   const uc={critico:'ntag-warn',alerta:'ntag-warn',info:'ntag-info'};
   const ul={alerta:'🟡 Tendencia a monitorear',info:'🔵 Informativa'};
+  // Prepend press report items
+  const pressItems = getPresNewsItems(cat);
+  if (pressItems.length) {
+    list = [...pressItems, ...list];
+  }
   let filtered=cat==='all'?list:list.filter(n=>n.cat===cat);
   if(!filtered.length)filtered=list;
   let html='';
@@ -2320,6 +2404,116 @@ function removeTyping(){const e=document.getElementById('typing-ind');if(e)e.rem
 // ═══════════════════════════════════════════
 // FILE LOAD
 // ═══════════════════════════════════════════
+// ── INFORME DE PRENSA PDF ────────────────────────────────────────────────────
+// El PDF del informe diario de prensa contiene URLs de noticias relevantes.
+// Esta función lee el PDF con la API de Claude, extrae los enlaces y los convierte
+// en ítems de noticias que se guardan en localStorage para mostrar en la pestaña Noticias.
+async function loadInformePDF(input) {
+  if (!input.files.length) return;
+  const f = input.files[0];
+  const prev = document.getElementById('informe-preview');
+  const linksEl = document.getElementById('informe-links');
+  if (prev) { prev.className = 'upload-preview show'; prev.textContent = '⏳ Procesando PDF con IA...'; }
+  if (linksEl) linksEl.innerHTML = '';
+
+  // Convert PDF to base64
+  const toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+  try {
+    const apiKey = localStorage.getItem('carniq_apikey');
+    if (!apiKey) {
+      if (prev) prev.textContent = '❌ Debes configurar tu API Key de Claude primero.';
+      return;
+    }
+    const b64 = await toBase64(f);
+    // Ask Claude to extract news URLs and titles from the PDF
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2048,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'document',
+              source: { type: 'base64', media_type: 'application/pdf', data: b64 }
+            },
+            {
+              type: 'text',
+              text: `Extrae todos los enlaces (URLs) de noticias que aparecen en este informe de prensa. Para cada enlace indica:
+1. La URL completa
+2. El titular o tema de la noticia (si está mencionado)
+3. La especie cárnica relacionada: vacuno, cerdo, ave, o mercado
+4. Si es mercado nacional (Chile) o internacional
+
+Responde SOLO con un array JSON válido, sin texto adicional. Formato:
+[{"url":"https://...","titulo":"Título","especie":"vacuno","ambito":"internacional"}]
+
+Si no hay enlaces, devuelve [].`
+            }
+          ]
+        }]
+      })
+    });
+    if (!resp.ok) throw new Error('API error ' + resp.status);
+    const data = await resp.json();
+    const txt = data.content?.[0]?.text || '[]';
+    let items;
+    try {
+      // Extract JSON from response
+      const match = txt.match(/\[[\s\S]*\]/);
+      items = match ? JSON.parse(match[0]) : [];
+    } catch { items = []; }
+
+    if (!items.length) {
+      if (prev) prev.textContent = '⚠️ No se encontraron enlaces en el PDF.';
+      return;
+    }
+
+    // Build news items and save to localStorage
+    const dateStr = new Date().toLocaleDateString('es-CL');
+    const newsItems = items.map((it, i) => ({
+      id: 'press_' + Date.now() + '_' + i,
+      titulo: it.titulo || it.url,
+      resumen: 'Noticia del Informe de Prensa · ' + dateStr,
+      especie: it.especie || 'mercado',
+      ambito: it.ambito || 'internacional',
+      fuente: new URL(it.url).hostname.replace('www.',''),
+      url: it.url,
+      fecha_publicacion: dateStr,
+      fecha_dato: dateStr,
+      confianza: 'Fuente directa del informe',
+      tipo: 'informe_prensa'
+    }));
+
+    // Merge with existing press news (keep last 60 days)
+    const saved = JSON.parse(localStorage.getItem('carniq_press_news') || '[]');
+    const merged = [...newsItems, ...saved].slice(0, 100);
+    localStorage.setItem('carniq_press_news', JSON.stringify(merged));
+
+    if (prev) prev.textContent = `✅ ${newsItems.length} noticias cargadas desde el informe.`;
+    if (linksEl) {
+      linksEl.innerHTML = '<div style="font-size:10px;color:var(--t2);font-weight:600;margin-bottom:6px">Noticias extraídas:</div>'
+        + newsItems.map(n => `<div style="font-size:10px;color:var(--b);margin-bottom:3px">📎 <a href="${n.url}" target="_blank" style="color:var(--b)">${n.titulo}</a> · ${n.especie}</div>`).join('');
+    }
+    // Mark news as needing reload
+    NEWS_LOADED = false;
+  } catch (err) {
+    if (prev) prev.textContent = '❌ Error: ' + err.message;
+  }
+}
+
 function loadStock(input){
   if(!input.files.length)return;
   const f=input.files[0];
@@ -2459,7 +2653,16 @@ const GEO_ALERTS = [
 ];
 
 let geoAlertTab = 'todas';
+let geoScopeFilter = 'todas';
 let expandedAlerts = {};
+
+function setScopeFilter(scope, el) {
+  geoScopeFilter = scope;
+  document.querySelectorAll('.scope-btn').forEach(b=>b.classList.remove('scope-active'));
+  if(el) el.classList.add('scope-active');
+  renderGeoAlerts();
+  renderCompetitorIntel();
+}
 
 function aTab(el, cat) {
   geoAlertTab = cat;
@@ -2511,9 +2714,12 @@ function geoAlertHtml(a) {
 }
 
 function renderGeoAlerts() {
-  const list = geoAlertTab === 'todas' ? GEO_ALERTS
-    : geoAlertTab === 'critico' ? GEO_ALERTS.filter(a=>a.nivel==='critico'||a.nivel==='alto')
-    : GEO_ALERTS.filter(a=>a.categoria===geoAlertTab);
+  let base = GEO_ALERTS;
+  if(geoScopeFilter === 'nacional') base = base.filter(a=>a.ambito==='nacional');
+  else if(geoScopeFilter === 'internacional') base = base.filter(a=>a.ambito==='internacional'||!a.ambito);
+  const list = geoAlertTab === 'todas' ? base
+    : geoAlertTab === 'critico' ? base.filter(a=>a.nivel==='critico'||a.nivel==='alto')
+    : base.filter(a=>a.categoria===geoAlertTab);
   const el = document.getElementById('geo-alerts-list');
   if (!el) return;
   if (!list.length) {
@@ -2529,6 +2735,227 @@ function renderGeoAlerts() {
     badge.style.display = critical > 0 ? 'flex' : 'none';
     badge.textContent = critical;
   }
+}
+
+// ─── COMPETITOR INTEL ───────────────────────────────────────────────────────
+const COMPETITORS = [
+  {
+    id:'agrosuper',
+    nombre:'Agrosuper',
+    logo:'🐔',
+    tipo:'Productor integrado',
+    especies:['Ave','Cerdo','Vacuno'],
+    presencia:'Nacional · Exportaciones a 70+ países',
+    fortaleza:'Liderazgo en ave y cerdo. Escala industrial, precios competitivos.',
+    debilidad:'Escasa personalización B2B. Canal masivo.',
+    estrategia_oct26:'Expansión canal foodservice post-pandemia. Inversión logística norte.',
+    relevancia_ft:'Principal competidor en ave y cerdo. Monitorear precios lista.',
+    fuente:'Memoria Anual 2024 · Agrosuper.com',
+    url:'https://www.agrosuper.com',
+    ambito:'nacional'
+  },
+  {
+    id:'ariztia',
+    nombre:'Ariztia',
+    logo:'🍗',
+    tipo:'Productor integrado',
+    especies:['Ave','Cerdo'],
+    presencia:'Zona central · Norte Grande en distribución',
+    fortaleza:'Fuerte en retail. Marca reconocida en pollo fresco.',
+    debilidad:'Menor presencia B2B industrial vs. Agrosuper.',
+    estrategia_oct26:'Foco en innovación de productos y canal moderno.',
+    relevancia_ft:'Competidor en ave. Comparar precios de pechuga y troceados.',
+    fuente:'Ariztia.com · ODEPA 2024',
+    url:'https://www.ariztia.com',
+    ambito:'nacional'
+  },
+  {
+    id:'coexca',
+    nombre:'Coexca',
+    logo:'🥩',
+    tipo:'Exportadora · Vacuno',
+    especies:['Vacuno'],
+    presencia:'Norte Grande · Exportación Asia-Pacífico',
+    fortaleza:'Especialización vacuno premium. Buenas relaciones con ganaderos del norte.',
+    debilidad:'Volúmenes menores que grandes integrados.',
+    estrategia_oct26:'Crecimiento en cortes premium para foodservice.',
+    relevancia_ft:'Competidor directo en vacuno para canal B2B Antofagasta.',
+    fuente:'Coexca.cl · ODEPA registros exportación 2024',
+    url:'https://www.coexca.cl',
+    ambito:'nacional'
+  },
+  {
+    id:'bidfood',
+    nombre:'Bidfood Chile',
+    logo:'🚚',
+    tipo:'Distribuidor foodservice',
+    especies:['Ave','Cerdo','Vacuno','Procesados'],
+    presencia:'Nacional · Enfoque foodservice y hospitalidad',
+    fortaleza:'Catálogo amplio. Relaciones con hotelería y casinos.',
+    debilidad:'No es productor — márgenes ajustados en commodities.',
+    estrategia_oct26:'Digitalización pedidos. Expansión a minería y educación.',
+    relevancia_ft:'Competidor directo en canal casino/hotel/restaurante Antofagasta.',
+    fuente:'Bidfood.cl · LinkedIn empresa 2024',
+    url:'https://www.bidfood.cl',
+    ambito:'nacional'
+  },
+  {
+    id:'cial',
+    nombre:'Cial Alimentos',
+    logo:'🏭',
+    tipo:'Distribuidor regional',
+    especies:['Ave','Cerdo','Vacuno','Procesados'],
+    presencia:'Norte de Chile · Antofagasta, Atacama',
+    fortaleza:'Conocimiento del mercado nortino. Distribución ágil.',
+    debilidad:'Menor escala que distribuidores nacionales.',
+    estrategia_oct26:'Foco en clientes medianos. Competencia directa en zona norte.',
+    relevancia_ft:'Competidor regional más directo. Comparar precios y niveles de servicio.',
+    fuente:'Mercado público · LinkedIn · referencias de clientes',
+    url:'',
+    ambito:'nacional'
+  },
+  {
+    id:'pf',
+    nombre:'PF Alimentos',
+    logo:'🐖',
+    tipo:'Productor · Cerdo y derivados',
+    especies:['Cerdo','Procesados'],
+    presencia:'Nacional',
+    fortaleza:'Especialización cerdo. Buen posicionamiento en embutidos.',
+    debilidad:'Menor diversificación vs. Agrosuper.',
+    estrategia_oct26:'Crecimiento en proteína de cerdo premium.',
+    relevancia_ft:'Monitorear precios cerdo fresco y procesados.',
+    fuente:'PFAlimentos.cl · ODEPA',
+    url:'',
+    ambito:'nacional'
+  },
+  {
+    id:'lovalledor',
+    nombre:'Lo Valledor',
+    logo:'🛒',
+    tipo:'Mercado mayorista',
+    especies:['Ave','Cerdo','Vacuno'],
+    presencia:'Santiago · Impacto en precios mayoristas nacionales',
+    fortaleza:'Referente de precios mayoristas Chile. Volúmenes masivos.',
+    debilidad:'Cobertura principalmente Región Metropolitana.',
+    estrategia_oct26:'Sin cambios estratégicos conocidos.',
+    relevancia_ft:'Usar como referencia de precios mayoristas para cotizaciones.',
+    fuente:'odepa.gob.cl precios mayoristas Lo Valledor',
+    url:'https://www.lovalledor.cl',
+    ambito:'nacional'
+  },
+  {
+    id:'icb',
+    nombre:'ICB (Importadora y Comercializadora de Bovinos)',
+    logo:'🌎',
+    tipo:'Importador · Vacuno',
+    especies:['Vacuno'],
+    presencia:'Norte de Chile · Importación Brasil/Paraguay',
+    fortaleza:'Especialización en vacuno importado. Acceso a cortes Brasil/PY.',
+    debilidad:'Portafolio limitado a vacuno.',
+    estrategia_oct26:'Aprovechar ventana de precios FOB Brasil.',
+    relevancia_ft:'Competidor directo en vacuno importado para Antofagasta.',
+    fuente:'Mercado público · DGA importaciones 2024',
+    url:'',
+    ambito:'nacional'
+  }
+];
+
+function renderCompetitorIntel() {
+  const el = document.getElementById('competitor-intel');
+  if(!el) return;
+  // Filter by scope if nacional/todas; internacional scope hides this section
+  if(geoScopeFilter === 'internacional') {
+    el.innerHTML = `<div style="padding:16px max(16px,env(safe-area-inset-left,0px));font-size:12px;color:var(--t3);font-style:italic">Filtro Internacional activo — sección de competencia nacional no aplica.</div>`;
+    return;
+  }
+  el.innerHTML = '<div style="padding:0 max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));padding-bottom:16px">'
+    + COMPETITORS.map(c=>`
+    <div class="comp-card">
+      <div class="comp-header">
+        <div class="comp-logo">${c.logo}</div>
+        <div class="comp-info">
+          <div class="comp-name">${c.nombre}</div>
+          <div class="comp-tipo">${c.tipo} · ${c.especies.join(' · ')}</div>
+        </div>
+        <div class="comp-ambito">🇨🇱 Nacional</div>
+      </div>
+      <div class="comp-body">
+        <div class="comp-row"><span class="comp-lbl">Presencia</span><span>${c.presencia}</span></div>
+        <div class="comp-row comp-strength"><span class="comp-lbl">✅ Fortaleza</span><span>${c.fortaleza}</span></div>
+        <div class="comp-row comp-weak"><span class="comp-lbl">⚠️ Debilidad</span><span>${c.debilidad}</span></div>
+        <div class="comp-row comp-strat"><span class="comp-lbl">📌 Oct 2026</span><span>${c.estrategia_oct26}</span></div>
+        <div class="comp-row comp-rel"><span class="comp-lbl">🎯 Relevancia FT</span><span>${c.relevancia_ft}</span></div>
+      </div>
+      <div class="comp-footer">
+        <span style="font-size:9px;color:var(--t3)">Fuente: ${c.fuente}</span>
+        ${c.url ? `<a href="${c.url}" target="_blank" style="font-size:9px;color:var(--b)">Ver sitio →</a>` : ''}
+      </div>
+      <div style="font-size:9px;color:var(--t3);margin-top:4px;font-style:italic;padding:0 0 2px">Datos elaborados por CarnIQ con información pública. No representan análisis financiero certificado.</div>
+    </div>`).join('<div style="height:8px"></div>')
+    + '</div>';
+}
+
+// ─── COMMUNAL DATA ───────────────────────────────────────────────────────────
+const COMUNAS_DATA = [
+  {
+    nombre:'Antofagasta',
+    poblacion:401096,
+    pib_fam_clp:3850000, // estimado ingreso medio familiar CASEN 2024 región
+    nota:'Capital regional. Mayor densidad B2B.'
+  },
+  {
+    nombre:'Calama',
+    poblacion:175702,
+    pib_fam_clp:4200000, // ingreso más alto por minería activa
+    nota:'Centro minero. Casinos y empresas contratistas.'
+  },
+  {
+    nombre:'Iquique',
+    poblacion:191468,
+    pib_fam_clp:3700000,
+    nota:'Puerto libre. Comercio y distribución.'
+  },
+  {
+    nombre:'Mejillones',
+    poblacion:12842,
+    pib_fam_clp:4100000, // industria energética y portuaria
+    nota:'Puerto industrial. Minería y energía.'
+  },
+  {
+    nombre:'Tocopilla',
+    poblacion:22390,
+    pib_fam_clp:3200000,
+    nota:'Puerto menor. Pesca y servicios.'
+  }
+];
+
+// Consumo nacional ODEPA 2024 per cápita (kg/año)
+const CPP = {ave:33.9, vacuno:25.7, cerdo:19.7};
+
+function renderComunalData() {
+  const tbody = document.getElementById('communal-tbody');
+  if(!tbody) return;
+  const fmtN = n => n.toLocaleString('es-CL');
+  const fmtKg = kg => kg.toFixed(1)+' kg';
+  const fmtM = kg => (kg/1000).toFixed(1)+'t';
+  const fmtPIB = v => '$'+Math.round(v/1000)+'k';
+  let rows = '';
+  COMUNAS_DATA.forEach((c,i)=>{
+    const bg = i%2===0 ? 'var(--card)' : 'var(--bg)';
+    const aveKg = (c.poblacion * CPP.ave / 1000).toFixed(0);
+    const vacKg = (c.poblacion * CPP.vacuno / 1000).toFixed(0);
+    const cerdoKg = (c.poblacion * CPP.cerdo / 1000).toFixed(0);
+    rows += `<tr style="background:${bg}">
+      <td style="padding:7px 8px;font-weight:600;color:var(--t)">${c.nombre}<br><span style="font-weight:400;font-size:9px;color:var(--t3)">${c.nota}</span></td>
+      <td style="padding:7px 8px;text-align:right;color:var(--t)">${fmtN(c.poblacion)}</td>
+      <td style="padding:7px 8px;text-align:right"><span style="color:var(--t);font-weight:600">${fmtKg(CPP.ave)}</span><br><span style="font-size:9px;color:var(--t3)">${fmtN(+aveKg)}t/año</span></td>
+      <td style="padding:7px 8px;text-align:right"><span style="color:var(--t);font-weight:600">${fmtKg(CPP.vacuno)}</span><br><span style="font-size:9px;color:var(--t3)">${fmtN(+vacKg)}t/año</span></td>
+      <td style="padding:7px 8px;text-align:right"><span style="color:var(--t);font-weight:600">${fmtKg(CPP.cerdo)}</span><br><span style="font-size:9px;color:var(--t3)">${fmtN(+cerdoKg)}t/año</span></td>
+      <td style="padding:7px 8px;text-align:right;font-weight:600;color:var(--t)">${fmtPIB(c.pib_fam_clp)}/mes</td>
+    </tr>`;
+  });
+  tbody.innerHTML = rows;
 }
 
 function renderDashGeoAlerts() {
@@ -3052,7 +3479,7 @@ async function init(){
     }catch(e){}
     // Tasas con timeout de 4s — si falla usa fallback $931/$40870
     try{await Promise.race([fetchRates(),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),4000))])}
-    catch(e){DB.usd=DB.usd||980.79;DB.uf=DB.uf||38471.06;updateRateDisplay()}
+    catch(e){DB.usd=DB.usd||980.79;DB.uf=DB.uf||41157.43;updateRateDisplay()}
     // Render inmediato
     updatePasoStatus();
     renderDashGeoAlerts();
