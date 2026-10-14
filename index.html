@@ -726,16 +726,18 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       <div class="sh"><h2>Mercado</h2><p>Indicadores globales · Actualización en vivo</p></div>
 
       <!-- FOB Chart -->
-      <div class="chart-container" style="margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));margin-bottom:10px;padding:12px">
-        <div class="chart-title">FOB Internacional · USD/kg</div>
-        <div class="chart-tabs" style="margin-bottom:8px">
-          <div class="ctab active" onclick="showChart(this,'vacuno')">🥩 Vacuno</div>
-          <div class="ctab" onclick="showChart(this,'cerdo')">🐷 Cerdo</div>
-          <div class="ctab" onclick="showChart(this,'ave')">🍗 Ave</div>
+      <div style="display:flex;justify-content:center;margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));margin-bottom:10px">
+        <div class="chart-container" style="width:50%;min-width:180px;padding:10px">
+          <div class="chart-title" style="font-size:11px">FOB Internacional · USD/kg</div>
+          <div class="chart-tabs" style="margin-bottom:6px">
+            <div class="ctab active" onclick="showChart(this,'vacuno')" style="font-size:9px;padding:3px 7px">🥩</div>
+            <div class="ctab" onclick="showChart(this,'cerdo')" style="font-size:9px;padding:3px 7px">🐷</div>
+            <div class="ctab" onclick="showChart(this,'ave')" style="font-size:9px;padding:3px 7px">🍗</div>
+          </div>
+          <svg class="chart" id="fob-chart" viewBox="0 0 340 160" style="width:100%;height:auto;display:block"></svg>
+          <div class="chart-legend" id="fob-legend" style="font-size:9px;gap:6px;margin-top:4px"></div>
+          <div style="font-size:9px;color:var(--t3);margin-top:4px">Ref. USDA FAS · ABPA. No son cotizaciones.</div>
         </div>
-        <svg class="chart" id="fob-chart" viewBox="0 0 340 160" style="width:100%;height:auto;display:block"></svg>
-        <div class="chart-legend" id="fob-legend" style="font-size:9px;gap:6px;margin-top:4px"></div>
-        <div style="font-size:9px;color:var(--t3);margin-top:4px">Estimaciones referenciales basadas en USDA FAS · ABPA Brasil. No son cotizaciones vigentes.</div>
       </div>
 
       <div class="mkt-card">
