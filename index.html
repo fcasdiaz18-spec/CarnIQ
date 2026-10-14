@@ -1868,21 +1868,37 @@ function renderAdminPage(){
     // User info
     const info=document.getElementById('admin-user-info');
     if(info&&CURRENT_USER)info.textContent=`${CURRENT_USER.name} · ${CURRENT_USER.email}`;
-    // Log de accesos
+    // Log de accesos — consolidado por usuario
     const logList=document.getElementById('admin-log-list');
     if(logList){
       const logs=getAccessLog();
-      if(!logs.length){logList.innerHTML='<div style="font-size:11px;color:var(--t3);padding:8px 0">Sin registros aún.</div>';return}
-      logList.innerHTML=logs.slice(0,50).map(l=>{
-        const dt=new Date(l.ts);
-        const fecha=dt.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
-        const hora=dt.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
-        return`<div class="log-row">
-          <div class="log-name">${l.name||'—'}</div>
-          <div class="log-email">${l.email}</div>
-          <div class="log-time">${fecha} ${hora}</div>
-        </div>`;
-      }).join('');
+      if(!logs.length){logList.innerHTML='<div style="font-size:11px;color:var(--t3);padding:8px 0">Sin registros aún.</div>';}
+      else {
+        // Agrupar por email
+        const byUser={};
+        logs.forEach(l=>{
+          const key=l.email||'anónimo';
+          if(!byUser[key]){byUser[key]={name:l.name||'—',email:key,count:0,last:l.ts,first:l.ts}}
+          byUser[key].count++;
+          if(l.ts>byUser[key].last)byUser[key].last=l.ts;
+          if(l.ts<byUser[key].first)byUser[key].first=l.ts;
+        });
+        const users=Object.values(byUser).sort((a,b)=>b.last.localeCompare(a.last));
+        logList.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr auto auto;gap:4px 8px;font-size:10px;font-weight:600;color:var(--t3);padding:4px 0;border-bottom:1px solid var(--brd);margin-bottom:4px">
+          <span>Usuario</span><span>Email</span><span style="text-align:center">Visitas</span><span>Último acceso</span>
+        </div>`+users.map(u=>{
+          const dt=new Date(u.last);
+          const fecha=dt.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit'});
+          const hora=dt.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+          const isAdminUser=u.email===ADMIN_EMAIL;
+          return`<div style="display:grid;grid-template-columns:1fr 1fr auto auto;gap:4px 8px;font-size:10px;padding:5px 0;border-bottom:1px solid var(--brd);align-items:center">
+            <span style="font-weight:600;color:var(--t)">${u.name}${isAdminUser?' 👑':''}</span>
+            <span style="color:var(--t2);word-break:break-all">${u.email}</span>
+            <span style="text-align:center;background:var(--r3);color:var(--r);border-radius:10px;padding:1px 7px;font-weight:700">${u.count}</span>
+            <span style="color:var(--t3);white-space:nowrap">${fecha} ${hora}</span>
+          </div>`;
+        }).join('');
+      }
     }
   } else {
     locked.style.display='block';
