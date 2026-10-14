@@ -317,6 +317,30 @@ svg.chart{width:100%;overflow:visible}
 .api-input{width:100%;background:var(--bg);border:1.5px solid var(--brd);border-radius:var(--rad-sm);padding:10px 12px;font-size:12px;color:var(--t);outline:none;font-family:monospace;margin-top:6px}
 .api-input:focus{border-color:var(--r)}
 label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin-bottom:4px}
+.btn-outline{background:transparent;border:1.5px solid var(--r);color:var(--r);border-radius:var(--rad-sm);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-outline:hover{background:var(--r3)}
+/* User badge in header */
+.user-badge-btn{background:var(--r3);border:1px solid var(--r);border-radius:20px;padding:4px 10px 4px 7px;display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;font-weight:700;color:var(--r);flex-shrink:0}
+.user-badge-btn svg{width:14px;height:14px;stroke:var(--r)}
+/* Login modal */
+#login-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .2s}
+#login-modal.show{opacity:1;pointer-events:all}
+.login-box{background:var(--card);border-radius:16px;padding:24px 20px;width:100%;max-width:340px;box-shadow:var(--shadow-md)}
+.login-logo{text-align:center;margin-bottom:8px}
+.login-title{font-size:17px;font-weight:800;color:var(--t);text-align:center;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px}
+.login-sub{font-size:11px;color:var(--t2);text-align:center;margin-top:4px}
+/* Foto upload */
+.prod-detail-img-wrap{position:relative;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.prod-detail-img{width:88px;height:88px;border-radius:10px;overflow:hidden;background:var(--g2);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative}
+.upload-photo-btn{display:flex;align-items:center;gap:4px;background:var(--r);color:#fff;border:none;border-radius:8px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap}
+.upload-photo-btn svg{width:12px;height:12px;stroke:#fff;flex-shrink:0}
+.photo-credit{font-size:10px;color:var(--t3);margin-top:6px;font-style:italic}
+/* Log accesos */
+.log-row{padding:8px 0;border-bottom:1px solid var(--brd);display:grid;grid-template-columns:1fr 1fr auto;gap:4px;align-items:start}
+.log-row:last-child{border-bottom:none}
+.log-name{font-size:12px;font-weight:600;color:var(--t)}
+.log-email{font-size:11px;color:var(--t2)}
+.log-time{font-size:10px;color:var(--t3);text-align:right;white-space:nowrap}
 
 /* MERCADO */
 .mkt-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);margin:0 max(16px,env(safe-area-inset-left,0px)) 10px;margin-right:max(16px,env(safe-area-inset-right,0px));overflow:hidden;box-shadow:var(--shadow)}
@@ -380,6 +404,27 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <div class="live-dot"></div>
         <span>En vivo</span>
       </div>
+      <button class="user-badge-btn" onclick="goPage('admin',document.getElementById('nav-admin'))" title="Mi cuenta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+        <span id="user-badge">—</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div id="login-modal">
+    <div class="login-box">
+      <div class="login-logo">
+        <svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="18" fill="#da532c"/><text x="18" y="24" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="16" font-weight="900" fill="#fff">FT</text></svg>
+      </div>
+      <div class="login-title">CarnIQ · FT Foods</div>
+      <div class="login-sub">Identifícate para acceder al catálogo colaborativo</div>
+      <label class="lbl-sm" style="margin-top:14px">Tu nombre</label>
+      <input class="api-input" id="login-name" type="text" placeholder="Ej: Carlos Vega" autocomplete="name">
+      <label class="lbl-sm" style="margin-top:8px">Email corporativo</label>
+      <input class="api-input" id="login-email" type="email" placeholder="tu.nombre@ftfoods.cl" autocomplete="email">
+      <div id="login-err" style="font-size:11px;color:#da532c;min-height:14px;margin-top:4px"></div>
+      <button class="btn-primary" style="margin-top:10px" onclick="submitLogin()">Ingresar</button>
     </div>
   </div>
 
@@ -618,9 +663,23 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 
     <!-- ═══ ADMIN ═══ -->
     <div class="page" id="pg-admin">
-      <div class="sh"><h2>Admin</h2><p>Configuración y carga de datos</p></div>
-
+      <div class="sh"><h2>Admin</h2><p>Configuración · Solo administrador</p></div>
+      <!-- Bloqueo no-admin -->
+      <div id="admin-locked" style="display:none;padding:32px max(16px,env(safe-area-inset-left,0px));text-align:center">
+        <div style="font-size:40px;margin-bottom:12px">🔒</div>
+        <div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:6px">Acceso restringido</div>
+        <div style="font-size:12px;color:var(--t2);margin-bottom:16px">Esta sección es solo para <strong>felipe.castillo@ftfoods.cl</strong></div>
+        <button class="btn-primary" style="width:auto;padding:10px 24px" onclick="logoutUser()">Cambiar usuario</button>
+      </div>
+      <!-- Contenido admin -->
+      <div id="admin-content">
       <div class="admin-section">
+        <div class="admin-card" style="background:linear-gradient(135deg,var(--r3),var(--card))">
+          <h3>👤 Sesión activa</h3>
+          <div style="font-size:13px;color:var(--t);font-weight:600" id="admin-user-info">—</div>
+          <button class="btn-outline" style="margin-top:10px;width:auto;padding:6px 16px;font-size:11px" onclick="logoutUser()">Cerrar sesión</button>
+        </div>
+
         <div class="admin-card">
           <h3>🔑 API Key Claude</h3>
           <label class="lbl-sm">Anthropic API Key</label>
@@ -657,7 +716,13 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
           <input type="number" class="api-input" id="threshold-input" value="30" min="1" max="100" style="font-family:'Inter',sans-serif">
           <button class="btn-primary" onclick="saveThreshold()">Guardar configuración</button>
         </div>
+
+        <div class="admin-card" id="admin-log-card">
+          <h3>📋 Registro de accesos</h3>
+          <div id="admin-log-list" style="max-height:300px;overflow-y:auto"></div>
+        </div>
       </div>
+      </div><!-- /admin-content -->
     </div>
 
   </div><!-- /pages -->
@@ -690,7 +755,7 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <span>IA Chat</span>
         <div class="badge" id="chat-badge" style="display:none">1</div>
       </button>
-      <button class="nv" onclick="goPage('admin',this)">
+      <button class="nv" id="nav-admin" onclick="goPage('admin',this)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
         <span>Admin</span>
       </button>
@@ -705,10 +770,113 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 // ═══════════════════════════════════════════════════
 
 // ── IDB ──
-const IDB_NAME='carniq_v10'; let db;
-function openIDB(){return new Promise(r=>{const q=indexedDB.open(IDB_NAME,1);q.onupgradeneeded=e=>{e.target.result.createObjectStore('kv')};q.onsuccess=e=>{db=e.target.result;r()};q.onerror=()=>r()})}
+const IDB_NAME='carniq_v11'; let db;
+function openIDB(){return new Promise(r=>{
+  const q=indexedDB.open(IDB_NAME,2);
+  q.onupgradeneeded=e=>{
+    const d=e.target.result;
+    if(!d.objectStoreNames.contains('kv'))d.createObjectStore('kv');
+    if(!d.objectStoreNames.contains('photos'))d.createObjectStore('photos'); // fotos producto por código/uid
+  };
+  q.onsuccess=e=>{db=e.target.result;r()};
+  q.onerror=()=>r()
+})}
 function iSet(k,v){return new Promise(r=>{try{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>r();t.onerror=()=>r()}catch{r()}})}
 function iGet(k){return new Promise(r=>{try{const t=db.transaction('kv');const q=t.objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch{r(null)}})}
+function iPhotoSet(uid,data){return new Promise(r=>{try{const t=db.transaction('photos','readwrite');t.objectStore('photos').put(data,uid);t.oncomplete=()=>r(true);t.onerror=()=>r(false)}catch{r(false)}})}
+function iPhotoGet(uid){return new Promise(r=>{try{const t=db.transaction('photos');const q=t.objectStore('photos').get(uid);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}catch{r(null)}})}
+function iPhotoGetAll(){return new Promise(r=>{try{const t=db.transaction('photos');const all={};const q=t.objectStore('photos').openCursor();q.onsuccess=e=>{const c=e.target.result;if(c){all[c.key]=c.value;c.continue()}else r(all)};q.onerror=()=>r({})}catch{r({})}})}
+
+// ── USUARIO ACTUAL ──
+const ADMIN_EMAIL='felipe.castillo@ftfoods.cl';
+let CURRENT_USER=null;
+function getCurrentUser(){
+  try{return JSON.parse(localStorage.getItem('carniq_user')||'null')}catch{return null}
+}
+function setCurrentUser(u){
+  try{localStorage.setItem('carniq_user',JSON.stringify(u))}catch{}
+  CURRENT_USER=u;
+}
+function isAdmin(){return CURRENT_USER&&CURRENT_USER.email===ADMIN_EMAIL}
+
+// ── LOG DE ACCESOS ──
+function logAccess(){
+  try{
+    const logs=JSON.parse(localStorage.getItem('carniq_accesslog')||'[]');
+    logs.unshift({
+      ts:new Date().toISOString(),
+      email:CURRENT_USER?.email||'anónimo',
+      name:CURRENT_USER?.name||'—',
+      ua:navigator.userAgent.substring(0,80)
+    });
+    // keep last 200
+    if(logs.length>200)logs.splice(200);
+    localStorage.setItem('carniq_accesslog',JSON.stringify(logs));
+  }catch{}
+}
+function getAccessLog(){
+  try{return JSON.parse(localStorage.getItem('carniq_accesslog')||'[]')}catch{return[]}
+}
+
+// ── CACHE DE FOTOS (IDB → memoria) ──
+let PHOTO_CACHE={};
+
+// ── LOGIN MODAL ──
+function showLoginPrompt(){
+  const m=document.getElementById('login-modal');
+  if(m)m.classList.add('show');
+}
+function hideLoginModal(){
+  const m=document.getElementById('login-modal');
+  if(m)m.classList.remove('show');
+}
+function submitLogin(){
+  const email=(document.getElementById('login-email').value||'').trim().toLowerCase();
+  const name=(document.getElementById('login-name').value||'').trim();
+  if(!email||!email.includes('@')){document.getElementById('login-err').textContent='Ingresa un email válido';return}
+  if(!name){document.getElementById('login-err').textContent='Ingresa tu nombre';return}
+  const user={email,name,loginAt:new Date().toISOString()};
+  setCurrentUser(user);
+  logAccess();
+  updateUserBadge();
+  hideLoginModal();
+}
+function logoutUser(){
+  localStorage.removeItem('carniq_user');
+  CURRENT_USER=null;
+  updateUserBadge();
+  showLoginPrompt();
+}
+function updateUserBadge(){
+  const el=document.getElementById('user-badge');
+  if(el)el.textContent=CURRENT_USER?CURRENT_USER.name.split(' ')[0]:'—';
+  // Mostrar/ocultar botón Admin según rol
+  const adminNav=document.getElementById('nav-admin');
+  if(adminNav)adminNav.style.display='flex';// siempre visible; página filtra internamente
+}
+
+// ── FOTOS CATÁLOGO ──
+async function uploadProdPhoto(uid,inputEl){
+  const file=inputEl.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const dataUrl=e.target.result;
+    PHOTO_CACHE[uid]=dataUrl;
+    await iPhotoSet(uid,dataUrl);
+    // Refresh detalle
+    catOpenDetail=uid;
+    renderCatalog();
+    // scroll back
+    setTimeout(()=>{const el=document.getElementById('det-'+uid);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'})},50);
+  };
+  reader.readAsDataURL(file);
+}
+function triggerPhotoUpload(uid){
+  const id='photo-input-'+uid;
+  let inp=document.getElementById(id);
+  if(!inp){inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.capture='environment';inp.id=id;inp.style.display='none';document.body.appendChild(inp);inp.onchange=()=>uploadProdPhoto(uid,inp);}
+  inp.click();
+}
 
 // ── DB ──
 let DB={usd:931,uf:40870,stock:[],prices:{},catalog:[],chatCtx:[],threshold:30};
@@ -718,7 +886,7 @@ function todayStr(){const d=new Date();return`${String(d.getDate()).padStart(2,'
 // ── LOAD/SAVE ──
 async function loadDB(){
   try{
-    const s=localStorage.getItem('carniq_v10');
+    const s=localStorage.getItem('carniq_v10')||localStorage.getItem('carniq_v11');
     if(s){const p=JSON.parse(s);DB.stock=p.stock||[];DB.prices=p.prices||{};DB.catalog=p.catalog||[];DB.threshold=p.threshold||30}
     const k=localStorage.getItem('carniq_apikey');if(k)document.getElementById('api-key-input').value=k;
   }catch{}
@@ -727,6 +895,12 @@ async function loadDB(){
   if(!Object.keys(DB.prices).length) DB.prices=PRICES_DATA;
   if(!DB.catalog.length) DB.catalog=buildCatalog();
   updateStockCount();
+  // Cargar fotos desde IDB en el mapa global
+  try{PHOTO_CACHE=await iPhotoGetAll();}catch{}
+  // Usuario / login
+  CURRENT_USER=getCurrentUser();
+  if(!CURRENT_USER){showLoginPrompt();}
+  else{logAccess();updateUserBadge();}
 }
 async function saveDB(){
   try{localStorage.setItem('carniq_v10',JSON.stringify({stock:DB.stock,prices:DB.prices,catalog:DB.catalog,threshold:DB.threshold}))}catch{}
@@ -1104,10 +1278,42 @@ function goPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
   document.getElementById('pg-'+id).classList.add('active');
-  el.classList.add('active');
+  if(el)el.classList.add('active');
   if(id==='noticias'&&!NEWS_LOADED)fetchAndRender('all');
   if(id==='precios'){renderPriceTable('ave');drawFOBChart('vacuno');drawStockChart()}
   if(id==='catalogo')renderCatalog();
+  if(id==='admin')renderAdminPage();
+}
+function renderAdminPage(){
+  const locked=document.getElementById('admin-locked');
+  const content=document.getElementById('admin-content');
+  if(!locked||!content)return;
+  if(isAdmin()){
+    locked.style.display='none';
+    content.style.display='block';
+    // User info
+    const info=document.getElementById('admin-user-info');
+    if(info&&CURRENT_USER)info.textContent=`${CURRENT_USER.name} · ${CURRENT_USER.email}`;
+    // Log de accesos
+    const logList=document.getElementById('admin-log-list');
+    if(logList){
+      const logs=getAccessLog();
+      if(!logs.length){logList.innerHTML='<div style="font-size:11px;color:var(--t3);padding:8px 0">Sin registros aún.</div>';return}
+      logList.innerHTML=logs.slice(0,50).map(l=>{
+        const dt=new Date(l.ts);
+        const fecha=dt.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
+        const hora=dt.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+        return`<div class="log-row">
+          <div class="log-name">${l.name||'—'}</div>
+          <div class="log-email">${l.email}</div>
+          <div class="log-time">${fecha} ${hora}</div>
+        </div>`;
+      }).join('');
+    }
+  } else {
+    locked.style.display='block';
+    content.style.display='none';
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -1484,8 +1690,9 @@ function renderCatalog(){
           const uid=p.code||(p.name.replace(/\s+/g,'_'));
           const isOpen=catOpenDetail===uid;
           const priceTxt=p.price?`<span class="prod-row-price">${fmt(p.price)}/kg</span>`:'';
+          const rowImgHtml=PHOTO_CACHE[uid]?`<img src="${PHOTO_CACHE[uid]}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="${p.name}">`:(p.icon);
           html+=`<div class="prod-row ${isOpen?'prod-row--open':''}" onclick="showProdDetail('${uid}','${p.name.replace(/'/g,"\\'")}')">
-            <div class="prod-row-img">${p.icon}</div>
+            <div class="prod-row-img">${rowImgHtml}</div>
             <div class="prod-row-info">
               <div class="prod-row-name">${p.name}</div>
               <div class="prod-row-meta">${p.brand}${p.code?` · #${p.code}`:''}${priceTxt}</div>
@@ -1493,8 +1700,16 @@ function renderCatalog(){
             <span class="prod-row-chevron">${isOpen?'▲':'▼'}</span>
           </div>`;
           if(isOpen){
+            const userPhoto=PHOTO_CACHE[uid];
+            const detailImgSrc=userPhoto?`<img src="${userPhoto}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="${p.name}">`:(p.icon);
             html+=`<div class="prod-detail" id="det-${uid}">
-              <div class="prod-detail-img">${p.icon}</div>
+              <div class="prod-detail-img-wrap">
+                <div class="prod-detail-img">${detailImgSrc}</div>
+                <button class="upload-photo-btn" onclick="triggerPhotoUpload('${uid}')" title="Subir foto">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  ${userPhoto?'Cambiar foto':'Subir foto'}
+                </button>
+              </div>
               <div class="prod-detail-body">
                 <div class="prod-detail-name">${p.name}</div>
                 <div class="prod-detail-brand">${p.brand}</div>
@@ -1505,6 +1720,7 @@ function renderCatalog(){
                   ${p.unid?`<div class="pd-item"><span class="pd-lbl">Unid/caja</span><span class="pd-val">${p.unid} unid</span></div>`:''}
                   ${p.price?`<div class="pd-item pd-item--price"><span class="pd-lbl">Precio ref.</span><span class="pd-val price-val">${fmt(p.price)}/kg</span></div>`:''}
                 </div>
+                ${userPhoto?`<div class="photo-credit">📸 Foto subida por equipo FT Foods</div>`:'<div class="photo-credit">📷 Sin foto real aún — sube una foto del producto</div>'}
               </div>
             </div>`;
           }
