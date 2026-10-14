@@ -288,18 +288,19 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 
 <!-- SPLASH -->
 <div id="splash">
-  <!-- Logo basado en logo real FT Foods: cuadrado rojo abajo-izq, cuadrado verde arriba-der, FT negro bold, foods gris -->
-  <svg viewBox="0 0 90 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- cuadrado rojo grande abajo-izquierda -->
-    <rect x="4" y="40" width="32" height="32" rx="3" fill="#c0392b"/>
-    <!-- cuadrado verde pequeño arriba-derecha del bloque izquierdo -->
-    <rect x="22" y="22" width="18" height="18" rx="2" fill="#4a7c3f"/>
-    <!-- texto FT negro bold -->
-    <text x="46" y="52" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="38" fill="#1a1a1a" letter-spacing="-1">FT</text>
-    <!-- texto foods gris -->
-    <text x="47" y="68" font-family="Arial,Helvetica,sans-serif" font-weight="400" font-size="16" fill="#555555" letter-spacing="1">foods</text>
-    <text x="37" y="58" font-family="'Barlow Condensed',sans-serif" font-weight="600" font-size="11" fill="#ffffff99">foods</text>
-  </svg>
+  <!-- Logo FT Foods sobre fondo blanco redondeado para que resalte -->
+  <div style="background:#fff;border-radius:20px;padding:18px 22px;margin-bottom:4px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.35)">
+    <svg viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:52px;display:block">
+      <!-- cuadrado rojo grande abajo-izquierda -->
+      <rect x="0" y="26" width="24" height="24" rx="2" fill="#c0392b"/>
+      <!-- cuadrado verde pequeño arriba-derecha del bloque -->
+      <rect x="14" y="12" width="14" height="14" rx="1.5" fill="#4a7c3f"/>
+      <!-- FT negro bold -->
+      <text x="34" y="42" font-family="Arial Black,Arial,Helvetica,sans-serif" font-weight="900" font-size="34" fill="#111111" letter-spacing="-1">FT</text>
+      <!-- foods gris -->
+      <text x="35" y="50" font-family="Arial,Helvetica,sans-serif" font-weight="400" font-size="11" fill="#666666" letter-spacing="2">foods</text>
+    </svg>
+  </div>
   <div id="splash-title">CARNIQ</div>
   <div id="splash-sub">Inteligencia Cárnica · FT Foods</div>
   <div id="splash-loader"></div>
@@ -310,17 +311,15 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
   <div id="header">
     <div class="header-inner">
       <!-- Logo SVG inline con diseño FT Foods -->
-      <!-- Logo real FT Foods -->
-      <svg id="logo-img" viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg">
-        <!-- cuadrado rojo abajo-izquierda -->
-        <rect x="0" y="22" width="20" height="20" rx="2" fill="#c0392b"/>
-        <!-- cuadrado verde pequeño arriba-derecha del bloque -->
-        <rect x="12" y="10" width="12" height="12" rx="1.5" fill="#4a7c3f"/>
-        <!-- FT bold negro -->
-        <text x="30" y="34" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="28" fill="var(--t)" letter-spacing="-1">FT</text>
-        <!-- foods gris -->
-        <text x="31" y="43" font-family="Arial,Helvetica,sans-serif" font-weight="400" font-size="11" fill="var(--t2)" letter-spacing="1">foods</text>
-      </svg>
+      <!-- Logo real FT Foods — sobre píldora blanca para legibilidad en cualquier tema -->
+      <div style="background:#fff;border-radius:10px;padding:4px 10px;display:flex;align-items:center">
+        <svg viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg" style="height:34px;width:auto;display:block">
+          <rect x="0" y="22" width="20" height="20" rx="2" fill="#c0392b"/>
+          <rect x="12" y="10" width="12" height="12" rx="1.5" fill="#4a7c3f"/>
+          <text x="28" y="34" font-family="Arial Black,Arial,Helvetica,sans-serif" font-weight="900" font-size="28" fill="#111111" letter-spacing="-1">FT</text>
+          <text x="29" y="43" font-family="Arial,Helvetica,sans-serif" font-weight="400" font-size="11" fill="#666666" letter-spacing="2">foods</text>
+        </svg>
+      </div>
       <div class="header-brand">
         <h1>FT Foods</h1>
         <p>CarnIQ · Inteligencia Cárnica</p>
@@ -646,20 +645,27 @@ function updateStockCount(){const el=document.getElementById('stock-count');if(e
 // ── RATES — mindicador.cl (API pública CORS-open) ──
 const RATES_TTL=23*60*60*1000;
 async function fetchRates(force=false){
-  const cached=await iGet('rates_v10');
+  let cached=null;
+  try{cached=await iGet('rates_v10')}catch(e){}
   const now=Date.now();
   if(!force&&cached&&(now-cached.ts)<RATES_TTL){DB.usd=cached.usd;DB.uf=cached.uf;updateRateDisplay();return}
   try{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),5000);
     const [ru,rf]=await Promise.all([
-      fetch('https://mindicador.cl/api/dolar/'+todayStr()),
-      fetch('https://mindicador.cl/api/uf/'+todayStr())
+      fetch('https://mindicador.cl/api/dolar/'+todayStr(),{signal:ctrl.signal}),
+      fetch('https://mindicador.cl/api/uf/'+todayStr(),{signal:ctrl.signal})
     ]);
+    clearTimeout(tid);
     const ju=await ru.json(),jf=await rf.json();
-    const usd=ju?.serie?.[0]?.valor||931;
-    const uf=jf?.serie?.[0]?.valor||40870;
+    const usd=ju?.serie?.[0]?.valor||cached?.usd||931;
+    const uf=jf?.serie?.[0]?.valor||cached?.uf||40870;
     DB.usd=usd;DB.uf=uf;
-    await iSet('rates_v10',{usd,uf,ts:now});
-  }catch(e){DB.usd=cached?.usd||931;DB.uf=cached?.uf||40870}
+    try{await iSet('rates_v10',{usd,uf,ts:now})}catch(e){}
+  }catch(e){
+    DB.usd=cached?.usd||931;
+    DB.uf=cached?.uf||40870;
+  }
   updateRateDisplay();
 }
 function updateRateDisplay(){
@@ -892,6 +898,12 @@ const NEWS_STATIC=[
   {cat:'mercado',u:'info',src:'ODEPA',url:'#',img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70',pais:'🇨🇱 Chile',t:'Esta semana',title:'ODEPA: consumo per cápita de carne en Chile sube a 98 kg/año',body:'Chile consolida uno de los consumos de carne per cápita más altos de América Latina con 98 kg/año. El pollo lidera con 47 kg, seguido de vacuno con 27 kg y cerdo con 24 kg. La tendencia al alza se mantiene en 2026.'},
   {cat:'mercado',u:'info',src:'DIRECON Chile',url:'#',img:'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=70',pais:'🌎 Global',t:'Esta semana',title:'China aumenta cuotas de importación de carne sudamericana Q4',body:'El Ministerio de Comercio de China amplió las cuotas de importación de carne bovina y porcina para Q4 2026, beneficiando a Brasil, Argentina y Paraguay. Chile como importador de esas carnes verá presión alcista en precios FOB.'},
 ];
+
+function renderStaticNews(){
+  NEWS_CACHE=[];NEWS_LAST=0;
+  renderNewsData(NEWS_STATIC,curTab);
+  updateDashNews();
+}
 
 function nTab(el,cat){
   curTab=cat;
@@ -1270,23 +1282,39 @@ function loadPrecios(input){
 // ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
+function hideSplash(){document.getElementById('splash').classList.add('hide')}
+
 async function init(){
-  await openIDB();
-  await loadDB();
-  // Try cached news immediately
-  const cn=await iGet('news_cache_v10');
-  if(cn?.data?.length){NEWS_CACHE=cn.data;NEWS_LAST=cn.ts;NEWS_LOADED=true;updateNewsTS();updateDashNews()}
-  await fetchRates();
-  renderAlerts();
-  buildTicker();
-  renderCatalog();
-  renderPriceTable('ave');
-  drawFOBChart('vacuno');
-  drawStockChart();
-  // Fetch live news in background
-  fetchLiveNews().then(data=>{renderNewsData(data,curTab);updateDashNews()});
-  scheduleNewsRefresh();
-  setTimeout(()=>document.getElementById('splash').classList.add('hide'),1800);
+  // Garantía absoluta: splash desaparece en máximo 3s pase lo que pase
+  const splashTimer=setTimeout(hideSplash,3000);
+  try{
+    await openIDB();
+    await loadDB();
+    // Noticias desde caché si existen
+    try{
+      const cn=await iGet('news_cache_v10');
+      if(cn?.data?.length){NEWS_CACHE=cn.data;NEWS_LAST=cn.ts;NEWS_LOADED=true;updateNewsTS();updateDashNews()}
+    }catch(e){}
+    // Tasas con timeout de 4s — si falla usa fallback $931/$40870
+    try{await Promise.race([fetchRates(),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),4000))])}
+    catch(e){DB.usd=DB.usd||931;DB.uf=DB.uf||40870;updateRateDisplay()}
+    // Render inmediato
+    renderAlerts();
+    buildTicker();
+    renderCatalog();
+    renderPriceTable('ave');
+    drawFOBChart('vacuno');
+    drawStockChart();
+    // Noticias en background — no bloquea init
+    fetchLiveNews().then(data=>{renderNewsData(data,curTab);updateDashNews()}).catch(()=>{renderStaticNews();updateDashNews()});
+    scheduleNewsRefresh();
+  }catch(e){
+    console.error('CarnIQ init error:',e);
+  }finally{
+    // Ocultar splash siempre, con un mínimo de 1.2s para que se vea el logo
+    clearTimeout(splashTimer);
+    setTimeout(hideSplash,1200);
+  }
 }
 init();
 </script>
