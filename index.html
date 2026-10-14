@@ -460,6 +460,37 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 .rate-history-card{background:var(--card);border-radius:var(--rad);padding:14px max(16px,env(safe-area-inset-left,0px));margin:8px 0 12px;box-shadow:var(--shadow)}
 .rate-history-title{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
 .rate-history-refresh{background:none;border:1px solid var(--brd);border-radius:5px;padding:3px 8px;font-size:10px;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif}
+
+/* ═══ INTEL ═══ */
+.intel-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);margin:0 max(12px,env(safe-area-inset-left,0px)) 10px;margin-right:max(12px,env(safe-area-inset-right,0px));overflow:hidden;box-shadow:var(--shadow)}
+.intel-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 0;margin-bottom:10px}
+.intel-hdr h3{font-size:13px;font-weight:700;color:var(--t);display:flex;align-items:center;gap:7px}
+.intel-hdr span{font-size:10px;color:var(--t3);font-weight:500}
+.intel-body{padding:0 14px 14px}
+.intel-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--brd);font-size:11.5px}
+.intel-row:last-child{border-bottom:none}
+.intel-item{color:var(--t2);flex:1}
+.intel-val{font-weight:700;color:var(--t);text-align:right;min-width:70px}
+.intel-chg{font-size:10.5px;font-weight:700;min-width:60px;text-align:right;padding:2px 6px;border-radius:4px}
+.intel-up{color:var(--g);background:var(--g2)}
+.intel-dn{color:var(--r);background:var(--r3)}
+.intel-nt{color:var(--t3);background:var(--bg)}
+.intel-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.scenario-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);padding:14px;margin:0 max(12px,env(safe-area-inset-left,0px)) 8px;margin-right:max(12px,env(safe-area-inset-right,0px))}
+.scenario-title{font-size:12px;font-weight:700;color:var(--t);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.scenario-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid var(--brd)}
+.scenario-row:last-child{border-bottom:none}
+.scenario-lbl{color:var(--t2)}
+.scenario-val{font-weight:700;color:var(--t)}
+.margin-bar-wrap{background:var(--brd);border-radius:4px;height:6px;overflow:hidden;margin:6px 0 4px}
+.margin-bar{height:100%;border-radius:4px;transition:width .4s ease}
+.impact-kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 max(12px,env(safe-area-inset-left,0px)) 10px;margin-right:max(12px,env(safe-area-inset-right,0px))}
+.impact-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);padding:12px;text-align:center;box-shadow:var(--shadow)}
+.impact-icon{font-size:20px;display:block;margin-bottom:4px}
+.impact-val{font-size:16px;font-weight:800;color:var(--t);line-height:1.2}
+.impact-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.intel-disclaimer{font-size:9px;color:var(--t3);font-style:italic;padding:6px max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));margin-bottom:4px;border-top:1px solid var(--brd)}
+
 </style>
 
 <!-- SPLASH -->
@@ -814,6 +845,19 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       <div id="sources-list" style="padding-bottom:16px"></div>
     </div>
 
+
+    <!-- ═══ INTEL — Inteligencia Comercial ═══ -->
+    <div class="page" id="pg-intel">
+      <div class="sh"><h2>Inteligencia</h2><p>FT Foods vs. mercado · Márgenes · Escenarios</p></div>
+      <div class="tabs" id="intel-tabs">
+        <div class="tab active" onclick="intelTab(this,'comparador')">📊 Comparador</div>
+        <div class="tab" onclick="intelTab(this,'margenes')">💰 Márgenes</div>
+        <div class="tab" onclick="intelTab(this,'escenarios')">🔮 Escenarios</div>
+        <div class="tab" onclick="intelTab(this,'impacto')">⛏ Impacto Chile</div>
+      </div>
+      <div id="intel-content" style="padding-bottom:16px"></div>
+    </div>
+
     <!-- ═══ IA CHAT ═══ -->
     <div class="page" id="pg-chat">
       <div id="chat-area">
@@ -940,6 +984,10 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         <span>Alertas</span>
         <div class="badge" id="alert-badge" style="display:none">!</div>
+      </button>
+      <button class="nv" onclick="goPage('intel',this)">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Intel</span>
       </button>
       <button class="nv" onclick="goPage('catalogo',this)">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -1505,8 +1553,279 @@ function goPage(id,el){
   if(id==='catalogo')renderCatalog();
   if(id==='alertas')renderGeoAlerts();
   if(id==='fuentes')renderSources();
+  if(id==='intel')renderIntelPage();
   if(id==='admin')renderAdminPage();
 }
+
+// ═══════════════════════════════════════════
+// INTEL — Inteligencia Comercial Fase 4
+// ═══════════════════════════════════════════
+let curIntelTab='comparador';
+
+function intelTab(el,cat){
+  curIntelTab=cat;
+  document.querySelectorAll('#intel-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderIntelContent();
+}
+
+function renderIntelPage(){renderIntelContent()}
+
+function renderIntelContent(){
+  const el=document.getElementById('intel-content');
+  if(!el)return;
+  if(curIntelTab==='comparador')el.innerHTML=renderComparador();
+  else if(curIntelTab==='margenes')el.innerHTML=renderMargenes();
+  else if(curIntelTab==='escenarios')el.innerHTML=renderEscenarios();
+  else if(curIntelTab==='impacto')el.innerHTML=renderImpactoChile();
+}
+
+/* ── COMPARADOR FT vs ODEPA ── */
+function renderComparador(){
+  const usd=DB.usd||980.79;
+  const prices=DB.prices||{};
+  // Obtener precios FT por especie (promedio de productos con precio)
+  const ftPrecios={vacuno:[],cerdo:[],ave:[]};
+  Object.entries(prices).forEach(([cod,p])=>{
+    const prod=CATALOG_PRODUCTS.find(c=>c.cod===cod||c.codigo===cod);
+    if(!prod)return;
+    const cat=(prod.categoria||'').toLowerCase();
+    const precio=typeof p==='object'?p.precio||p.precioKg||p.neto:p;
+    if(!precio||precio<=0)return;
+    if(cat.includes('vacuno'))ftPrecios.vacuno.push(precio);
+    else if(cat.includes('cerdo'))ftPrecios.cerdo.push(precio);
+    else if(cat.includes('ave')||cat.includes('pollo')||cat.includes('pechuga'))ftPrecios.ave.push(precio);
+  });
+  const avg=arr=>arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length):null;
+  const ftVac=avg(ftPrecios.vacuno);
+  const ftCer=avg(ftPrecios.cerdo);
+  const ftAve=avg(ftPrecios.ave);
+
+  // Precios ODEPA mayorista importados
+  const odepaByEspecie={vacuno:null,cerdo:null,ave:null};
+  if(ODEPA_IMPORTED.length){
+    ['vacuno','cerdo','ave'].forEach(esp=>{
+      const terms=esp==='vacuno'?['vacuno','bov','bovino']:esp==='cerdo'?['cerdo','porc','porcino']:['pollo','ave','pechuga','frango'];
+      const matches=ODEPA_IMPORTED.filter(r=>terms.some(t=>r.producto.toLowerCase().includes(t)));
+      if(matches.length){
+        const vals=matches.map(r=>r.precio).filter(v=>v&&v>0);
+        if(vals.length)odepaByEspecie[esp]=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+      }
+    });
+  }
+
+  // CIF estimado (FOB → CLP)
+  const cif={
+    vacuno:Math.round(REP_FOB_REF.vacuno.fob*usd*1.18),
+    cerdo:Math.round(REP_FOB_REF.cerdo.fob*usd*1.18),
+    ave:Math.round(REP_FOB_REF.ave.fob*usd*1.18)
+  };
+
+  const especies=[
+    {k:'vacuno',ico:'🥩',label:'Vacuno',fob:REP_FOB_REF.vacuno.fob,origen:REP_FOB_REF.vacuno.origen,cif:cif.vacuno,ft:ftVac,odepa:odepaByEspecie.vacuno},
+    {k:'cerdo',ico:'🐷',label:'Cerdo',fob:REP_FOB_REF.cerdo.fob,origen:REP_FOB_REF.cerdo.origen,cif:cif.cerdo,ft:ftCer,odepa:odepaByEspecie.cerdo},
+    {k:'ave',ico:'🍗',label:'Ave',fob:REP_FOB_REF.ave.fob,origen:REP_FOB_REF.ave.origen,cif:cif.ave,ft:ftAve,odepa:odepaByEspecie.ave}
+  ];
+
+  const rows=especies.map(e=>{
+    const ftStr=e.ft?`<span class="intel-val">${fmt(e.ft)}/kg</span>`:`<span class="intel-val" style="color:var(--t3)">Sin datos</span>`;
+    let odStr,margenFt='',margenOdepa='';
+    if(e.odepa){
+      odStr=`<span class="intel-val">${fmt(e.odepa)}/kg</span>`;
+      if(e.ft){
+        const diff=((e.ft-e.odepa)/e.odepa*100);
+        const cls=diff>5?'intel-up':diff<-5?'intel-dn':'intel-nt';
+        margenFt=`<span class="intel-badge ${cls}">${diff>=0?'+':''}${diff.toFixed(0)}%</span>`;
+      }
+    }else{
+      odStr=`<span class="intel-val" style="color:var(--t3)">Importar →</span>`;
+    }
+    const cifMargen=e.ft?((e.ft-e.cif)/e.cif*100).toFixed(0):'—';
+    const cmCls=cifMargen!=='—'&&+cifMargen>10?'intel-up':cifMargen!=='—'&&+cifMargen<0?'intel-dn':'intel-nt';
+    const cmBadge=cifMargen!=='—'?`<span class="intel-badge ${cmCls}">${+cifMargen>=0?'+':''}${cifMargen}%</span>`:'';
+    return`<div style="border-bottom:1.5px solid var(--brd);padding:10px 0">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <span style="font-size:18px">${e.ico}</span>
+        <span style="font-size:13px;font-weight:700;color:var(--t)">${e.label}</span>
+        <span style="font-size:10px;color:var(--t3)">${e.origen}</span>
+      </div>
+      <div class="intel-row"><span class="intel-item">FOB referencial</span>${fmtFob(e.fob)} USD/kg = ${fmt(Math.round(e.fob*usd))}/kg</div>
+      <div class="intel-row"><span class="intel-item">Costo CIF estimado (FOB+18%)</span><span class="intel-val">${fmt(e.cif)}/kg</span></div>
+      <div class="intel-row"><span class="intel-item">Precio FT Foods (promedio)</span>${ftStr}${cmBadge}</div>
+      <div class="intel-row"><span class="intel-item">Precio ODEPA mayorista</span>${odStr}${margenFt}</div>
+    </div>`;
+  }).join('');
+
+  const hasOdepa=ODEPA_IMPORTED.length>0;
+  return`
+  <div class="intel-card" style="padding:12px 14px">
+    <div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px">📊 FT Foods vs. Mercado</div>
+    <div style="font-size:10px;color:var(--t3);margin-bottom:12px">Comparación precios FT · CIF referencial · ODEPA mayorista · USD ${fmt(Math.round(usd))}</div>
+    ${rows}
+    ${!hasOdepa?`<div style="margin-top:10px;padding:8px 10px;background:var(--am2);border-radius:8px;font-size:11px;color:var(--am)">💡 Importa un CSV de ODEPA en <strong>Admin → Importar ODEPA</strong> para comparar con precios mayoristas reales.</div>`:''}
+  </div>
+  <div class="intel-disclaimer">⚠ CIF estimado = FOB × USD × 1,18 (flete+arancel aprox.). Precios FT calculados desde lista cargada. Precios ODEPA desde CSV importado. No son precios negociados ni cotizaciones vigentes.</div>`;
+}
+
+function fmtFob(v){return`<span class="intel-val">$${v.toFixed(2)}</span>`}
+
+/* ── MÁRGENES POR ESPECIE ── */
+function renderMargenes(){
+  const usd=DB.usd||980.79;
+  const prices=DB.prices||{};
+
+  // Construir análisis de márgenes para productos con precio cargado
+  const byEsp={};
+  CATALOG_PRODUCTS.forEach(p=>{
+    const cod=p.cod||p.codigo||'';
+    const pFT=prices[cod];
+    const precio=typeof pFT==='object'?pFT.precio||pFT.precioKg||pFT.neto:pFT;
+    if(!precio||precio<=0)return;
+    const cat=(p.categoria||'').toLowerCase();
+    const especie=cat.includes('vacuno')?'Vacuno':cat.includes('cerdo')?'Cerdo':
+      cat.includes('ave')||cat.includes('pollo')||cat.includes('pechuga')?'Ave':'Procesado';
+    if(!byEsp[especie])byEsp[especie]={items:[],especie};
+    byEsp[especie].items.push({nombre:p.nombre||p.descripcion||cod,precio,cod});
+  });
+
+  if(!Object.keys(byEsp).length){
+    return`<div style="padding:32px;text-align:center">
+      <div style="font-size:36px;margin-bottom:8px">💰</div>
+      <div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:4px">Sin lista de precios cargada</div>
+      <div style="font-size:11px;color:var(--t2)">Ve a <strong>Admin → Cargar Lista de Precios</strong> para analizar márgenes</div>
+    </div>`;
+  }
+
+  const refCif={Vacuno:Math.round(REP_FOB_REF.vacuno.fob*usd*1.18),Cerdo:Math.round(REP_FOB_REF.cerdo.fob*usd*1.18),Ave:Math.round(REP_FOB_REF.ave.fob*usd*1.18),Procesado:null};
+
+  const cards=Object.entries(byEsp).map(([esp,{items}])=>{
+    const avg=Math.round(items.reduce((a,b)=>a+b.precio,0)/items.length);
+    const min=Math.min(...items.map(i=>i.precio));
+    const max=Math.max(...items.map(i=>i.precio));
+    const cif=refCif[esp];
+    const margen=cif?((avg-cif)/cif*100).toFixed(1):null;
+    const barPct=cif?Math.max(5,Math.min(95,(avg/cif-1)*200+50)):50;
+    const barClr=margen!==null&&+margen>15?'var(--g)':margen!==null&&+margen>5?'var(--am)':'var(--r)';
+    const ico=esp==='Vacuno'?'🥩':esp==='Cerdo'?'🐷':esp==='Ave'?'🍗':'🍔';
+    return`<div class="scenario-card" style="margin-bottom:8px">
+      <div class="scenario-title">${ico} ${esp} <span style="font-size:10px;font-weight:500;color:var(--t3)">${items.length} productos</span></div>
+      <div class="scenario-row"><span class="scenario-lbl">Precio FT promedio</span><span class="scenario-val">${fmt(avg)}/kg</span></div>
+      <div class="scenario-row"><span class="scenario-lbl">Rango precios FT</span><span class="scenario-val">${fmt(min)} – ${fmt(max)}</span></div>
+      ${cif?`<div class="scenario-row"><span class="scenario-lbl">Costo CIF est. (FOB+18%)</span><span class="scenario-val">${fmt(cif)}/kg</span></div>`:''}
+      ${margen!==null?`<div class="scenario-row"><span class="scenario-lbl">Margen bruto estimado</span><span class="scenario-val" style="color:${+margen>0?'var(--g)':'var(--r)'}">${+margen>=0?'+':''}${margen}%</span></div>
+      <div class="margin-bar-wrap"><div class="margin-bar" style="width:${barPct}%;background:${barClr}"></div></div>`:''}
+      <div style="font-size:10px;color:var(--t3);margin-top:4px">Top 3: ${items.sort((a,b)=>b.precio-a.precio).slice(0,3).map(i=>`${i.nombre} ${fmt(i.precio)}`).join(' · ')}</div>
+    </div>`;
+  }).join('');
+
+  return cards+`<div class="intel-disclaimer">⚠ Margen = (Precio FT promedio − CIF est.) / CIF est. CIF estimado no incluye gastos portuarios, refrigeración ni financiamiento. Para decisiones de compra, usar calculadora en Precios → Reposición.</div>`;
+}
+
+/* ── ESCENARIOS USD ── */
+function renderEscenarios(){
+  const usdBase=DB.usd||980.79;
+  const escenarios=[
+    {label:'USD −5%',usd:Math.round(usdBase*0.95),color:'var(--g)',icon:'📉'},
+    {label:'USD actual',usd:Math.round(usdBase),color:'var(--b)',icon:'📊'},
+    {label:'USD +5%',usd:Math.round(usdBase*1.05),color:'var(--am)',icon:'📈'},
+    {label:'USD +10%',usd:Math.round(usdBase*1.10),color:'var(--r)',icon:'🚨'}
+  ];
+
+  const especies=[
+    {k:'vacuno',ico:'🥩',label:'Vacuno',fob:REP_FOB_REF.vacuno.fob},
+    {k:'cerdo',ico:'🐷',label:'Cerdo',fob:REP_FOB_REF.cerdo.fob},
+    {k:'ave',ico:'🍗',label:'Ave',fob:REP_FOB_REF.ave.fob}
+  ];
+
+  const tabla=`<div class="intel-card" style="padding:12px 14px;margin-bottom:10px">
+    <div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px">🔮 Impacto Variación USD en Costo CIF</div>
+    <div style="font-size:10px;color:var(--t3);margin-bottom:10px">FOB × USD × 1,18 (flete+arancel estimados) · Costo CLP/kg</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:280px">
+      <thead><tr style="border-bottom:1.5px solid var(--brd)">
+        <th style="text-align:left;padding:4px 4px 4px 0;color:var(--t2)">Especie</th>
+        ${escenarios.map(e=>`<th style="text-align:right;padding:4px;color:${e.color}">${e.icon} ${e.label}<br><span style="font-size:9px;font-weight:400">${e.usd.toLocaleString('es-CL')}</span></th>`).join('')}
+      </tr></thead>
+      <tbody>
+        ${especies.map(e=>`<tr style="border-bottom:1px solid var(--brd)">
+          <td style="padding:5px 4px 5px 0;color:var(--t);font-weight:600">${e.ico} ${e.label}</td>
+          ${escenarios.map((sc,i)=>{
+            const cif=Math.round(e.fob*sc.usd*1.18);
+            const cifBase=Math.round(e.fob*escenarios[1].usd*1.18);
+            const diff=cif-cifBase;
+            const cls=i===1?'color:var(--b);font-weight:700':diff<0?'color:var(--g)':diff>0?'color:var(--r)':'';
+            return`<td style="text-align:right;padding:5px 4px;${cls}">${fmt(cif)}${i!==1&&diff!==0?`<br><span style="font-size:9px">${diff>0?'+':''}${fmt(diff)}</span>`:''}`;
+          }).join('')}
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>`;
+
+  // Escenario compra: 5.000 kg vacuno
+  const compra5k=`<div class="scenario-card">
+    <div class="scenario-title">📦 Escenario Compra 5.000 kg Vacuno</div>
+    ${escenarios.map((sc,i)=>{
+      const cif=Math.round(REP_FOB_REF.vacuno.fob*sc.usd*1.18);
+      const total=cif*5000;
+      return`<div class="scenario-row">
+        <span class="scenario-lbl" style="color:${sc.color}">${sc.icon} ${sc.label} (${sc.usd.toLocaleString('es-CL')})</span>
+        <span class="scenario-val">${fmt(total)} <span style="font-size:10px;font-weight:400;color:var(--t3)">(${fmt(cif)}/kg)</span></span>
+      </div>`;
+    }).join('')}
+    <div style="font-size:10px;color:var(--t3);margin-top:6px">Diferencia +10% vs base: <strong style="color:var(--r)">+${fmt(Math.round(REP_FOB_REF.vacuno.fob*(Math.round(usdBase*1.10)-Math.round(usdBase))*1.18*5000))}</strong> en 5.000 kg</div>
+  </div>`;
+
+  return tabla+compra5k+`<div class="intel-disclaimer">⚠ Escenarios estimativos. FOB referencial USDA/ABPA, no cotización vigente. Para decisiones de compra verificar con proveedor.</div>`;
+}
+
+/* ── IMPACTO CHILE ── */
+function renderImpactoChile(){
+  const pob=401096; // Antofagasta comuna Censo 2024
+  const pobReg=635416;
+  const hogares=Math.round(pob/2.8); // promedio hogar Chile
+  const consumoAveAnual=33.9,consumoVacAnual=25.7,consumoCerAnual=19.7;
+  const consumoDiarioAve=(consumoAveAnual/365).toFixed(3);
+  const consumoDiarioVac=(consumoVacAnual/365).toFixed(3);
+  const mercadoMensualKg=Math.round(pob*(consumoAveAnual+consumoVacAnual+consumoCerAnual)/12);
+
+  const usd=DB.usd||980.79;
+  const cifVac=Math.round(REP_FOB_REF.vacuno.fob*usd*1.18);
+  const cifAve=Math.round(REP_FOB_REF.ave.fob*usd*1.18);
+  const cifCer=Math.round(REP_FOB_REF.cerdo.fob*usd*1.18);
+  const valorMercado=Math.round(pob*(consumoAveAnual*cifAve+consumoVacAnual*cifVac+consumoCerAnual*cifCer)/12/1e6);
+
+  return`
+  <div class="impact-kpi">
+    <div class="impact-card"><span class="impact-icon">🏙</span><div class="impact-val">${(pob/1000).toFixed(0)}k</div><div class="impact-lbl">Hab. Antofagasta</div></div>
+    <div class="impact-card"><span class="impact-icon">🏠</span><div class="impact-val">${(hogares/1000).toFixed(0)}k</div><div class="impact-lbl">Hogares est.</div></div>
+    <div class="impact-card"><span class="impact-icon">🥩</span><div class="impact-val">${consumoVacAnual}</div><div class="impact-lbl">kg/persona/año Vac</div></div>
+    <div class="impact-card"><span class="impact-icon">🍗</span><div class="impact-val">${consumoAveAnual}</div><div class="impact-lbl">kg/persona/año Ave</div></div>
+  </div>
+
+  <div class="intel-card" style="padding:12px 14px">
+    <div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px">⛏ Potencial Mercado Antofagasta</div>
+    <div style="font-size:10px;color:var(--t3);margin-bottom:10px">Estimación basada en Censo 2024 + ODEPA consumo per cápita 2024</div>
+    <div class="intel-row"><span class="intel-item">Consumo mensual estimado región</span><span class="intel-val">${(mercadoMensualKg/1000).toFixed(0)}t/mes</span></div>
+    <div class="intel-row"><span class="intel-item">Valor mercado est. CIF mensual</span><span class="intel-val">~$${valorMercado}MM</span></div>
+    <div class="intel-row"><span class="intel-item">Consumo diario Ave por persona</span><span class="intel-val">${consumoDiarioAve} kg/día</span></div>
+    <div class="intel-row"><span class="intel-item">Consumo diario Vacuno por persona</span><span class="intel-val">${consumoDiarioVac} kg/día</span></div>
+    <div class="intel-row"><span class="intel-item">Segmento minería / casinos</span><span class="intel-val" style="color:var(--b)">B2B clave</span></div>
+    <div class="intel-row"><span class="intel-item">Inmigración (diversidad consumo)</span><span class="intel-val">19,5% pob.</span></div>
+  </div>
+
+  <div class="intel-card" style="padding:12px 14px">
+    <div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px">📊 Mix Consumo Chile 2024</div>
+    <div style="font-size:10px;color:var(--t3);margin-bottom:10px">ChileCarne / ODEPA · Total 82,7 kg/persona/año — récord histórico</div>
+    ${[{ico:'🍗',e:'Ave',kg:33.9,pct:41,chg:'+2%'},{ico:'🥩',e:'Vacuno',kg:25.7,pct:31,chg:'+2%'},{ico:'🐷',e:'Cerdo',kg:19.7,pct:24,chg:'+9%'},{ico:'🐑',e:'Otros',kg:3.4,pct:4,chg:'est.'}].map(e=>{
+      return`<div class="intel-row"><span class="intel-item">${e.ico} ${e.e}</span><span class="intel-val">${e.kg} kg/año</span><span class="intel-chg intel-up">${e.pct}% · ${e.chg}</span></div>`;
+    }).join('')}
+    <div style="font-size:10px;color:var(--am);margin-top:6px;background:var(--am2);border-radius:6px;padding:6px">🔥 Mayor crecimiento: Cerdo +9% — consumo parrilla + cocina asiática. Oportunidad FT.</div>
+  </div>
+
+  <div class="intel-disclaimer">Fuentes: Censo 2024 (INE), ODEPA consumo per cápita 2024, Kantar CMV T3 2025, BCN · Datos observados de fuentes oficiales. Estimaciones de potencial mercado calculadas por CarnIQ.</div>`;
+}
+
 function renderAdminPage(){
   const locked=document.getElementById('admin-locked');
   const content=document.getElementById('admin-content');
@@ -1721,7 +2040,7 @@ function pTab(el,cat){
 
 function renderPriceTable(cat){
   const items=PRICES_DATA[cat]||[];
-  const usd=DB.usd||931;
+  const usd=DB.usd||980.79;
   let html=`<div class="price-table-wrap"><table><thead><tr><th>Producto</th><th>Stock (cajas)</th><th>$/kg CLP</th><th>USD/kg</th></tr></thead><tbody>`;
   items.forEach(p=>{
     const usdPrice=(p.price/usd).toFixed(2);
@@ -2566,7 +2885,7 @@ function repSelectEspecie(especie){
 }
 
 function calcReposicion(){
-  const usd=DB.usd||931;
+  const usd=DB.usd||980.79;
   const esp=repEspecie;
   const ref=REP_FOB_REF[esp]||REP_FOB_REF.vacuno;
 
@@ -2629,7 +2948,7 @@ function calcReposicion(){
 function renderReposicionTab(){
   const el=document.getElementById('price-list');
   if(!el)return;
-  const usd=DB.usd||931;
+  const usd=DB.usd||980.79;
   const fobVac=REP_FOB_REF.vacuno.fob,fobCer=REP_FOB_REF.cerdo.fob,fobAve=REP_FOB_REF.ave.fob;
   el.innerHTML=`
   <div style="padding:0 max(16px,env(safe-area-inset-left,0px))">
@@ -2762,7 +3081,7 @@ async function init(){
     }catch(e){}
     // Tasas con timeout de 4s — si falla usa fallback $931/$40870
     try{await Promise.race([fetchRates(),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),4000))])}
-    catch(e){DB.usd=DB.usd||931;DB.uf=DB.uf||40870;updateRateDisplay()}
+    catch(e){DB.usd=DB.usd||980.79;DB.uf=DB.uf||38471.06;updateRateDisplay()}
     // Render inmediato
     updatePasoStatus();
     renderDashGeoAlerts();
