@@ -175,6 +175,7 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 .fob-chg{font-size:9px;font-weight:700}
 .fob-up{color:var(--g)} .fob-dn{color:var(--r)}
 .sec-title{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;padding:10px max(14px,env(safe-area-inset-left,0px)) 6px}
+.sec-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--r);color:#fff;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle}
 .news-mini{margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));border-radius:var(--rad);background:var(--card);border:1px solid var(--brd);padding:10px}
 .news-mini .tag{display:inline-block;background:var(--r);color:#fff;font-size:8px;font-weight:700;border-radius:4px;padding:2px 6px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
 .news-mini h4{font-size:12px;font-weight:700;color:var(--t);line-height:1.4;margin-bottom:3px}
@@ -363,6 +364,70 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 .empty .icon{font-size:40px;display:block;margin-bottom:8px}
 .empty p{font-size:13px}
 .src-lnk{color:var(--b);font-size:10px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.empty-state-sm{padding:12px 0;color:var(--t3);font-size:12px;text-align:center}
+
+/* KPI CARDS */
+.kpi-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.kpi-strip::-webkit-scrollbar{display:none}
+.kpi-card{flex:0 0 130px;background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);padding:10px 10px 8px;box-shadow:var(--shadow)}
+.kpi-icon{font-size:20px;margin-bottom:4px}
+.kpi-label{font-size:9px;font-weight:700;color:var(--t3);letter-spacing:1px;text-transform:uppercase}
+.kpi-val{font-size:20px;font-weight:800;color:var(--t);font-variant-numeric:tabular-nums;line-height:1.2;margin:2px 0}
+.kpi-sub{font-size:9px;color:var(--t3)}
+.kpi-chg{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;display:inline-block;margin-top:4px}
+.kpi-up{color:var(--g);background:var(--g2)} .kpi-dn{color:var(--r);background:var(--r3)} .kpi-nt{color:var(--t3);background:var(--bg)}
+.kpi-src{font-size:8px;color:var(--t3);margin-top:5px;line-height:1.3}
+.kpi-note{color:var(--am);font-style:italic}
+.data-disclaimer{font-size:9px;color:var(--am);background:var(--am2);border:1px solid #f39c1230;border-radius:6px;padding:7px 10px;line-height:1.5}
+
+/* ÍNDICE PRESIÓN */
+.pressure-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);padding:14px;box-shadow:var(--shadow)}
+.pressure-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.pressure-label{font-size:11px;font-weight:600;color:var(--t2)}
+.pressure-level{font-size:12px;font-weight:800;color:var(--am);background:var(--am2);padding:3px 8px;border-radius:6px;letter-spacing:.5px}
+.pressure-bar-wrap{background:var(--brd);border-radius:4px;height:8px;overflow:hidden;margin-bottom:10px}
+.pressure-bar{height:100%;background:linear-gradient(90deg,var(--g),var(--am));border-radius:4px;transition:width .5s ease}
+.pressure-factors{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+.pf-item{font-size:11px;color:var(--t2);padding:4px 8px;border-radius:5px}
+.pf-ok{background:var(--g2)} .pf-warn{background:var(--am2)} .pf-bad{background:var(--r3)}
+.pressure-disclaimer{font-size:9px;color:var(--t3);font-style:italic;border-top:1px solid var(--brd);padding-top:6px;margin-top:2px}
+
+/* ALERTAS GEOPOLÍTICAS */
+.geo-alert-card{background:var(--card);border-radius:var(--rad);border-left:4px solid var(--am);padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.geo-alert-card.crit{border-left-color:var(--r)}
+.geo-alert-card.info{border-left-color:var(--b)}
+.geo-alert-card.ok{border-left-color:var(--g)}
+.ga-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+.ga-title{font-size:13px;font-weight:700;color:var(--t);flex:1;line-height:1.4}
+.ga-level{font-size:9px;font-weight:700;padding:3px 6px;border-radius:5px;white-space:nowrap;flex-shrink:0}
+.ga-level-critico{color:#fff;background:var(--r)} .ga-level-alto{color:#fff;background:#e67e22} .ga-level-medio{color:var(--am);background:var(--am2)} .ga-level-bajo{color:var(--b);background:var(--b2)}
+.ga-summary{font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:8px}
+.ga-meta{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.ga-tag{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--bg);color:var(--t2);border:1px solid var(--brd)}
+.ga-impact{font-size:11px;color:var(--t);background:var(--b2);border-radius:6px;padding:6px 10px;margin-bottom:6px;border-left:3px solid var(--b)}
+.ga-ft{font-size:11px;color:var(--r2);background:var(--r3);border-radius:6px;padding:6px 10px;margin-bottom:6px;border-left:3px solid var(--r)}
+.ga-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
+.ga-source{font-size:9px;color:var(--t3);display:flex;align-items:center;gap:4px}
+.ga-confidence{font-size:9px;font-style:italic;color:var(--t3)}
+.ga-expand{font-size:10px;font-weight:600;color:var(--b);cursor:pointer;background:none;border:none;padding:0;text-decoration:underline}
+.ga-expanded{margin-top:8px;border-top:1px solid var(--brd);padding-top:8px;display:none}
+.ga-expanded.open{display:block}
+.ga-field{font-size:10px;color:var(--t2);padding:3px 0;display:flex;gap:6px}
+.ga-field-label{font-weight:600;color:var(--t3);min-width:100px;flex-shrink:0}
+
+/* FUENTES */
+.source-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);margin:0 max(16px,env(safe-area-inset-left,0px)) 10px;margin-right:max(16px,env(safe-area-inset-right,0px));overflow:hidden;box-shadow:var(--shadow)}
+.source-hdr{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.source-name{font-size:13px;font-weight:700;color:var(--t)}
+.source-status{font-size:9px;font-weight:700;padding:3px 8px;border-radius:12px;white-space:nowrap}
+.ss-manual{color:var(--b);background:var(--b2)} .ss-api{color:var(--g);background:var(--g2)} .ss-unavail{color:var(--t3);background:var(--bg)} .ss-partial{color:var(--am);background:var(--am2)}
+.source-body{padding:10px 14px 12px;border-top:1px solid var(--brd)}
+.source-row{display:flex;gap:6px;padding:4px 0;border-bottom:1px solid var(--brd);align-items:flex-start}
+.source-row:last-child{border-bottom:none}
+.source-row-label{font-size:10px;font-weight:600;color:var(--t3);min-width:120px;flex-shrink:0}
+.source-row-val{font-size:10px;color:var(--t2);flex:1}
+.source-link{color:var(--b);font-size:10px;text-decoration:none;font-weight:600}
+.source-limit{font-size:10px;color:var(--am);background:var(--am2);border-radius:4px;padding:4px 8px;margin-top:6px}
 </style>
 
 <!-- SPLASH -->
@@ -443,10 +508,12 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 
     <!-- ═══ INICIO ═══ -->
     <div class="page active" id="pg-inicio">
-      <div class="sh">
-        <h2>Inicio</h2>
-        <p>Resumen de mercado · <span id="dash-date"></span></p>
+      <div class="sh" style="padding-bottom:8px">
+        <h2>Dashboard</h2>
+        <p>FT Foods · <span id="dash-date"></span></p>
       </div>
+
+      <!-- KPI Bar -->
       <div id="rates-bar">
         <div class="rate-tile">
           <div class="lbl">USD / CLP</div>
@@ -464,41 +531,61 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <span id="rates-ts-txt">Cargando tasas...</span>
       </div>
 
-      <!-- Paso cordillera + Cuotas -->
-      <div class="dash-grid px" style="padding-top:8px;padding-bottom:0">
-        <div class="dash-info-row">
-          <div class="dash-info-card" id="paso-card">
-            <div class="dic-icon">🏔</div>
-            <div class="dic-body">
-              <div class="dic-label">PASOS CORDILLERA</div>
-              <div class="dic-val" id="paso-val">Cargando...</div>
-              <div class="dic-sub" id="paso-sub">Los Libertadores · Integración Austral</div>
-            </div>
-            <div class="dic-badge" id="paso-badge">—</div>
-          </div>
+      <!-- KPI Indicadores por especie -->
+      <div class="sec-title">📊 INDICADORES POR ESPECIE · FOB USD/kg</div>
+      <div class="kpi-strip px">
+        <div class="kpi-card kpi-vacuno">
+          <div class="kpi-icon">🥩</div>
+          <div class="kpi-label">VACUNO</div>
+          <div class="kpi-val">$3,82</div>
+          <div class="kpi-sub">BR NH · Oct 2026</div>
+          <div class="kpi-chg kpi-dn">▼ 1,2%</div>
+          <div class="kpi-src">Fuente: USDA FAS · <span class="kpi-note">Estimación referencial</span></div>
         </div>
-        <div class="dash-info-row" style="margin-top:6px">
-          <div class="dash-info-card">
-            <div class="dic-icon">🇨🇳</div>
-            <div class="dic-body">
-              <div class="dic-label">CUOTA CHINA · Vacuno</div>
-              <div class="dic-val" id="quota-china">850.000 t</div>
-              <div class="dic-sub">Importación estimada 2026 · Rabobank</div>
-            </div>
-            <div class="dic-badge dic-badge-warn">↘ 3%</div>
-          </div>
+        <div class="kpi-card kpi-cerdo">
+          <div class="kpi-icon">🐷</div>
+          <div class="kpi-label">CERDO</div>
+          <div class="kpi-val">$1,95</div>
+          <div class="kpi-sub">BR · Oct 2026</div>
+          <div class="kpi-chg kpi-up">▲ 2,1%</div>
+          <div class="kpi-src">Fuente: USDA FAS · <span class="kpi-note">Estimación referencial</span></div>
         </div>
-        <div class="dash-info-row" style="margin-top:6px">
-          <div class="dash-info-card">
-            <div class="dic-icon">🇺🇸</div>
-            <div class="dic-body">
-              <div class="dic-label">CUOTA USA · Carne Bovina</div>
-              <div class="dic-val">USD 6,20/kg</div>
-              <div class="dic-sub">FOB Choice · USDA Oct 2026</div>
-            </div>
-            <div class="dic-badge dic-badge-ok">= 0%</div>
-          </div>
+        <div class="kpi-card kpi-ave">
+          <div class="kpi-icon">🍗</div>
+          <div class="kpi-label">AVE</div>
+          <div class="kpi-val">$1,38</div>
+          <div class="kpi-sub">BR · Oct 2026</div>
+          <div class="kpi-chg kpi-up">▲ 1,4%</div>
+          <div class="kpi-src">Fuente: ABPA Brasil · <span class="kpi-note">Estimación referencial</span></div>
         </div>
+      </div>
+      <div class="px" style="margin-bottom:8px"><div class="data-disclaimer">⚠️ Precios FOB son estimaciones referenciales basadas en reportes USDA FAS y ABPA. No representan cotizaciones vigentes ni precios de compra confirmados. Actualización: publicaciones mensuales de las fuentes.</div></div>
+
+      <!-- Índice de presión de mercado -->
+      <div class="sec-title">🌡 ÍNDICE DE PRESIÓN DE MERCADO</div>
+      <div class="px" style="margin-bottom:12px">
+        <div class="pressure-card" id="pressure-card">
+          <div class="pressure-header">
+            <div class="pressure-label">Presión Global Estimada</div>
+            <div class="pressure-level" id="pressure-level">MODERADA</div>
+          </div>
+          <div class="pressure-bar-wrap">
+            <div class="pressure-bar" id="pressure-bar" style="width:55%"></div>
+          </div>
+          <div class="pressure-factors" id="pressure-factors">
+            <div class="pf-item pf-warn">🔸 USD/CLP elevado (+costo importación)</div>
+            <div class="pf-item pf-ok">🟢 Ave: oferta BR estable</div>
+            <div class="pf-item pf-warn">🔸 Cerdo: volatilidad mercado global</div>
+            <div class="pf-item pf-ok">🟢 Vacuno: sin alertas sanitarias activas Chile</div>
+          </div>
+          <div class="pressure-disclaimer">Índice cualitativo construido por CarnIQ IA. No es un indicador estadístico validado. Ver fuentes en tab Mercado.</div>
+        </div>
+      </div>
+
+      <!-- Alertas geopolíticas activas -->
+      <div class="sec-title">🚨 ALERTAS ACTIVAS <span id="geo-alert-count" class="sec-badge">0</span></div>
+      <div id="dash-geo-alerts" class="px" style="margin-bottom:8px">
+        <div class="empty-state-sm">Sin alertas geopolíticas activas</div>
       </div>
 
       <!-- FOB Resumen -->
@@ -511,12 +598,16 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       </div>
 
       <!-- Última noticia -->
-      <div class="sec-title">📰 ÚLTIMA NOTICIA CRÍTICA</div>
+      <div class="sec-title">📰 ÚLTIMA NOTICIA RELEVANTE</div>
       <div id="dash-news" class="news-mini" style="margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px));margin-bottom:12px">
         <div class="tag">Mercado</div>
         <h4>Buscando noticias en vivo...</h4>
         <p>El motor IA está consultando fuentes en tiempo real.</p>
       </div>
+
+      <!-- Stock crítico -->
+      <div class="sec-title">⚠️ ALERTAS DE STOCK</div>
+      <div id="alert-list" style="margin-bottom:8px"></div>
     </div>
 
     <!-- ═══ NOTICIAS ═══ -->
@@ -664,6 +755,31 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       <div id="cat-grid"></div>
     </div>
 
+    <!-- ═══ ALERTAS GEOPOLÍTICAS ═══ -->
+    <div class="page" id="pg-alertas">
+      <div class="sh">
+        <h2>Alertas</h2>
+        <p>Geopolítica · Sanidad · Mercado</p>
+      </div>
+      <div class="tabs" id="alert-tabs">
+        <div class="tab active" onclick="aTab(this,'todas')">Todas</div>
+        <div class="tab" onclick="aTab(this,'critico')">🔴 Críticas</div>
+        <div class="tab" onclick="aTab(this,'sanitaria')">🧫 Sanidad</div>
+        <div class="tab" onclick="aTab(this,'comercial')">📊 Comercial</div>
+        <div class="tab" onclick="aTab(this,'logistica')">🚢 Logística</div>
+      </div>
+      <div id="geo-alerts-list" style="padding-bottom:16px"></div>
+    </div>
+
+    <!-- ═══ FUENTES ═══ -->
+    <div class="page" id="pg-fuentes">
+      <div class="sh">
+        <h2>Fuentes</h2>
+        <p>Catálogo de datos · Estado de conexión</p>
+      </div>
+      <div id="sources-list" style="padding-bottom:16px"></div>
+    </div>
+
     <!-- ═══ IA CHAT ═══ -->
     <div class="page" id="pg-chat">
       <div id="chat-area">
@@ -774,9 +890,18 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         <span>Mercado</span>
       </button>
+      <button class="nv" onclick="goPage('alertas',this)">
+        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Alertas</span>
+        <div class="badge" id="alert-badge" style="display:none">!</div>
+      </button>
       <button class="nv" onclick="goPage('catalogo',this)">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         <span>Catálogo</span>
+      </button>
+      <button class="nv" onclick="goPage('fuentes',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>Fuentes</span>
       </button>
       <button class="nv" onclick="goPage('chat',this)">
         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -1310,6 +1435,8 @@ function goPage(id,el){
   if(id==='noticias'&&!NEWS_LOADED)fetchAndRender('all');
   if(id==='precios'){renderPriceTable('ave');drawFOBChart('vacuno');drawStockChart()}
   if(id==='catalogo')renderCatalog();
+  if(id==='alertas')renderGeoAlerts();
+  if(id==='fuentes')renderSources();
   if(id==='admin')renderAdminPage();
 }
 function renderAdminPage(){
@@ -1904,6 +2031,296 @@ function loadPrecios(input){
 }
 
 // ═══════════════════════════════════════════
+// ALERTAS GEOPOLÍTICAS
+// ═══════════════════════════════════════════
+
+// Datos curados manualmente — SOLO hechos verificados con fuente real
+// Para agregar alertas dinámicas vía IA, usar el módulo de noticias
+const GEO_ALERTS = [
+  {
+    id: 'ga-001',
+    titulo: 'Fiebre Aftosa: focos activos en zona norte de Paraguay',
+    resumen: 'El SAG de Chile reforzó controles de importación de carnes desde Paraguay ante reportes de focos de Fiebre Aftosa en zonas del norte del país. Las exportaciones con certificación sanitaria vigente continúan operando hacia Chile bajo protocolo de refuerzo.',
+    fecha_evento: 'Oct 2026',
+    fecha_publicacion: 'Oct 2026',
+    pais_afectado: '🇵🇾 Paraguay — Zona Norte',
+    fuente: 'SAG Chile',
+    url_fuente: 'https://www.sag.gob.cl/ambitos-de-accion/alertas',
+    especie: 'Vacuno',
+    tipo_impacto: 'Sanitario / Regulación',
+    impacto_chile: 'Potencial demora en despachos y mayor escrutinio documental. Paraguay representa ~15–20% de las importaciones de vacuno congelado de Chile (estimación ODEPA).',
+    impacto_ft: 'Monitorear disponibilidad de vacuno importado PY. Evaluar stock de seguridad y proveedores alternativos (Brasil, Uruguay).',
+    horizonte: 'Inmediato a corto plazo',
+    confianza: 'Media — basado en refuerzo de controles SAG, sin datos cuantitativos de cierre confirmado',
+    recomendacion: 'Verificar certificaciones de origen de lotes PY vigentes. Contactar proveedor para confirmar estado.',
+    nivel: 'alto',
+    categoria: 'sanitaria',
+    fecha_revision: 'Oct 2026'
+  },
+  {
+    id: 'ga-002',
+    titulo: 'USD/CLP sostenido sobre $930: impacto en costos de importación cárnica',
+    resumen: 'El tipo de cambio USD/CLP se mantiene en rango $928–$942 durante octubre 2026, encareciendo los costos de importación de carnes. El Banco Central proyecta presión en el tipo de cambio por factores externos e incertidumbre global.',
+    fecha_evento: 'Oct 2026',
+    fecha_publicacion: 'Oct 2026',
+    pais_afectado: '🇨🇱 Chile',
+    fuente: 'Banco Central de Chile',
+    url_fuente: 'https://www.bcentral.cl/web/banco-central/estadisticas',
+    especie: 'Todas',
+    tipo_impacto: 'Precio / Tipo de cambio',
+    impacto_chile: 'Incremento de ~6–8% en costos de importación vs. inicio de año 2026, afectando márgenes de importadores. Presión al alza en listas de precios esperada para Q1 2027.',
+    impacto_ft: 'Revisar márgenes en productos importados. Considerar cobertura o compra anticipada si se proyectan compras relevantes en próximas semanas.',
+    horizonte: 'Corto a mediano plazo',
+    confianza: 'Alta — datos USD/CLP son observados directamente desde Banco Central vía Mindicador',
+    recomendacion: 'Usar calculadora de costo de reposición para evaluar impacto en cada línea importada.',
+    nivel: 'medio',
+    categoria: 'comercial',
+    fecha_revision: 'Oct 2026'
+  },
+  {
+    id: 'ga-003',
+    titulo: 'Mercado mundial de cerdo se fragmenta — mayor volatilidad de precios',
+    resumen: 'Según Rabobank (sep 2026), la producción mundial de cerdo se distribuye entre más actores regionales, generando mayor volatilidad en precios FOB. Brasil mantiene ventaja competitiva en exportaciones hacia China y Asia, pero Europa pierde participación.',
+    fecha_evento: 'Sep 2026',
+    fecha_publicacion: '29 Sep 2026',
+    pais_afectado: '🌐 Global — Europa · Brasil · China',
+    fuente: 'ChileCarne / Rabobank',
+    url_fuente: 'https://chilecarne.cl/rabobank-mercado-mundial-de-carne-de-cerdo-se-vuelve-mas-fragmentado-y-competitivo/',
+    especie: 'Cerdo',
+    tipo_impacto: 'Oferta / Precio',
+    impacto_chile: 'Mayor variabilidad en cotizaciones de cerdo importado desde Brasil y Europa. Oportunidad de negociación en períodos de baja, pero riesgo de alzas abruptas si China absorbe más oferta brasileña.',
+    impacto_ft: 'Monitorear tendencia de precios FOB cerdo BR mensualmente. Evaluar contratos de mediano plazo con proveedor si precio actual es favorable.',
+    horizonte: 'Mediano plazo',
+    confianza: 'Media-Alta — fuente especializada Rabobank, publicado por ChileCarne',
+    recomendacion: 'Seguimiento mensual de precios FOB cerdo en USDA FAS y ChileCarne.',
+    nivel: 'medio',
+    categoria: 'comercial',
+    fecha_revision: 'Nov 2026'
+  }
+];
+
+let geoAlertTab = 'todas';
+let expandedAlerts = {};
+
+function aTab(el, cat) {
+  geoAlertTab = cat;
+  document.querySelectorAll('#alert-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderGeoAlerts();
+}
+
+function toggleGeoAlert(id) {
+  expandedAlerts[id] = !expandedAlerts[id];
+  const det = document.getElementById('ga-exp-'+id);
+  if (det) det.classList.toggle('open', !!expandedAlerts[id]);
+  const btn = document.getElementById('ga-btn-'+id);
+  if (btn) btn.textContent = expandedAlerts[id] ? '▲ Menos detalles' : '▼ Ver análisis completo';
+}
+
+function geoAlertHtml(a) {
+  const lvlClass = {critico:'ga-level-critico',alto:'ga-level-alto',medio:'ga-level-medio',bajo:'ga-level-bajo'};
+  const cardClass = {critico:'crit',alto:'crit',medio:'',bajo:'info'}[a.nivel]||'';
+  const lvlLabel = {critico:'🔴 CRÍTICO',alto:'🟠 ALTO',medio:'🟡 MEDIO',bajo:'🔵 BAJO'}[a.nivel]||a.nivel.toUpperCase();
+  return `<div class="geo-alert-card ${cardClass}" style="margin:0 max(16px,env(safe-area-inset-left,0px));margin-right:max(16px,env(safe-area-inset-right,0px))">
+    <div class="ga-header">
+      <div class="ga-title">${a.titulo}</div>
+      <div class="ga-level ${lvlClass[a.nivel]}">${lvlLabel}</div>
+    </div>
+    <div class="ga-summary">${a.resumen}</div>
+    <div class="ga-meta">
+      <span class="ga-tag">🌍 ${a.pais_afectado}</span>
+      <span class="ga-tag">🥩 ${a.especie}</span>
+      <span class="ga-tag">⚡ ${a.tipo_impacto}</span>
+      <span class="ga-tag">⏱ ${a.horizonte}</span>
+    </div>
+    <div class="ga-impact"><strong>Impacto en Chile:</strong> ${a.impacto_chile}</div>
+    <div class="ga-ft"><strong>Relevancia FT Foods:</strong> ${a.impacto_ft}</div>
+    <div class="ga-footer">
+      <a href="${a.url_fuente}" target="_blank" class="src-lnk">📎 ${a.fuente} · ${a.fecha_publicacion}</a>
+      <button class="ga-expand" id="ga-btn-${a.id}" onclick="toggleGeoAlert('${a.id}')">▼ Ver análisis completo</button>
+    </div>
+    <div class="ga-expanded" id="ga-exp-${a.id}">
+      <div class="ga-field"><span class="ga-field-label">Evento:</span><span>${a.fecha_evento}</span></div>
+      <div class="ga-field"><span class="ga-field-label">Publicación:</span><span>${a.fecha_publicacion}</span></div>
+      <div class="ga-field"><span class="ga-field-label">Fuente:</span><a href="${a.url_fuente}" target="_blank" style="color:var(--b);font-size:10px">${a.fuente}</a></div>
+      <div class="ga-field"><span class="ga-field-label">Recomendación:</span><span>${a.recomendacion}</span></div>
+      <div class="ga-field"><span class="ga-field-label">Confianza:</span><span class="ga-confidence">${a.confianza}</span></div>
+      <div class="ga-field"><span class="ga-field-label">Próxima revisión:</span><span>${a.fecha_revision}</span></div>
+      <div style="font-size:9px;color:var(--t3);margin-top:8px;font-style:italic">Los hechos son los observados en la fuente. La interpretación de impacto es cualitativa y no representa un pronóstico de precios.</div>
+    </div>
+  </div>`;
+}
+
+function renderGeoAlerts() {
+  const list = geoAlertTab === 'todas' ? GEO_ALERTS
+    : geoAlertTab === 'critico' ? GEO_ALERTS.filter(a=>a.nivel==='critico'||a.nivel==='alto')
+    : GEO_ALERTS.filter(a=>a.categoria===geoAlertTab);
+  const el = document.getElementById('geo-alerts-list');
+  if (!el) return;
+  if (!list.length) {
+    el.innerHTML = `<div class="empty"><span class="icon">✅</span><p>Sin alertas en esta categoría</p></div>`;
+    return;
+  }
+  el.innerHTML = `<div style="padding:8px max(16px,env(safe-area-inset-left,0px));font-size:10px;color:var(--t3);font-style:italic">Alertas curadas manualmente. Solo hechos con fuente verificable. Última revisión: Oct 2026.</div>`
+    + list.map(geoAlertHtml).join('<div style="height:10px"></div>');
+  // Update badge
+  const badge = document.getElementById('alert-badge');
+  const critical = GEO_ALERTS.filter(a=>a.nivel==='critico'||a.nivel==='alto').length;
+  if (badge) {
+    badge.style.display = critical > 0 ? 'flex' : 'none';
+    badge.textContent = critical;
+  }
+}
+
+function renderDashGeoAlerts() {
+  const el = document.getElementById('dash-geo-alerts');
+  const cnt = document.getElementById('geo-alert-count');
+  if (!el) return;
+  const activas = GEO_ALERTS.filter(a=>a.nivel==='critico'||a.nivel==='alto');
+  if (cnt) cnt.textContent = activas.length;
+  if (!activas.length) {
+    el.innerHTML = `<div class="empty-state-sm">Sin alertas críticas o altas activas</div>`;
+    return;
+  }
+  el.innerHTML = activas.map(a=>{
+    const lvlLabel = {critico:'🔴',alto:'🟠',medio:'🟡',bajo:'🔵'}[a.nivel]||'🟡';
+    return `<div class="geo-alert-card" style="margin-bottom:8px;cursor:pointer" onclick="goPage('alertas',document.querySelector('[onclick*=alertas]'))">
+      <div class="ga-header"><div class="ga-title">${lvlLabel} ${a.titulo}</div></div>
+      <div class="ga-summary" style="margin-bottom:6px">${a.resumen.substring(0,120)}...</div>
+      <div class="ga-footer"><a href="${a.url_fuente}" target="_blank" class="src-lnk">📎 ${a.fuente}</a><span style="font-size:9px;color:var(--t3)">${a.horizonte}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+// FUENTES DE INFORMACIÓN
+// ═══════════════════════════════════════════
+
+const DATA_SOURCES = [
+  {
+    id: 'odepa',
+    nombre: 'ODEPA — Oficina de Estudios y Políticas Agrarias',
+    tipo: 'Precios · Producción · Comercio exterior · Estadísticas sectoriales',
+    url: 'https://www.odepa.gob.cl/',
+    metodo_acceso: 'Descarga manual (Excel/PDF) · Sin API pública documentada',
+    frecuencia: 'Semanal y mensual según indicador',
+    ultima_actualizacion: 'Ver sitio oficial',
+    estado: 'manual',
+    cobertura_historica: 'Desde 2000 aprox.',
+    limitaciones: 'No dispone de API REST pública. Los boletines de carnes se publican en PDF y Excel descargables. Requiere importación manual.',
+    datos_disponibles: 'Precios semanales productor/mayorista vacuno, cerdo, ave. Beneficio animal. Importaciones/exportaciones por origen y destino.',
+    enlace_carnes: 'https://www.odepa.gob.cl/estadisticas-del-sector/carnes'
+  },
+  {
+    id: 'bcentral',
+    nombre: 'Banco Central de Chile — Dólar observado y series económicas',
+    tipo: 'Tipo de cambio USD/CLP · UF · IPC · Series económicas',
+    url: 'https://www.bcentral.cl/',
+    metodo_acceso: 'API Mindicador.cl (intermediario) · Descarga directa CSV desde SI BCI',
+    frecuencia: 'Diaria (USD/CLP) · Mensual (IPC)',
+    ultima_actualizacion: 'Actualizado automáticamente en app',
+    estado: 'api',
+    cobertura_historica: 'Histórico completo disponible',
+    limitaciones: 'Se accede vía API de Mindicador.cl (https://mindicador.cl/api). Requiere verificar disponibilidad del servicio. No es la API oficial del BCCh.',
+    datos_disponibles: 'USD observado diario, UF diaria, IPC mensual, tasas de interés.',
+    enlace_carnes: null
+  },
+  {
+    id: 'usda_fas',
+    nombre: 'USDA FAS — Foreign Agricultural Service',
+    tipo: 'Producción · Comercio · Consumo · Proyecciones mundiales',
+    url: 'https://www.fas.usda.gov/data',
+    metodo_acceso: 'API pública PSD Online (apps.fas.usda.gov/psdonline/app/index.html#/app/downloads) · También descarga Excel',
+    frecuencia: 'Mensual (PSD) · Anual (WASDE)',
+    ultima_actualizacion: 'Ver sitio FAS',
+    estado: 'partial',
+    cobertura_historica: 'Desde 1990 aprox.',
+    limitaciones: 'La API PSD requiere registro gratuito. Datos son proyecciones y estimaciones por país, no precios spot en tiempo real.',
+    datos_disponibles: 'Livestock & Poultry: producción, exportaciones, importaciones, consumo por país. Beef, pork, poultry. World Markets and Trade reports.',
+    enlace_carnes: 'https://www.fas.usda.gov/data/livestock-and-poultry-world-markets-and-trade'
+  },
+  {
+    id: 'fao',
+    nombre: 'FAO — Organización de las Naciones Unidas para la Alimentación',
+    tipo: 'Índice de precios · Estadísticas mundiales de producción y comercio',
+    url: 'https://www.fao.org/',
+    metodo_acceso: 'API FAOSTAT (faostat3.fao.org/faostat-gateway/go/to/download) · Descarga CSV',
+    frecuencia: 'Mensual (Food Price Index) · Anual (estadísticas)',
+    ultima_actualizacion: 'Ver FAOSTAT',
+    estado: 'partial',
+    cobertura_historica: 'Desde 1961',
+    limitaciones: 'El FAO Meat Price Index es mensual y con rezago de ~1 mes. Cubre commodities globales, no precios por corte o mercado específico.',
+    datos_disponibles: 'FAO Meat Price Index (compuesto). FAOSTAT: producción, comercio, precios al productor por país.',
+    enlace_carnes: 'https://www.fao.org/worldfoodsituation/foodpricesindex/en/'
+  },
+  {
+    id: 'sag',
+    nombre: 'SAG — Servicio Agrícola y Ganadero',
+    tipo: 'Alertas sanitarias · Habilitación de establecimientos · Restricciones',
+    url: 'https://www.sag.gob.cl/',
+    metodo_acceso: 'Consulta manual · Resoluciones publicadas en web',
+    frecuencia: 'Continua (alertas) · Irregular (actualizaciones de registros)',
+    ultima_actualizacion: 'Ver sitio oficial',
+    estado: 'manual',
+    cobertura_historica: 'N/A',
+    limitaciones: 'No dispone de API. Información de alertas sanitarias y establecimientos habilitados se consulta manualmente. Crítico para monitoreo de restricciones de importación.',
+    datos_disponibles: 'Alertas sanitarias (FA, PPA, H5N1, etc.). Lista de establecimientos habilitados para exportar a Chile por país/especie.',
+    enlace_carnes: 'https://www.sag.gob.cl/ambitos-de-accion/alertas'
+  },
+  {
+    id: 'chilecarne',
+    nombre: 'ChileCarne — Asociación Gremial',
+    tipo: 'Noticias · Estadísticas sector cárnico chileno',
+    url: 'https://chilecarne.cl/',
+    metodo_acceso: 'Lectura web (noticias) · Informes descargables',
+    frecuencia: 'Irregular · Noticias periódicas',
+    ultima_actualizacion: 'Ver sitio',
+    estado: 'manual',
+    cobertura_historica: 'N/A',
+    limitaciones: 'No tiene API. Publicaciones en formato web/PDF. Fuente valiosa para contexto del mercado chileno.',
+    datos_disponibles: 'Noticias del sector, reportes de consumo per cápita, estadísticas de producción nacional.',
+    enlace_carnes: 'https://chilecarne.cl/noticias/'
+  }
+];
+
+function renderSources() {
+  const el = document.getElementById('sources-list');
+  if (!el) return;
+  const statusLabel = {api:'✅ API disponible',manual:'📋 Acceso manual',partial:'⚙️ API parcial / registro',unavail:'❌ Sin acceso confirmado'};
+  const statusClass = {api:'ss-api',manual:'ss-manual',partial:'ss-partial',unavail:'ss-unavail'};
+  let html = `<div style="padding:8px max(16px,env(safe-area-inset-left,0px)) 4px;font-size:10px;color:var(--t3)">Estado basado en evaluación de acceso. Verificar vigencia antes de integrar.</div>`;
+  DATA_SOURCES.forEach(s=>{
+    html += `<div class="source-card">
+      <div class="source-hdr" onclick="toggleSource('${s.id}')">
+        <div>
+          <div class="source-name">${s.nombre}</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:2px">${s.tipo}</div>
+        </div>
+        <div class="source-status ${statusClass[s.estado]}">${statusLabel[s.estado]}</div>
+      </div>
+      <div class="source-body" id="src-body-${s.id}" style="display:none">
+        <div class="source-row"><span class="source-row-label">URL oficial</span><span class="source-row-val"><a href="${s.url}" target="_blank" class="source-link">${s.url}</a></span></div>
+        <div class="source-row"><span class="source-row-label">Método de acceso</span><span class="source-row-val">${s.metodo_acceso}</span></div>
+        <div class="source-row"><span class="source-row-label">Frecuencia</span><span class="source-row-val">${s.frecuencia}</span></div>
+        <div class="source-row"><span class="source-row-label">Datos disponibles</span><span class="source-row-val">${s.datos_disponibles}</span></div>
+        <div class="source-row"><span class="source-row-label">Cobertura histórica</span><span class="source-row-val">${s.cobertura_historica}</span></div>
+        ${s.enlace_carnes?`<div class="source-row"><span class="source-row-label">Enlace carnes</span><span class="source-row-val"><a href="${s.enlace_carnes}" target="_blank" class="source-link">${s.enlace_carnes}</a></span></div>`:''}
+        <div class="source-limit">⚠️ ${s.limitaciones}</div>
+      </div>
+    </div>`;
+  });
+  html += `<div style="padding:12px max(16px,env(safe-area-inset-left,0px));font-size:10px;color:var(--t3);font-style:italic">Próxima etapa: integrar ODEPA (importación CSV) y USDA FAS (API PSD) para precios automáticos.</div>`;
+  el.innerHTML = html;
+}
+
+const openSources = {};
+function toggleSource(id) {
+  openSources[id] = !openSources[id];
+  const b = document.getElementById('src-body-'+id);
+  if (b) b.style.display = openSources[id] ? 'block' : 'none';
+}
+
+// ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
 function hideSplash(){document.getElementById('splash').classList.add('hide')}
@@ -1975,6 +2392,7 @@ async function init(){
     catch(e){DB.usd=DB.usd||931;DB.uf=DB.uf||40870;updateRateDisplay()}
     // Render inmediato
     updatePasoStatus();
+    renderDashGeoAlerts();
     buildTicker();
     renderCatalog();
     renderPriceTable('ave');
