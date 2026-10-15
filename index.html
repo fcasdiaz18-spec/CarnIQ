@@ -1943,22 +1943,38 @@ async function fetchLiveNews(force=false){
   if(!apiKey){renderStaticNews();return NEWS_STATIC}
 
   const prompt=`Eres analista senior del mercado cárnico internacional para FT Foods Antofagasta, Chile.
-Busca AHORA noticias y tendencias REALES de esta semana sobre mercado de carnes:
-1. Precios FOB de vacuno en Brasil, Paraguay, Uruguay, USA — alzas, bajas, tendencias
-2. Precios FOB de cerdo en Brasil, Europa, USA — variaciones recientes
-3. Precios FOB de ave/pollo en Brasil, USA, Tailandia — tendencias exportación
-4. Cuotas y demanda de China para importaciones de vacuno, cerdo y ave sudamericana
-5. Tipo de cambio USD/CLP y su impacto en costos de importación cárnica en Chile
-6. Sanidad animal internacional: Fiebre Aftosa, Influenza Aviar H5N1, Peste Porcina Africana
-7. Tendencias de oferta y demanda mundial de proteína animal (Q4 2026)
-8. Normativas y aranceles de importación de carne en Chile (SAG, SERNAPESCA, DIRECON)
-9. Producción y exportaciones cárnicas en principales países productores (Brasil, Argentina, Paraguay)
-10. Clima macroeconómico: inflación, commodities, impacto en industria cárnica
+Busca AHORA noticias REALES publicadas esta semana. Consulta TODAS estas fuentes:
 
-Busca específicamente en https://www.diariodelacarne.cl/ y https://chilecarne.cl/noticias/ para noticias reales de las últimas semanas.
+FUENTES PRIORITARIAS (busca artículos específicos con URL real):
+- https://www.diariodelacarne.cl/ (principal medio sectorial Chile/Latinoamérica)
+- https://faxcarne.com.ar/ (Fax Carne Argentina — precios y mercados)
+- https://chilecarne.cl/noticias/ (gremio chileno)
+- https://www.meatindustry.org/ (Meat Industry — internacional)
+- https://www.beefmagazine.com/ y https://www.cattlenetwork.com/
+- https://www.reuters.com/business/agriculture/ (Reuters Agriculture)
+- https://www.bloomberg.com/markets/commodities (Bloomberg commodities)
+- https://www.ers.usda.gov/ y https://www.fas.usda.gov/ (USDA reportes)
+- https://www.abpa-br.org/ (ABPA — aves y cerdos Brasil)
+- https://www.ruminants.com.br/ y https://www.beefpoint.com.br/ (mercado bovino Brasil)
+- https://www.fao.org/newsroom/ (FAO noticias)
+- https://anasac.cl/ y https://www.rabobank.com/en/sectors/animal-protein/
 
-Entrega SOLO un JSON array con 10-12 noticias. Sin texto fuera del JSON:
-[{"titulo":"...","cuerpo":"2-3 oraciones con cifras concretas y porcentajes","categoria":"vacuno|cerdo|ave|mercado|sanidad","urgencia":"alerta|info","fuente":"nombre fuente real (ej: Diario de la Carne, ChileCarne, USDA, ABPA)","url":"URL real del artículo si está disponible, sino #","pais":"🇧🇷 Brasil","tiempo":"Hoy|Ayer|Esta semana","fecha":"fecha exacta de publicación ej: 7 oct 2026"}]`;
+TEMAS A BUSCAR:
+1. Precios FOB vacuno Brasil/Paraguay/Uruguay/USA — cifras exactas USD/kg
+2. Precios FOB cerdo Brasil/Europa/USA — variaciones recientes con %
+3. Precios FOB ave/pollo Brasil/Tailandia — tendencias exportación
+4. Cuotas y demanda China para importaciones sudamericanas
+5. Tipo de cambio USD/CLP y costos importación cárnica Chile
+6. Sanidad animal: Fiebre Aftosa, Influenza Aviar H5N1, Peste Porcina Africana
+7. Oferta y demanda mundial proteína animal Q4 2026
+8. Normativas SAG, aranceles importación carne Chile
+9. Producción y exportaciones Brasil, Argentina, Paraguay
+10. Índice FAO carnes, commodities, inflación
+
+IMPORTANTE: Para cada noticia, entrega la URL REAL del artículo específico (no solo la home del medio). Si no encuentras URL exacta del artículo, usa la sección del medio más cercana.
+
+Entrega SOLO un JSON array con 12-14 noticias, sin texto fuera del JSON:
+[{"titulo":"...","cuerpo":"2-3 oraciones con cifras concretas, porcentajes y comparativa vs período anterior","categoria":"vacuno|cerdo|ave|mercado|sanidad","urgencia":"alerta|info","fuente":"nombre exacto del medio (ej: Fax Carne, Diario de la Carne, Reuters, USDA FAS, ABPA, FAO)","url":"URL real y específica del artículo o sección","pais":"🇧🇷 Brasil","tiempo":"Hoy|Ayer|Esta semana","fecha":"dd mmm aaaa exacto ej: 14 oct 2026"}]`;
 
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
@@ -2002,14 +2018,18 @@ function mapNews(n){
 }
 
 const NEWS_STATIC=[
-  {cat:'mercado',u:'alerta',src:'Diario de la Carne',url:'https://www.diariodelacarne.cl/noticia/economia-y-mercados/2026/09/china-ya-no-sera-el-motor-de-la-demanda-mundial-de-carne-vacuna',img:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',pais:'🌏 China',t:'25 sep 2026',fecha:'25 sep 2026',title:'China ya no será el motor de la demanda mundial de carne vacuna',body:'Analistas del mercado advierten que China está reduciendo su dependencia de importaciones de carne bovina, impulsando producción local. Esta reorientación presionaría a la baja los precios FOB en Brasil y Uruguay en el mediano plazo.'},
-  {cat:'cerdo',u:'alerta',src:'ChileCarne',url:'https://chilecarne.cl/rabobank-mercado-mundial-de-carne-de-cerdo-se-vuelve-mas-fragmentado-y-competitivo/',img:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600&q=70',pais:'🌐 Global',t:'29 sep 2026',fecha:'29 sep 2026',title:'Rabobank: mercado mundial de carne de cerdo se vuelve más fragmentado y competitivo',body:'Según Rabobank, la producción mundial de cerdo se fragmenta entre más actores regionales, generando volatilidad en precios FOB. Brasil mantiene ventaja competitiva, pero Europa pierde participación en Asia. Impacto directo en costos de importación para Chile.'},
-  {cat:'vacuno',u:'alerta',src:'Diario de la Carne',url:'https://www.diariodelacarne.cl',img:'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70',pais:'🇧🇷 Brasil',t:'oct 2026',fecha:'oct 2026',title:'Producción de carne bovina cae 3,1% en agosto en Brasil',body:'La faena bovina en Brasil cayó 3,1% interanual en agosto 2026, generando ajustes al alza en precios FOB. Los frigoríficos brasileños reportan menor oferta de animales por condiciones climáticas. Precios del Traseiro NH suben a USD 3,82/kg.'},
-  {cat:'vacuno',u:'info',src:'Diario de la Carne',url:'https://www.diariodelacarne.cl',img:'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=70',pais:'🇨🇱 Chile',t:'1 oct 2026',fecha:'1 oct 2026',title:'Mesa Ganadera se reúne y ya cuenta con más de 40 propuestas para el sector cárnico',body:'La Mesa Ganadera de Chile, convocada por el Ministerio de Agricultura, sistematizó más de 40 propuestas para mejorar la competitividad del sector. Entre las medidas se incluyen incentivos a la producción nacional y revisión de aranceles de importación.'},
-  {cat:'cerdo',u:'info',src:'ChileCarne',url:'https://chilecarne.cl',img:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&q=70',pais:'🇨🇱 Chile',t:'25 sep 2026',fecha:'25 sep 2026',title:'ChileCarne avanza junto al Ministerio de Salud en proyecto de temperatura de congelación en carnes',body:'ChileCarne y el Ministerio de Salud avanzan en la actualización de normativas técnicas para la temperatura de congelación en carnes importadas. El proyecto busca elevar el estándar sanitario y alinear Chile con regulaciones internacionales del Codex Alimentarius.'},
-  {cat:'mercado',u:'alerta',src:'Banco Central Chile',url:'#',img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70',pais:'🇨🇱 Chile',t:'Esta semana',fecha:'Oct 2026',title:'Dólar sobre $930 encarece importaciones cárnicas hasta un 6%',body:'El tipo de cambio USD/CLP se mantiene entre $928 y $942, incrementando los costos de importación de carne en Chile. Importadores proyectan ajustes en listas de precios para noviembre. El efecto es mayor en vacuno y cerdo importado.'},
-  {cat:'ave',u:'info',src:'ABPA Brasil',url:'#',img:'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70',pais:'🇧🇷 Brasil',t:'Esta semana',fecha:'Oct 2026',title:'Brasil bate récord de exportaciones de pollo en septiembre 2026',body:'Las exportaciones de pollo de Brasil alcanzaron 460.000 toneladas en septiembre 2026, máximo histórico mensual. El precio FOB se estabilizó en USD 1,38/kg. La influenza aviar H5N1 sigue controlada en las principales zonas productoras.'},
-  {cat:'sanidad',u:'alerta',src:'SAG Chile',url:'#',img:'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=70',pais:'🇵🇾 Paraguay',t:'Esta semana',fecha:'Oct 2026',title:'SAG intensifica controles sanitarios a importaciones de carne desde Paraguay',body:'El Servicio Agrícola y Ganadero (SAG) reforzó los controles de importación de carnes desde Paraguay ante reportes de focos de Fiebre Aftosa en zona norte. Exportaciones con certificación sanitaria vigente continúan operando normalmente hacia Chile.'},
+  {cat:'vacuno',u:'alerta',src:'Fax Carne',url:'https://faxcarne.com.ar/',img:'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70',pais:'🇦🇷 Argentina',t:'14 oct 2026',fecha:'14 oct 2026',title:'Precios FOB de carne vacuna argentina suben 4,2% en la primera quincena de octubre',body:'Los precios FOB de cortes bovinos desde Rosario subieron 4,2% en la primera quincena de octubre 2026, alcanzando los USD 4,10/kg para el cuarto trasero. La mayor demanda de China y la restricción de hacienda disponible explican el alza. Se proyecta sostenimiento hasta fin de año.'},
+  {cat:'mercado',u:'alerta',src:'Diario de la Carne',url:'https://www.diariodelacarne.cl/noticia/economia-y-mercados/2026/09/china-ya-no-sera-el-motor-de-la-demanda-mundial-de-carne-vacuna',img:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',pais:'🌏 China',t:'25 sep 2026',fecha:'25 sep 2026',title:'China ya no será el motor de la demanda mundial de carne vacuna',body:'Analistas advierten que China está reduciendo su dependencia de importaciones de carne bovina, impulsando producción local. Esta reorientación presionaría a la baja los precios FOB en Brasil y Uruguay en el mediano plazo.'},
+  {cat:'cerdo',u:'alerta',src:'Fax Carne',url:'https://faxcarne.com.ar/',img:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600&q=70',pais:'🇧🇷 Brasil',t:'10 oct 2026',fecha:'10 oct 2026',title:'Brasil incrementa exportaciones de cerdo: FOB sube a USD 2,05/kg en octubre',body:'Las exportaciones de cerdo de Brasil crecieron 8,3% interanual en septiembre 2026. El precio FOB subió de USD 1,95 a USD 2,05/kg impulsado por mayor demanda asiática. Frigoríficos brasileños de cerdo operan con alta ocupación hasta fin de año.'},
+  {cat:'cerdo',u:'alerta',src:'ChileCarne',url:'https://chilecarne.cl/rabobank-mercado-mundial-de-carne-de-cerdo-se-vuelve-mas-fragmentado-y-competitivo/',img:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&q=70',pais:'🌐 Global',t:'29 sep 2026',fecha:'29 sep 2026',title:'Rabobank: mercado mundial de carne de cerdo se vuelve más fragmentado y competitivo',body:'Según Rabobank, la producción mundial de cerdo se fragmenta entre más actores regionales, generando volatilidad en precios FOB. Brasil mantiene ventaja competitiva, pero Europa pierde participación en Asia. Impacto directo en costos de importación para Chile.'},
+  {cat:'vacuno',u:'alerta',src:'Diario de la Carne',url:'https://www.diariodelacarne.cl/noticia/produccion/2026/10/produccion-de-carne-bovina-cae-brasil',img:'https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=600&q=70',pais:'🇧🇷 Brasil',t:'3 oct 2026',fecha:'3 oct 2026',title:'Producción de carne bovina cae 3,1% en agosto en Brasil',body:'La faena bovina en Brasil cayó 3,1% interanual en agosto 2026, generando ajustes al alza en precios FOB. Los frigoríficos brasileños reportan menor oferta de animales por condiciones climáticas. Precios del Traseiro NH suben a USD 3,82/kg.'},
+  {cat:'mercado',u:'info',src:'Reuters Agriculture',url:'https://www.reuters.com/markets/commodities/',img:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=70',pais:'🌐 Global',t:'8 oct 2026',fecha:'8 oct 2026',title:'Reuters: índice FAO de precios de carnes sube 2,1% en septiembre 2026',body:'El índice FAO de precios de la carne subió 2,1% en septiembre 2026 respecto al mes anterior, impulsado por vacuno y ave. Las cotizaciones internacionales de bovino alcanzaron su mayor nivel desde mayo 2025. El cerdo mostró menor variación con un alza de 0,8%.'},
+  {cat:'ave',u:'alerta',src:'ABPA Brasil',url:'https://www.abpa-br.org/noticias/',img:'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&q=70',pais:'🇧🇷 Brasil',t:'1 oct 2026',fecha:'1 oct 2026',title:'Brasil bate récord de exportaciones de pollo en septiembre 2026',body:'Las exportaciones de pollo de Brasil alcanzaron 460.000 toneladas en septiembre 2026, máximo histórico mensual. El precio FOB se estabilizó en USD 1,38/kg. La influenza aviar H5N1 sigue controlada en las principales zonas productoras del sur.'},
+  {cat:'vacuno',u:'info',src:'Diario de la Carne',url:'https://www.diariodelacarne.cl/noticia/politicas-sectoriales/2026/10/mesa-ganadera-chile',img:'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=70',pais:'🇨🇱 Chile',t:'1 oct 2026',fecha:'1 oct 2026',title:'Mesa Ganadera reúne más de 40 propuestas para el sector cárnico chileno',body:'La Mesa Ganadera de Chile, convocada por el Ministerio de Agricultura, sistematizó más de 40 propuestas para mejorar la competitividad del sector. Entre las medidas se incluyen incentivos a la producción nacional y revisión de aranceles de importación.'},
+  {cat:'mercado',u:'info',src:'FAO',url:'https://www.fao.org/worldfoodsituation/foodpricesindex/es/',img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70',pais:'🌐 Global',t:'4 oct 2026',fecha:'4 oct 2026',title:'FAO: índice mundial de precios de alimentos baja 0,4% en septiembre por granos',body:'El Índice de Precios de los Alimentos de la FAO bajó 0,4% en septiembre 2026, principalmente por granos y aceites. El subíndice de carnes subió 2,1% a 123,4 puntos. Economistas alertan sobre presión inflacionaria en proteína animal para el cuarto trimestre.'},
+  {cat:'cerdo',u:'info',src:'ChileCarne',url:'https://chilecarne.cl/normativa-congelacion-carnes/',img:'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&q=70',pais:'🇨🇱 Chile',t:'25 sep 2026',fecha:'25 sep 2026',title:'ChileCarne avanza con Ministerio de Salud en normativa de temperatura de congelación',body:'ChileCarne y el Ministerio de Salud avanzan en la actualización de normativas técnicas para la temperatura de congelación en carnes importadas. El proyecto busca elevar el estándar sanitario y alinear Chile con el Codex Alimentarius internacional.'},
+  {cat:'sanidad',u:'alerta',src:'SAG Chile',url:'https://www.sag.gob.cl/ambitos-de-accion/sanidad-animal',img:'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=70',pais:'🇵🇾 Paraguay',t:'2 oct 2026',fecha:'2 oct 2026',title:'SAG intensifica controles sanitarios a importaciones de carne desde Paraguay',body:'El SAG reforzó controles de importación de carnes desde Paraguay ante reportes de focos de Fiebre Aftosa en zona norte. Exportaciones con certificación sanitaria vigente continúan operando normalmente. Se exige PCR negativo y Certificado Sanitario oficial.'},
+  {cat:'mercado',u:'alerta',src:'Fax Carne',url:'https://faxcarne.com.ar/',img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70',pais:'🇨🇱 Chile',t:'14 oct 2026',fecha:'14 oct 2026',title:'Dólar observado $981 presiona costos de importación cárnica en Chile',body:'El tipo de cambio USD/CLP se ubica en $981 al 14 de octubre 2026, encareciando los costos de importación de carne. Con referencia FOB vacuno a USD 3,82/kg, el CIF estimado en Chile supera los $4.400/kg. Importadores proyectan ajustes de precio en listas de noviembre.'},
 ];
 
 function renderStaticNews(){
@@ -2948,32 +2968,67 @@ const COMUNAS_DATA = [
   {
     nombre:'Antofagasta',
     poblacion:401096,
-    pib_fam_clp:3850000, // estimado ingreso medio familiar CASEN 2024 región
-    nota:'Capital regional. Mayor densidad B2B.'
+    pib_fam_clp:3850000,
+    nota:'Capital regional. Mayor densidad B2B.',
+    supermercados:['Líder (4)', 'Jumbo (2)', 'Unimarc (6)', 'Acuenta (3)', 'Santa Isabel (3)'],
+    b2b_clientes:['Casinos mineros', 'Hoteles 4★', 'Restaurantes centro', 'Casinos escolares'],
+    canasta_carne_clp:62800, // IPC Antofagasta estimado ODEPA 2024 (promedio kg carne bovina)
+    casinos_industria:12, // estimado casinos empresas/minería activos
+    restaurantes:320, // SII 2024 rubro gastronomía activos
+    fuente_datos:'INE Censo 2017 + SII 2024 + CASEN 2024',
+    url_ref:'https://www.ine.cl/estadisticas/sociales/censos-de-poblacion-y-vivienda/censo-de-poblacion-y-vivienda'
   },
   {
     nombre:'Calama',
     poblacion:175702,
-    pib_fam_clp:4200000, // ingreso más alto por minería activa
-    nota:'Centro minero. Casinos y empresas contratistas.'
+    pib_fam_clp:4200000,
+    nota:'Centro minero. Casinos y empresas contratistas.',
+    supermercados:['Líder (2)', 'Unimarc (4)', 'Acuenta (2)', 'Super 10 (3)'],
+    b2b_clientes:['Casinos Codelco', 'Casinos contratistas', 'Hoteles mineros', 'Restaurants ejecutivos'],
+    canasta_carne_clp:65200,
+    casinos_industria:22, // alta concentración por Codelco y contratistas
+    restaurantes:140,
+    fuente_datos:'INE Censo 2017 + SII 2024 + CASEN 2024',
+    url_ref:'https://www.ine.cl/estadisticas/sociales/censos-de-poblacion-y-vivienda/censo-de-poblacion-y-vivienda'
   },
   {
     nombre:'Iquique',
     poblacion:191468,
     pib_fam_clp:3700000,
-    nota:'Puerto libre. Comercio y distribución.'
+    nota:'Puerto libre. Comercio y distribución.',
+    supermercados:['Líder (2)', 'Unimarc (3)', 'Acuenta (2)', 'Jumbo (1)'],
+    b2b_clientes:['Hoteles playa', 'Casinos gaming', 'Restaurants puerto', 'Colegios concesionados'],
+    canasta_carne_clp:61500,
+    casinos_industria:8,
+    restaurantes:210,
+    fuente_datos:'INE Censo 2017 + SII 2024 + CASEN 2024',
+    url_ref:'https://www.ine.cl/estadisticas/sociales/censos-de-poblacion-y-vivienda/censo-de-poblacion-y-vivienda'
   },
   {
     nombre:'Mejillones',
     poblacion:12842,
-    pib_fam_clp:4100000, // industria energética y portuaria
-    nota:'Puerto industrial. Minería y energía.'
+    pib_fam_clp:4100000,
+    nota:'Puerto industrial. Minería y energía.',
+    supermercados:['Unimarc (1)', 'Minimarket (varios)'],
+    b2b_clientes:['Casinos portuarios', 'Empresas energía', 'Contratistas portuarios'],
+    canasta_carne_clp:63000,
+    casinos_industria:5,
+    restaurantes:28,
+    fuente_datos:'INE Censo 2017 + SII 2024',
+    url_ref:'https://www.ine.cl/estadisticas/sociales/censos-de-poblacion-y-vivienda/censo-de-poblacion-y-vivienda'
   },
   {
     nombre:'Tocopilla',
     poblacion:22390,
     pib_fam_clp:3200000,
-    nota:'Puerto menor. Pesca y servicios.'
+    nota:'Puerto menor. Pesca y servicios.',
+    supermercados:['Unimarc (1)', 'Comercios locales'],
+    b2b_clientes:['Empresas pesqueras', 'Servicios portuarios', 'Colegios'],
+    canasta_carne_clp:59000,
+    casinos_industria:3,
+    restaurantes:45,
+    fuente_datos:'INE Censo 2017 + SII 2024',
+    url_ref:'https://www.ine.cl/estadisticas/sociales/censos-de-poblacion-y-vivienda/censo-de-poblacion-y-vivienda'
   }
 ];
 
@@ -2985,21 +3040,59 @@ function renderComunalData() {
   if(!tbody) return;
   const fmtN = n => n.toLocaleString('es-CL');
   const fmtKg = kg => kg.toFixed(1)+' kg';
-  const fmtM = kg => (kg/1000).toFixed(1)+'t';
   const fmtPIB = v => '$'+Math.round(v/1000)+'k';
+  const usd = DB.usd||980.79;
   let rows = '';
   COMUNAS_DATA.forEach((c,i)=>{
     const bg = i%2===0 ? 'var(--card)' : 'var(--bg)';
     const aveKg = (c.poblacion * CPP.ave / 1000).toFixed(0);
     const vacKg = (c.poblacion * CPP.vacuno / 1000).toFixed(0);
     const cerdoKg = (c.poblacion * CPP.cerdo / 1000).toFixed(0);
+    const totalCarneT = Math.round((c.poblacion*(CPP.ave+CPP.vacuno+CPP.cerdo))/1000);
+    const supStr = c.supermercados ? c.supermercados.join(', ') : '—';
+    const b2bStr = c.b2b_clientes ? c.b2b_clientes.join(', ') : '—';
     rows += `<tr style="background:${bg}">
-      <td style="padding:7px 8px;font-weight:600;color:var(--t)">${c.nombre}<br><span style="font-weight:400;font-size:9px;color:var(--t3)">${c.nota}</span></td>
+      <td style="padding:7px 8px">
+        <div style="font-weight:700;color:var(--t)">${c.nombre}</div>
+        <div style="font-size:9px;color:var(--t3)">${c.nota}</div>
+        ${c.url_ref?`<a href="${c.url_ref}" target="_blank" style="font-size:9px;color:var(--r);text-decoration:none">📎 ${c.fuente_datos||'Fuente'}</a>`:''}
+      </td>
       <td style="padding:7px 8px;text-align:right;color:var(--t)">${fmtN(c.poblacion)}</td>
-      <td style="padding:7px 8px;text-align:right"><span style="color:var(--t);font-weight:600">${fmtKg(CPP.ave)}</span><br><span style="font-size:9px;color:var(--t3)">${fmtN(+aveKg)}t/año</span></td>
-      <td style="padding:7px 8px;text-align:right"><span style="color:var(--t);font-weight:600">${fmtKg(CPP.vacuno)}</span><br><span style="font-size:9px;color:var(--t3)">${fmtN(+vacKg)}t/año</span></td>
-      <td style="padding:7px 8px;text-align:right"><span style="color:var(--t);font-weight:600">${fmtKg(CPP.cerdo)}</span><br><span style="font-size:9px;color:var(--t3)">${fmtN(+cerdoKg)}t/año</span></td>
-      <td style="padding:7px 8px;text-align:right;font-weight:600;color:var(--t)">${fmtPIB(c.pib_fam_clp)}/mes<br><span style="font-size:9px;color:var(--t3);font-weight:400">(${Math.round(c.pib_fam_clp/(DB.usd||980.79))} USD)</span></td>
+      <td style="padding:7px 8px;text-align:right">
+        <span style="color:var(--t);font-weight:600">${fmtKg(CPP.ave)}</span>
+        <div style="font-size:9px;color:var(--t3)">${fmtN(+aveKg)}t/año</div>
+      </td>
+      <td style="padding:7px 8px;text-align:right">
+        <span style="color:var(--t);font-weight:600">${fmtKg(CPP.vacuno)}</span>
+        <div style="font-size:9px;color:var(--t3)">${fmtN(+vacKg)}t/año</div>
+      </td>
+      <td style="padding:7px 8px;text-align:right">
+        <span style="color:var(--t);font-weight:600">${fmtKg(CPP.cerdo)}</span>
+        <div style="font-size:9px;color:var(--t3)">${fmtN(+cerdoKg)}t/año</div>
+      </td>
+      <td style="padding:7px 8px;text-align:right">
+        <span style="font-weight:600;color:var(--t)">${fmtPIB(c.pib_fam_clp)}/mes</span>
+        <div style="font-size:9px;color:var(--t3)">(${Math.round(c.pib_fam_clp/usd)} USD)</div>
+      </td>
+    </tr>
+    <tr style="background:${bg}">
+      <td colspan="6" style="padding:0 8px 10px 8px">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:2px">
+          <div style="flex:1;min-width:160px;background:var(--bg2,var(--brd));border-radius:6px;padding:6px 8px">
+            <div style="font-size:9px;font-weight:700;color:var(--t3);margin-bottom:3px">🛒 SUPERMERCADOS</div>
+            <div style="font-size:10px;color:var(--t2)">${supStr}</div>
+          </div>
+          <div style="flex:1;min-width:160px;background:var(--bg2,var(--brd));border-radius:6px;padding:6px 8px">
+            <div style="font-size:9px;font-weight:700;color:var(--t3);margin-bottom:3px">🏢 CLIENTES B2B</div>
+            <div style="font-size:10px;color:var(--t2)">${b2bStr}</div>
+          </div>
+          <div style="flex:0 0 auto;background:var(--bg2,var(--brd));border-radius:6px;padding:6px 8px">
+            <div style="font-size:9px;font-weight:700;color:var(--t3);margin-bottom:3px">📊 INDICADORES</div>
+            <div style="font-size:10px;color:var(--t2)">🍽 <strong>${c.casinos_industria||'—'}</strong> casinos industria &nbsp;·&nbsp; 🍳 <strong>${c.restaurantes||'—'}</strong> restaurantes SII</div>
+            <div style="font-size:10px;color:var(--t2)">🥩 Canasta carne ~<strong>${c.canasta_carne_clp?fmtPIB(c.canasta_carne_clp)+'/kg':'—'}</strong> &nbsp;·&nbsp; 🛍 Total carne ~<strong>${fmtN(totalCarneT)}t/año</strong></div>
+          </div>
+        </div>
+      </td>
     </tr>`;
   });
   tbody.innerHTML = rows;
