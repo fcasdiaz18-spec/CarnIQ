@@ -2713,8 +2713,13 @@ async function loadInformePDF(input) {
 
   try {
     const buf = await f.arrayBuffer();
-    // Decodificar el PDF como texto Latin-1 (preserva bytes ASCII intactos)
-    const pdfText = new TextDecoder('latin-1').decode(buf);
+    // Leer PDF como texto: usar BinaryString via FileReader (más compatible que TextDecoder)
+    const pdfText = await new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = e => res(e.target.result);
+      fr.onerror = rej;
+      fr.readAsBinaryString(f);
+    });
 
     // ── 1. Extraer URLs únicas desde /URI (...) ──────────────────────────────
     // Patrón robusto: soporta paréntesis escapados dentro de la URL
