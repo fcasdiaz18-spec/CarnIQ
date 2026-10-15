@@ -190,6 +190,8 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 .btn-refresh svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5}
 
 .news-card{margin:0 max(12px,env(safe-area-inset-left,0px)) 8px;margin-right:max(12px,env(safe-area-inset-right,0px));background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);overflow:hidden;box-shadow:var(--shadow)}
+.news-card--highlight{border:2px solid var(--r)!important;background:color-mix(in srgb,var(--card) 92%,var(--r) 8%)!important}
+.ntag-highlight{background:#da532c!important;color:#fff!important}
 .news-img{width:100%;height:100px;object-fit:cover;display:block}
 .news-body{padding:10px}
 .news-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
@@ -2128,6 +2130,7 @@ function renderLogList(logList,logs){
 let NEWS_CACHE=[];let NEWS_LAST=0;let NEWS_LOADED=false;
 const NEWS_TTL=6*60*60*1000;
 let curTab='all';
+const HIGHLIGHT_KEYS=['nicanor allende','nicanor','ft foods','frigorifico temuco','frigorífico temuco','agrolomas','ftfoods','vietnam'];
 
 async function fetchLiveNews(force=false){
   const now=Date.now();
@@ -2270,8 +2273,10 @@ function renderNewsData(list,cat){
   if (pressItems.length) {
     list = [...pressItems, ...list];
   }
-  // Ordenar por fecha descendente (más reciente primero)
+  // Ordenar: destacadas primero, luego por fecha descendente
   list = [...list].sort((a,b)=>{
+    const ha=isHighlight(a)?1:0, hb=isHighlight(b)?1:0;
+    if(hb!==ha)return hb-ha;
     const da=a.fecha?new Date(a.fecha.split('-').reverse().join('-')):new Date(a.t||0);
     const db=b.fecha?new Date(b.fecha.split('-').reverse().join('-')):new Date(b.t||0);
     return db-da;
@@ -2289,12 +2294,19 @@ function renderNewsData(list,cat){
   document.getElementById('news-list').innerHTML=html||'<div class="empty"><span class="icon">📭</span><p>Sin noticias en esta categoría</p></div>';
 }
 
+function isHighlight(n){
+  const hay=(n.title||'')+(n.body||'')+(n.url||'');
+  const low=hay.toLowerCase();
+  return HIGHLIGHT_KEYS.some(k=>low.includes(k));
+}
 function newsHtml(n,cls){
+  const hl=isHighlight(n);
   const dateStr=n.fecha?`<span class="news-date">📅 ${n.fecha}</span>`:`<span class="news-time">${n.t}</span>`;
-  return`<div class="news-card">
+  return`<div class="news-card${hl?' news-card--highlight':''}">
     <img class="news-img" src="${n.img}" alt="" loading="lazy" onerror="this.style.display='none'">
     <div class="news-body">
       <div class="news-tags">
+        ${hl?'<span class="ntag ntag-highlight">⭐ FT Foods</span>':''}
         <span class="ntag ${cls}">${n.u==='alerta'||n.u==='critico'?'Alerta':'Informativo'}</span>
         <span class="ntag ntag-cat">${n.cat}</span>
         <span class="ntag ntag-cat">${n.pais}</span>
@@ -2317,11 +2329,20 @@ function updateNewsTS(){
 }
 
 function updateDashNews(){
-  const list=NEWS_CACHE.length?NEWS_CACHE:NEWS_STATIC;
-  const crit=list.find(n=>n.u==='alerta')||list[0];
+  const baseList=NEWS_CACHE.length?NEWS_CACHE:NEWS_STATIC;
+  const pressItems=getPresNewsItems('all');
+  const list=[...pressItems,...baseList];
+  // Prioridad: destacadas primero, luego alertas
+  const crit=list.find(n=>isHighlight(n))||list.find(n=>n.u==='alerta')||list[0];
   if(!crit)return;
   const el=document.getElementById('dash-news');
-  if(el)el.innerHTML=`<div class="tag" style="background:#f39c12">Tendencia</div><h4>${crit.title}</h4><p>${crit.body}</p><br><a href="${crit.url}" target="_blank" class="src-lnk" style="margin-top:4px">📎 ${crit.src} →</a>`;
+  if(!el)return;
+  const hl=isHighlight(crit);
+  const tagStyle=hl?'background:#da532c':'background:#f39c12';
+  const tagLabel=hl?'⭐ FT Foods':'Tendencia';
+  const borderStyle=hl?'border:2px solid #da532c;background:color-mix(in srgb,var(--card) 92%,#da532c 8%)':'';
+  el.innerHTML=`<div class="tag" style="${tagStyle}">${tagLabel}</div><h4>${crit.title}</h4><p>${crit.body}</p><br><a href="${crit.url}" target="_blank" class="src-lnk" style="margin-top:4px">📎 ${crit.src} →</a>`;
+  el.style.cssText=borderStyle;
 }
 
 async function fetchAndRender(cat){
