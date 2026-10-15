@@ -1002,7 +1002,7 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 
         <div class="admin-card">
           <h3>📰 Informe de Prensa Diario</h3>
-          <p style="font-size:12px;color:var(--t2);margin:0 0 10px">Sube el PDF del informe diario. CarnIQ extrae los enlaces y los publica como noticias en la pestaña Noticias.</p>
+          <p style="font-size:12px;color:var(--t2);margin:0 0 10px">Sube el PDF del informe diario. CarnIQ extrae los enlaces automáticamente y los publica como noticias en la pestaña Noticias. No requiere API key.</p>
           <div class="file-drop" onclick="document.getElementById('f-informe').click()">
             <input type="file" id="f-informe" accept=".pdf" onchange="loadInformePDF(this)">
             <div class="icon">📄</div>
@@ -1432,6 +1432,8 @@ function saveSyncCfg(){
   if(k&&b){
     localStorage.setItem('carniq_sync_key',k);
     localStorage.setItem('carniq_sync_bin',b);
+    // Mostrar badge activo de inmediato (credenciales ya guardadas)
+    renderSyncCard();
     if(statusEl){statusEl.textContent='🔄 Probando conexión…';statusEl.classList.add('show');}
     testSyncCfg();
   } else {
@@ -1448,6 +1450,7 @@ async function testSyncCfg(){
   const r=await syncRead();
   if(r===null){
     if(statusEl){statusEl.textContent='❌ No se pudo conectar. Verifica el Bin ID y la Master Key.';statusEl.classList.add('show');}
+    renderSyncCard();
   } else {
     const nFotos=Object.keys(r.photos||{}).length;
     const nLogs=(r.logs||[]).length;
@@ -2698,111 +2701,111 @@ function removeTyping(){const e=document.getElementById('typing-ind');if(e)e.rem
 // ═══════════════════════════════════════════
 // ── INFORME DE PRENSA PDF ────────────────────────────────────────────────────
 // El PDF del informe diario de prensa contiene URLs de noticias relevantes.
-// Esta función lee el PDF con la API de Claude, extrae los enlaces y los convierte
-// en ítems de noticias que se guardan en localStorage para mostrar en la pestaña Noticias.
+// Esta función extrae el texto del PDF en el browser con pdf.js y busca URLs con regex.
+// No requiere servidor ni API key — todo corre localmente.
 async function loadInformePDF(input) {
   if (!input.files.length) return;
   const f = input.files[0];
   const prev = document.getElementById('informe-preview');
   const linksEl = document.getElementById('informe-links');
-  if (prev) { prev.className = 'upload-preview show'; prev.textContent = '⏳ Procesando PDF con IA...'; }
+  if (prev) { prev.className = 'upload-preview show'; prev.textContent = '⏳ Leyendo PDF…'; }
   if (linksEl) linksEl.innerHTML = '';
 
-  // Convert PDF to base64
-  const toBase64 = file => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = e => resolve(e.target.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-
   try {
-    const apiKey = localStorage.getItem('carniq_apikey');
-    if (!apiKey) {
-      if (prev) prev.textContent = '❌ Debes configurar tu API Key de Claude primero.';
-      return;
+    // Leer el archivo como ArrayBuffer
+    const buf = await f.arrayBuffer();
+
+    // Cargar pdf.js dinámicamente si no está disponible
+    if (!window.pdfjsLib) {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
-    const b64 = await toBase64(f);
-    // Ask Claude to extract news URLs and titles from the PDF
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2048,
-        messages: [{
-          role: 'user',
-          content: [
-            {
-              type: 'document',
-              source: { type: 'base64', media_type: 'application/pdf', data: b64 }
-            },
-            {
-              type: 'text',
-              text: `Extrae todos los enlaces (URLs) de noticias que aparecen en este informe de prensa. Para cada enlace indica:
-1. La URL completa
-2. El titular o tema de la noticia (si está mencionado)
-3. La especie cárnica relacionada: vacuno, cerdo, ave, o mercado
-4. Si es mercado nacional (Chile) o internacional
 
-Responde SOLO con un array JSON válido, sin texto adicional. Formato:
-[{"url":"https://...","titulo":"Título","especie":"vacuno","ambito":"internacional"}]
+    // Extraer todo el texto del PDF
+    const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
+    let fullText = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const tc = await page.getTextContent();
+      fullText += tc.items.map(it => it.str).join(' ') + '\n';
+    }
 
-Si no hay enlaces, devuelve [].`
-            }
-          ]
-        }]
-      })
+    // Buscar URLs con regex
+    const urlRegex = /https?:\/\/[^\s"'<>\]\)]+/g;
+    const rawUrls = [...new Set(fullText.match(urlRegex) || [])];
+
+    // Filtrar URLs de noticias (excluir URLs de infraestructura)
+    const skipDomains = /jsonbin\.io|anthropic\.com|github\.com|googleapis\.com|cdnjs\.cloudflare/i;
+    const newsUrls = rawUrls.filter(u => {
+      try { return !skipDomains.test(new URL(u).hostname); } catch { return false; }
     });
-    if (!resp.ok) throw new Error('API error ' + resp.status);
-    const data = await resp.json();
-    const txt = data.content?.[0]?.text || '[]';
-    let items;
-    try {
-      // Extract JSON from response
-      const match = txt.match(/\[[\s\S]*\]/);
-      items = match ? JSON.parse(match[0]) : [];
-    } catch { items = []; }
 
-    if (!items.length) {
+    if (!newsUrls.length) {
       if (prev) prev.textContent = '⚠️ No se encontraron enlaces en el PDF.';
       return;
     }
 
-    // Build news items and save to localStorage
-    const dateStr = new Date().toLocaleDateString('es-CL');
-    const newsItems = items.map((it, i) => ({
-      id: 'press_' + Date.now() + '_' + i,
-      titulo: it.titulo || it.url,
-      resumen: 'Noticia del Informe de Prensa · ' + dateStr,
-      especie: it.especie || 'mercado',
-      ambito: it.ambito || 'internacional',
-      fuente: new URL(it.url).hostname.replace('www.',''),
-      url: it.url,
-      fecha_publicacion: dateStr,
-      fecha_dato: dateStr,
-      confianza: 'Fuente directa del informe',
-      tipo: 'informe_prensa'
-    }));
+    // Determinar especie y ámbito por heurística en texto cercano
+    function guessEspecie(url) {
+      const u = url.toLowerCase();
+      if (/cerdo|pork|swine|porcino/i.test(u)) return 'cerdo';
+      if (/ave|pollo|poultry|broiler|avicultura/i.test(u)) return 'ave';
+      if (/vacuno|beef|bovino|cattle/i.test(u)) return 'vacuno';
+      return 'mercado';
+    }
+    function guessAmbito(url) {
+      try {
+        const h = new URL(url).hostname;
+        if (/\.cl$|emol|biobio|lun\.com|cooperativa|minagri|odepa|ftf|ftfoods/i.test(h)) return 'nacional';
+        return 'internacional';
+      } catch { return 'internacional'; }
+    }
 
-    // Merge with existing press news (keep last 60 days)
+    // Build news items
+    const dateStr = new Date().toLocaleDateString('es-CL');
+    const newsItems = newsUrls.map((url, i) => {
+      let hostname = '';
+      try { hostname = new URL(url).hostname.replace('www.', ''); } catch {}
+      return {
+        id: 'press_' + Date.now() + '_' + i,
+        titulo: hostname || url,
+        resumen: 'Noticia del Informe de Prensa · ' + dateStr,
+        especie: guessEspecie(url),
+        ambito: guessAmbito(url),
+        fuente: hostname,
+        url,
+        fecha_publicacion: dateStr,
+        fecha_dato: dateStr,
+        confianza: 'Fuente directa del informe',
+        tipo: 'informe_prensa'
+      };
+    });
+
+    // Merge with existing press news
     const saved = JSON.parse(localStorage.getItem('carniq_press_news') || '[]');
-    const merged = [...newsItems, ...saved].slice(0, 100);
+    // Remove old press items from today to avoid duplicates
+    const filtered = saved.filter(n => n.tipo !== 'informe_prensa' || n.fecha_dato !== dateStr);
+    const merged = [...newsItems, ...filtered].slice(0, 100);
     localStorage.setItem('carniq_press_news', JSON.stringify(merged));
 
-    if (prev) prev.textContent = `✅ ${newsItems.length} noticias cargadas desde el informe.`;
+    if (prev) prev.textContent = `✅ ${newsItems.length} enlaces cargados desde el informe.`;
     if (linksEl) {
-      linksEl.innerHTML = '<div style="font-size:10px;color:var(--t2);font-weight:600;margin-bottom:6px">Noticias extraídas:</div>'
-        + newsItems.map(n => `<div style="font-size:10px;color:var(--b);margin-bottom:3px">📎 <a href="${n.url}" target="_blank" style="color:var(--b)">${n.titulo}</a> · ${n.especie}</div>`).join('');
+      linksEl.innerHTML = '<div style="font-size:10px;color:var(--t2);font-weight:600;margin-bottom:6px">Enlaces extraídos:</div>'
+        + newsItems.slice(0, 15).map(n =>
+            `<div style="font-size:10px;color:var(--b);margin-bottom:3px">📎 <a href="${n.url}" target="_blank" style="color:var(--b)">${n.fuente||n.url}</a> · ${n.especie}</div>`
+          ).join('')
+        + (newsItems.length > 15 ? `<div style="font-size:10px;color:var(--t3);margin-top:4px">…y ${newsItems.length - 15} más</div>` : '');
     }
     // Mark news as needing reload
     NEWS_LOADED = false;
   } catch (err) {
-    if (prev) prev.textContent = '❌ Error: ' + err.message;
+    if (prev) prev.textContent = '❌ Error al leer el PDF: ' + err.message;
   }
 }
 
