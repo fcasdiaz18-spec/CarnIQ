@@ -2723,9 +2723,12 @@ async function loadInformePDF(input) {
         s.onload = res; s.onerror = rej;
         document.head.appendChild(s);
       });
+      // Configurar worker ANTES de cualquier llamada a getDocument
+      // Usar workerSrc externo para evitar problemas de origen cruzado
       window.pdfjsLib.GlobalWorkerOptions.workerSrc =
         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
+    if (prev) prev.textContent = '⏳ Analizando hipervínculos…';
 
     // Extraer texto Y anotaciones (hipervínculos) del PDF
     const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
@@ -2746,20 +2749,25 @@ async function loadInformePDF(input) {
       fullText += textItems.map(it => it.str).join(' ') + '\n';
 
       // Anotaciones de tipo URI (hipervínculos)
+      // ann.url: pdf.js ya resuelve la URI directamente en este campo
+      // ann.contentsObj / ann.contents: texto del tooltip/contents de la anotación
       for (const ann of annotations) {
-        if (ann.subtype === 'Link' && ann.url) {
-          const url = ann.url.trim();
-          if (!urlMap.has(url)) {
-            // Buscar texto que solape con el rect de la anotación [x1,y1,x2,y2]
-            const [ax1, ay1, ax2, ay2] = ann.rect;
-            const overlapping = textItems.filter(it =>
-              it.x < ax2 && (it.x + it.w) > ax1 &&
-              it.y < ay2 && (it.y + it.h) > ay1
-            );
-            const titulo = overlapping.map(it => it.str).join(' ').trim() || url;
-            urlMap.set(url, { titulo, page: i });
-          }
+        if (ann.subtype !== 'Link') continue;
+        // pdf.js expone la URL resuelta en ann.url (para actions tipo URI)
+        const url = (ann.url || '').trim();
+        if (!url || urlMap.has(url)) continue;
+        // El titulo puede venir de ann.contents (campo /Contents del PDF)
+        // o buscarlo por superposición de texto
+        let titulo = (ann.contents || '').trim();
+        if (!titulo) {
+          const [ax1, ay1, ax2, ay2] = ann.rect;
+          const overlapping = textItems.filter(it =>
+            it.x < ax2 && (it.x + it.w) > ax1 &&
+            it.y < ay2 && (it.y + it.h) > ay1
+          );
+          titulo = overlapping.map(it => it.str).join('').trim() || url;
         }
+        urlMap.set(url, { titulo, page: i });
       }
     }
 
@@ -2776,7 +2784,8 @@ async function loadInformePDF(input) {
     });
 
     if (!newsEntries.length) {
-      if (prev) prev.textContent = '⚠️ No se encontraron enlaces en el PDF. Verifica que el archivo tenga hipervínculos activos.';
+      const totalAnns = [...urlMap.entries()].length;
+      if (prev) prev.textContent = `⚠️ No se encontraron enlaces. El PDF tiene ${pdf.numPages} pág. — verifica que los encabezados sean hipervínculos activos (no solo texto).`;
       return;
     }
 
