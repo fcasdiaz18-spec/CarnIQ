@@ -969,19 +969,35 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
           <div class="upload-preview" id="api-status"></div>
         </div>
 
-        <div class="admin-card">
+        <div class="admin-card" id="sync-card">
           <h3>🔄 Sincronización entre usuarios</h3>
-          <p style="font-size:11px;color:var(--t2);margin:0 0 10px">Comparte fotos del catálogo y registros de acceso entre todos los dispositivos. Usa <a href="https://jsonbin.io" target="_blank" style="color:var(--b)">jsonbin.io</a> (cuenta gratuita). Crea un bin vacío (<code>{}</code>), copia el Bin ID y tu Master Key.</p>
-          <label class="lbl-sm">Master Key (X-Master-Key)</label>
-          <input type="password" class="api-input" id="sync-key-input" placeholder="$2a$10$..." autocomplete="off">
-          <label class="lbl-sm" style="margin-top:8px">Bin ID</label>
-          <input type="text" class="api-input" id="sync-bin-input" placeholder="67f3a..." autocomplete="off">
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn-primary" style="flex:1" onclick="saveSyncCfg()">Guardar</button>
-            <button class="btn-outline" style="flex:1;padding:8px" onclick="testSyncCfg()">Probar conexión</button>
+          <!-- Estado activo (se muestra si ya está configurado) -->
+          <div id="sync-active" style="display:none">
+            <div style="display:flex;align-items:center;gap:8px;background:var(--g2);border:1px solid var(--g);border-radius:8px;padding:10px 12px;margin-bottom:10px">
+              <span style="font-size:20px">✅</span>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:var(--g)">Sincronización activa</div>
+                <div style="font-size:10px;color:var(--t2)" id="sync-bin-label">Bin: —</div>
+              </div>
+              <button class="btn-outline" style="padding:5px 10px;font-size:10px" onclick="showSyncForm()">Cambiar</button>
+            </div>
+            <button class="btn-outline" style="width:100%;padding:8px" onclick="testSyncCfg()">🔄 Probar conexión</button>
+            <div class="upload-preview" id="sync-status"></div>
           </div>
-          <div class="upload-preview" id="sync-status"></div>
-          <p style="font-size:10px;color:var(--t3);margin:8px 0 0">⚠️ Las claves se guardan solo en este navegador (localStorage), nunca en el código fuente. Sin configurar, la app funciona normalmente en modo local.</p>
+          <!-- Formulario (se muestra si NO está configurado o presiona Cambiar) -->
+          <div id="sync-form">
+            <p style="font-size:11px;color:var(--t2);margin:0 0 10px">Comparte fotos y registros de acceso entre todos los dispositivos. Usa <a href="https://jsonbin.io" target="_blank" style="color:var(--b)">jsonbin.io</a> (gratuito). Crea un bin con <code>{}</code>, copia el Bin ID y tu Master Key.</p>
+            <label class="lbl-sm">Master Key (X-Master-Key)</label>
+            <input type="password" class="api-input" id="sync-key-input" placeholder="$2a$10$..." autocomplete="off">
+            <label class="lbl-sm" style="margin-top:8px">Bin ID</label>
+            <input type="text" class="api-input" id="sync-bin-input" placeholder="67f3a..." autocomplete="off">
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn-primary" style="flex:1" onclick="saveSyncCfg()">Guardar</button>
+              <button class="btn-outline" style="flex:1;padding:8px" onclick="testSyncCfg()">Probar</button>
+            </div>
+            <div class="upload-preview" id="sync-status-form"></div>
+            <p style="font-size:10px;color:var(--t3);margin:8px 0 0">Las claves se guardan solo en este navegador, nunca en el código fuente.</p>
+          </div>
         </div>
 
         <div class="admin-card">
@@ -1388,30 +1404,55 @@ function saveApiKey(){
   if(k){localStorage.setItem('carniq_apikey',k);showEl('api-status','✅ API Key guardada',true)}
   else showEl('api-status','⚠️ Ingresa una clave válida',true)
 }
+function showSyncForm(){
+  const f=document.getElementById('sync-form');
+  const a=document.getElementById('sync-active');
+  if(f)f.style.display='';
+  if(a)a.style.display='none';
+}
+function renderSyncCard(){
+  const cfg=getSyncCfg();
+  const formEl=document.getElementById('sync-form');
+  const activeEl=document.getElementById('sync-active');
+  const binLabel=document.getElementById('sync-bin-label');
+  if(!formEl||!activeEl)return;
+  if(cfg.ok){
+    formEl.style.display='none';
+    activeEl.style.display='';
+    if(binLabel)binLabel.textContent='Bin: …'+cfg.bin.slice(-8);
+  } else {
+    formEl.style.display='';
+    activeEl.style.display='none';
+  }
+}
 function saveSyncCfg(){
   const k=(document.getElementById('sync-key-input').value||'').trim();
   const b=(document.getElementById('sync-bin-input').value||'').trim();
+  const statusEl=document.getElementById('sync-status-form');
   if(k&&b){
     localStorage.setItem('carniq_sync_key',k);
     localStorage.setItem('carniq_sync_bin',b);
-    showEl('sync-status','✅ Configuración guardada. Probando conexión…',true);
+    if(statusEl){statusEl.textContent='🔄 Probando conexión…';statusEl.classList.add('show');}
     testSyncCfg();
   } else {
-    showEl('sync-status','⚠️ Completa ambos campos (Master Key y Bin ID)',true);
+    if(statusEl){statusEl.textContent='⚠️ Completa ambos campos (Master Key y Bin ID)';statusEl.classList.add('show');}
   }
 }
 async function testSyncCfg(){
   const cfg=getSyncCfg();
-  if(!cfg.ok){showEl('sync-status','⚠️ Configura Master Key y Bin ID primero.',true);return}
-  showEl('sync-status','🔄 Probando…',true);
+  // Usar el status visible según el panel que esté activo
+  const statusId=cfg.ok&&document.getElementById('sync-active').style.display!=='none'?'sync-status':'sync-status-form';
+  const statusEl=document.getElementById(statusId);
+  if(!cfg.ok){if(statusEl){statusEl.textContent='⚠️ Configura Master Key y Bin ID primero.';statusEl.classList.add('show');}return}
+  if(statusEl){statusEl.textContent='🔄 Probando…';statusEl.classList.add('show');}
   const r=await syncRead();
   if(r===null){
-    showEl('sync-status','❌ No se pudo conectar. Verifica el Bin ID y la Master Key.',true);
+    if(statusEl){statusEl.textContent='❌ No se pudo conectar. Verifica el Bin ID y la Master Key.';statusEl.classList.add('show');}
   } else {
     const nFotos=Object.keys(r.photos||{}).length;
     const nLogs=(r.logs||[]).length;
-    showEl('sync-status',`✅ Conexión exitosa · ${nFotos} fotos sincronizadas · ${nLogs} registros de acceso`,true);
-    // Cargar estado inmediatamente
+    if(statusEl){statusEl.textContent=`✅ Conexión OK · ${nFotos} fotos · ${nLogs} accesos`;statusEl.classList.add('show');}
+    renderSyncCard();
     await loadSyncState();
     renderCatalog();
   }
@@ -2036,11 +2077,8 @@ function renderAdminPage(){
     // User info
     const info=document.getElementById('admin-user-info');
     if(info&&CURRENT_USER)info.textContent=`${CURRENT_USER.name} · ${CURRENT_USER.email}`;
-    // Pre-rellenar campos de sync si ya están configurados
-    const skEl=document.getElementById('sync-key-input');
-    const sbEl=document.getElementById('sync-bin-input');
-    if(skEl)skEl.value=localStorage.getItem('carniq_sync_key')||'';
-    if(sbEl)sbEl.value=localStorage.getItem('carniq_sync_bin')||'';
+    // Mostrar estado de sync (activo o formulario vacío)
+    renderSyncCard();
 
     // Log de accesos — consolidado por usuario (async: lee remoto si hay sync)
     const logList=document.getElementById('admin-log-list');
