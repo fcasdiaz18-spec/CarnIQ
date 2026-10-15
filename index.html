@@ -2727,36 +2727,65 @@ async function loadInformePDF(input) {
         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
 
-    // Extraer todo el texto del PDF
+    // Extraer texto Y anotaciones (hipervínculos) del PDF
     const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
+
+    // Mapa: url → texto visible más cercano (para usar como título)
+    const urlMap = new Map(); // url → {titulo, rect, page}
     let fullText = '';
+
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
-      const tc = await page.getTextContent();
-      fullText += tc.items.map(it => it.str).join(' ') + '\n';
+      const [tc, annotations] = await Promise.all([
+        page.getTextContent(),
+        page.getAnnotations()
+      ]);
+
+      // Texto de la página con posición
+      const textItems = tc.items.map(it => ({ str: it.str, x: it.transform[4], y: it.transform[5], w: it.width, h: it.height }));
+      fullText += textItems.map(it => it.str).join(' ') + '\n';
+
+      // Anotaciones de tipo URI (hipervínculos)
+      for (const ann of annotations) {
+        if (ann.subtype === 'Link' && ann.url) {
+          const url = ann.url.trim();
+          if (!urlMap.has(url)) {
+            // Buscar texto que solape con el rect de la anotación [x1,y1,x2,y2]
+            const [ax1, ay1, ax2, ay2] = ann.rect;
+            const overlapping = textItems.filter(it =>
+              it.x < ax2 && (it.x + it.w) > ax1 &&
+              it.y < ay2 && (it.y + it.h) > ay1
+            );
+            const titulo = overlapping.map(it => it.str).join(' ').trim() || url;
+            urlMap.set(url, { titulo, page: i });
+          }
+        }
+      }
     }
 
-    // Buscar URLs con regex
-    const urlRegex = /https?:\/\/[^\s"'<>\]\)]+/g;
-    const rawUrls = [...new Set(fullText.match(urlRegex) || [])];
+    // También buscar URLs en texto plano (por si algunas están escritas como texto)
+    const urlRegex = /https?:\/\/[^\s"'<>\]\),;]+/g;
+    for (const u of (fullText.match(urlRegex) || [])) {
+      if (!urlMap.has(u)) urlMap.set(u, { titulo: u, page: 0 });
+    }
 
-    // Filtrar URLs de noticias (excluir URLs de infraestructura)
-    const skipDomains = /jsonbin\.io|anthropic\.com|github\.com|googleapis\.com|cdnjs\.cloudflare/i;
-    const newsUrls = rawUrls.filter(u => {
+    // Filtrar URLs de noticias (excluir URLs de infraestructura/sistema)
+    const skipDomains = /jsonbin\.io|anthropic\.com|github\.com|googleapis\.com|cdnjs\.cloudflare|gstatic\.com|fonts\.google/i;
+    const newsEntries = [...urlMap.entries()].filter(([u]) => {
       try { return !skipDomains.test(new URL(u).hostname); } catch { return false; }
     });
 
-    if (!newsUrls.length) {
-      if (prev) prev.textContent = '⚠️ No se encontraron enlaces en el PDF.';
+    if (!newsEntries.length) {
+      if (prev) prev.textContent = '⚠️ No se encontraron enlaces en el PDF. Verifica que el archivo tenga hipervínculos activos.';
       return;
     }
 
     // Determinar especie y ámbito por heurística en texto cercano
-    function guessEspecie(url) {
-      const u = url.toLowerCase();
-      if (/cerdo|pork|swine|porcino/i.test(u)) return 'cerdo';
-      if (/ave|pollo|poultry|broiler|avicultura/i.test(u)) return 'ave';
-      if (/vacuno|beef|bovino|cattle/i.test(u)) return 'vacuno';
+    function guessEspecie(text) {
+      const t = text.toLowerCase();
+      if (/cerdo|pork|swine|porcino|cerd/i.test(t)) return 'cerdo';
+      if (/ave|pollo|poultry|broiler|avicultura|pavo/i.test(t)) return 'ave';
+      if (/vacuno|beef|bovino|cattle|vaca|ternera/i.test(t)) return 'vacuno';
       return 'mercado';
     }
     function guessAmbito(url) {
@@ -2769,14 +2798,16 @@ async function loadInformePDF(input) {
 
     // Build news items
     const dateStr = new Date().toLocaleDateString('es-CL');
-    const newsItems = newsUrls.map((url, i) => {
+    const newsItems = newsEntries.map(([url, meta], i) => {
       let hostname = '';
       try { hostname = new URL(url).hostname.replace('www.', ''); } catch {}
+      // Usar título del texto visible del hipervínculo, o el hostname como fallback
+      const titulo = (meta.titulo && meta.titulo !== url) ? meta.titulo : hostname || url;
       return {
         id: 'press_' + Date.now() + '_' + i,
-        titulo: hostname || url,
+        titulo,
         resumen: 'Noticia del Informe de Prensa · ' + dateStr,
-        especie: guessEspecie(url),
+        especie: guessEspecie(url + ' ' + titulo),
         ambito: guessAmbito(url),
         fuente: hostname,
         url,
