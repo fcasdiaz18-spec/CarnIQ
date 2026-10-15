@@ -1509,120 +1509,40 @@ const CATALOG_PRODUCTS=[
   {code:'11777',name:"TUETANO",brand:"FT Multimarca",cat:"Vacuno",sub:"Vacuno Subproductos",origen:"CHILE",totalCajas:8,totalKg:70.2,lotes:[{"lote": "E4T3222672", "cajas": 2, "kg_neto": 18.2, "origen": "CHILE", "fecha_prod": "04.08.2026"}, {"lote": "E4T4052670", "cajas": 6, "kg_neto": 52.0, "origen": "CHILE", "fecha_prod": "02.10.2026"}]},
 ];
 
-// Fotos por código — Jumbo.cl / catálogo FT Foods
-// Fuente: jumbocl.vtexassets.com (A Punto, Fundo Sur, Frigosorno) · catalogo.ftfoods.cl
+// Fotos por código — solo marcas propias FT Foods
+// Fuentes: catalogo.ftfoods.cl · carnesapunto.cl · jumbocl.vtexassets.com
+// Solo A Punto, Fundo Sur, La Reserva y FT Excelencia — el resto se sube manualmente
 const PROD_PHOTOS={
-  // ── Ave ──
-  '69021':'https://jumbocl.vtexassets.com/arquivos/ids/576916-250-250/Trutro-Entero-850-g-Aprox.jpg?v=639069339666930000', // trutro entero/pata muslo
-  '69030':'https://jumbocl.vtexassets.com/arquivos/ids/576916-250-250/Trutro-Entero-850-g-Aprox.jpg?v=639069339666930000', // trutro 1/4 bloque
-  '69081':'https://jumbocl.vtexassets.com/arquivos/ids/672718-250-250/Pechuga-de-Pollo-Deshuesada-Canto-del-Gallo-Sin-Marinar-550-g.jpg?v=639237058342400000', // pechuga
-  '69160':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // pollo entero
-  '69231':'https://jumbocl.vtexassets.com/arquivos/ids/672718-250-250/Pechuga-de-Pollo-Deshuesada-Canto-del-Gallo-Sin-Marinar-550-g.jpg?v=639237058342400000', // pechuga deshuesada
-  '69257':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // gallina
-  '69340':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // pollo cal
-  '69404':'https://jumbocl.vtexassets.com/arquivos/ids/575764-250-250/Filetitos-de-Pechuga-Congelado-700-g.jpg?v=639069337086930000', // filetillo IQF
-  '69410':'https://jumbocl.vtexassets.com/arquivos/ids/576916-250-250/Trutro-Entero-850-g-Aprox.jpg?v=639069339666930000', // trutro ala IQF
-  '69440':'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg', // garras
-  // ── Cerdo ──
-  '25162':'https://jumbocl.vtexassets.com/arquivos/ids/627659-250-250/Chuleta-Centro-Super-Cerdo-550-g.jpg?v=639123768407330000', // chuleta vetada 5kg FT
-  '25163':'https://jumbocl.vtexassets.com/arquivos/ids/627659-250-250/Chuleta-Centro-Super-Cerdo-550-g.jpg?v=639123768407330000', // chuleta centro 5kg FT
-  '25152':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // cuero cerdo
-  '25763':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // pulpa pierna
-  '25834':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // paleta
-  '66141':'https://jumbocl.vtexassets.com/arquivos/ids/627659-250-250/Chuleta-Centro-Super-Cerdo-550-g.jpg?v=639123768407330000', // chuleta centro CON
-  '66142':'https://jumbocl.vtexassets.com/arquivos/ids/393486-250-250/COST-CHILE-C-CO-KG.jpg?v=638776874741400000', // costillar
-  '66230':'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg', // pierna entera
-  '68185':'https://jumbocl.vtexassets.com/arquivos/ids/627659-250-250/Chuleta-Centro-Super-Cerdo-550-g.jpg?v=639123768407330000', // chuleta vetada IMP
-  // ── Vacuno importado ──
-  '67402':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // posta negra
-  '67722':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // abastero Neuland
-  '67723':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // asado carnicero
-  '67724':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // asiento Neuland
-  '67725':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // choclillo Neuland
-  '67726':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // entraña Neuland
-  '67727':'https://jumbocl.vtexassets.com/arquivos/ids/311031-250-250/Filete-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776392793300000', // filete Neuland
-  '67728':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // ganso Neuland
-  '67729':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // huachalomo Neuland
-  '67730':'https://jumbocl.vtexassets.com/arquivos/ids/297569-250-250/Lomo-Liso-Al-Vacio-kg.jpg?v=638985515442830000', // lomo liso Neuland
-  '67731':'https://jumbocl.vtexassets.com/arquivos/ids/303885-900-900?width=250&height=250&aspect=true', // lomo vetado Frigosorno/Neuland
-  '67738':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // punta picana Neuland
-  '67739':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // punta paleta Neuland
-  '67740':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // sobrecostilla Neuland
-  '67741':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // tapapecho Neuland
-  '67955':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // choclillo Campo Largo
-  '67960':'https://jumbocl.vtexassets.com/arquivos/ids/311031-250-250/Filete-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776392793300000', // filete Campo Largo
-  '67966':'https://jumbocl.vtexassets.com/arquivos/ids/303885-900-900?width=250&height=250&aspect=true', // lomo vetado Campo Largo
-  '67975':'https://jumbocl.vtexassets.com/arquivos/ids/298293-250-250/Punta-Picana-Premium-A-Punto-Al-Vacio-kg.jpg?v=638775750619400000', // punta picana Campo Largo
-  '67976':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // punta paleta Campo Largo
-  '67981':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // tapabarriga Campo Largo
-  // ── Vacuno nacional A Punto ──
-  '71010':'https://jumbocl.vtexassets.com/arquivos/ids/311007-250-250/Asado-de-Tira-Criollo-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776392750270000', // asado tira
-  '71064':'https://jumbocl.vtexassets.com/arquivos/ids/311031-250-250/Filete-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776392793300000', // filete A Punto
-  '71065':'https://jumbocl.vtexassets.com/arquivos/ids/298290-250-250/Punta-de-Ganso-Premium-A-Punto-Al-Vacio-kg.jpg?v=638775750582970000', // punta ganso A Punto
-  '71039':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // punta paleta A Punto
-  '71107':'https://jumbocl.vtexassets.com/arquivos/ids/298293-250-250/Punta-Picana-Premium-A-Punto-Al-Vacio-kg.jpg?v=638775750619400000', // punta picana A Punto
-  '71232':'https://jumbocl.vtexassets.com/arquivos/ids/297569-250-250/Lomo-Liso-Al-Vacio-kg.jpg?v=638985515442830000', // lomo liso porc A Punto
-  '71275':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // entraña A Punto
-  '71491':'https://jumbocl.vtexassets.com/arquivos/ids/311104-900-900?width=250&height=250&aspect=true', // arrachera A Punto
-  '71700':'https://jumbocl.vtexassets.com/arquivos/ids/303885-900-900?width=250&height=250&aspect=true', // lomo vetado porc A Punto
-  '71714':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // tomahawk A Punto
-  '71770':'https://jumbocl.vtexassets.com/arquivos/ids/311007-250-250/Asado-de-Tira-Criollo-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776392750270000', // asado tira AP
-  '71913':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // tomahawk AP alt
-  '71978':'https://jumbocl.vtexassets.com/arquivos/ids/314294-250-250/Filete-Entrecot-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776401597930000', // entrecot porc A Punto
-  // ── Vacuno nacional FT ──
-  '14086':'https://jumbocl.vtexassets.com/arquivos/ids/380301-250-250/Osobuco-1-kg.jpg?v=638776822649970000', // osobuco
-  '14087':'https://jumbocl.vtexassets.com/arquivos/ids/380301-250-250/Osobuco-1-kg.jpg?v=638776822649970000', // osobuco alt
-  '11258':'https://jumbocl.vtexassets.com/arquivos/ids/380301-250-250/Osobuco-1-kg.jpg?v=638776822649970000', // osobuco
-  '11776':'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg', // french rack
-  '11777':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // tuétano
-  '13443':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // trimming 80/20
-  '67402':'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg', // posta negra
-  // ── Procesados A Punto ──
-  '17085':'https://jumbocl.vtexassets.com/arquivos/ids/374851-250-250/HAMBURGUESA-CHUCKROLL-A-PUNTO.jpg?v=638776801164370000', // hamb chuckroll 125g
-  '17086':'https://jumbocl.vtexassets.com/arquivos/ids/374858-250-250/HAMBURGUESA-SMOKED-A-PUNTO.jpg?v=638776801192070000', // hamb smoked 125g
-  '71081':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // hamb brisket
-  '71083':'https://jumbocl.vtexassets.com/arquivos/ids/374858-250-250/HAMBURGUESA-SMOKED-A-PUNTO.jpg?v=638776801192070000', // hamb smoked 185g
-  '17088':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // hamb La Reserva 100g
-  '17997':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // hamb brisket ap
-  // ── Procesados Fundo Sur ──
-  '17075':'https://jumbocl.vtexassets.com/arquivos/ids/341215-250-250/Crocante-de-Vacuno-Fundo-Sur-100-g.jpg?v=638776441509300000', // crocante 100g
-  '17076':'https://jumbocl.vtexassets.com/arquivos/ids/341215-250-250/Crocante-de-Vacuno-Fundo-Sur-100-g.jpg?v=638776441509300000', // escalopa/crocante
-  '17858':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // hamb Fundo Sur
-  '17044':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000', // churrasco Fundo Sur
-  // ── Procesados FT Excelencia ──
-  '17631':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000', // churrasco FT
-  '17859':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // hamburguesa FT
-  '17954':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // albóndiga
-  '17968':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000', // churrasco La Reserva
-  '17129':'https://jumbocl.vtexassets.com/arquivos/ids/311007-250-250/Asado-de-Tira-Criollo-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776392750270000', // asado tira proc
-  '17128':'https://jumbocl.vtexassets.com/arquivos/ids/393486-250-250/COST-CHILE-C-CO-KG.jpg?v=638776874741400000', // costillas proc
-  '17077':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000', // tiritas
-  '17078':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000', // cubitos
-  '17964':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // nuggets
-  '71017':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // mechada
-  // ── Molidas / bandejas ──
-  '18512':'https://jumbocl.vtexassets.com/arquivos/ids/341162-250-250/Churrasco-A-Punto-120-g.jpg?v=638776441454100000', // molida 250g
-  '18513':'https://jumbocl.vtexassets.com/arquivos/ids/341162-250-250/Churrasco-A-Punto-120-g.jpg?v=638776441454100000', // molida 125g
-  '18383':'https://jumbocl.vtexassets.com/arquivos/ids/341162-250-250/Churrasco-A-Punto-120-g.jpg?v=638776441454100000', // molida FTE 250
-  '18182':'https://jumbocl.vtexassets.com/arquivos/ids/341162-250-250/Churrasco-A-Punto-120-g.jpg?v=638776441454100000', // molida FTE 500
-  '18372':'https://jumbocl.vtexassets.com/arquivos/ids/341162-250-250/Churrasco-A-Punto-120-g.jpg?v=638776441454100000', // molida FTE 1kg
-  '17121':'https://jumbocl.vtexassets.com/arquivos/ids/341162-250-250/Churrasco-A-Punto-120-g.jpg?v=638776441454100000', // bdj tiritas
-  '17120':'https://jumbocl.vtexassets.com/arquivos/ids/341162-250-250/Churrasco-A-Punto-120-g.jpg?v=638776441454100000', // bdj cubitos
-  '17122':'https://jumbocl.vtexassets.com/arquivos/ids/341162-250-250/Churrasco-A-Punto-120-g.jpg?v=638776441454100000', // bdj molida
-  '17123':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // bdj hamb
-  '17124':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // bdj mini hamb
-  '17125':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000', // bdj smash
-  // ── FT Excelencia embutidos ──
-  '37345':'https://jumbocl.vtexassets.com/arquivos/ids/341215-250-250/Crocante-de-Vacuno-Fundo-Sur-100-g.jpg?v=638776441509300000', // longaniza
-  '37370':'https://jumbocl.vtexassets.com/arquivos/ids/341215-250-250/Crocante-de-Vacuno-Fundo-Sur-100-g.jpg?v=638776441509300000', // chorizo
+  // ── A Punto — cortes al vacío ──
+  // Fuente: carnesapunto.cl / jumbo.cl
+  '71064':'https://jumbocl.vtexassets.com/arquivos/ids/311031-250-250/Filete-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776392793300000',        // Filete V A Punto
+  '71065':'https://jumbocl.vtexassets.com/arquivos/ids/298290-250-250/Punta-de-Ganso-Premium-A-Punto-Al-Vacio-kg.jpg?v=638775750582970000', // Punta de Ganso A Punto
+  '71107':'https://jumbocl.vtexassets.com/arquivos/ids/298293-250-250/Punta-Picana-Premium-A-Punto-Al-Vacio-kg.jpg?v=638775750619400000',   // Punta Picana A Punto
+  '71232':'https://jumbocl.vtexassets.com/arquivos/ids/297569-250-250/Lomo-Liso-Al-Vacio-kg.jpg?v=638985515442830000',                     // Lomo Liso Porc A Punto
+  '71700':'https://jumbocl.vtexassets.com/arquivos/ids/303885-900-900?width=250&height=250&aspect=true',                                    // Lomo Vetado Porc A Punto
+  '71010':'https://jumbocl.vtexassets.com/arquivos/ids/311007-250-250/Asado-de-Tira-Criollo-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776392750270000', // Asado Tira A Punto
+  '71770':'https://jumbocl.vtexassets.com/arquivos/ids/311007-250-250/Asado-de-Tira-Criollo-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776392750270000', // Asado Tira AP (alt)
+  '71491':'https://jumbocl.vtexassets.com/arquivos/ids/311104-900-900?width=250&height=250&aspect=true',                                    // Arrachera A Punto
+  '71978':'https://jumbocl.vtexassets.com/arquivos/ids/314294-250-250/Filete-Entrecot-Premium-A-Punto-Al-Vacio-kg.jpg?v=638776401597930000', // Entrecot Porc A Punto
+  // ── A Punto — hamburguesas ──
+  '17085':'https://jumbocl.vtexassets.com/arquivos/ids/374851-250-250/HAMBURGUESA-CHUCKROLL-A-PUNTO.jpg?v=638776801164370000', // Hamb. ChuckRoll 125g
+  '17086':'https://jumbocl.vtexassets.com/arquivos/ids/374858-250-250/HAMBURGUESA-SMOKED-A-PUNTO.jpg?v=638776801192070000',   // Hamb. Smoked 125g
+  '71081':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000',  // Hamb. Brisket
+  '71083':'https://jumbocl.vtexassets.com/arquivos/ids/374858-250-250/HAMBURGUESA-SMOKED-A-PUNTO.jpg?v=638776801192070000',   // Hamb. Smoked 185g
+  '17997':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000',  // Hamb. Brisket AP alt
+  // ── La Reserva — hamburguesa ──
+  '17088':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000',  // Hamb. La Reserva 100g
+  // ── Fundo Sur ──
+  '17075':'https://jumbocl.vtexassets.com/arquivos/ids/341215-250-250/Crocante-de-Vacuno-Fundo-Sur-100-g.jpg?v=638776441509300000', // Crocante 100g Fundo Sur
+  '17076':'https://jumbocl.vtexassets.com/arquivos/ids/341215-250-250/Crocante-de-Vacuno-Fundo-Sur-100-g.jpg?v=638776441509300000', // Crocante/escalopa alt
+  '17044':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000',          // Churrasco Fundo Sur
+  '17858':'https://jumbocl.vtexassets.com/arquivos/ids/374849-250-250/HAMBURGUESA-BRISKET-A-PUNTO.jpg?v=638776801163570000',         // Hamb. Fundo Sur
+  // ── FT Excelencia ──
+  '17631':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000', // Churrasco FT Con W
+  '17968':'https://jumbocl.vtexassets.com/arquivos/ids/341186-250-250/Churrasco-Fundo-Sur-120-g.jpg?v=638776441483500000', // Churrasco La Reserva
 };
-// Fotos por defecto por categoría — imágenes reales catálogo FT Foods
-const CAT_DEFAULT_PHOTOS={
-  Ave:'https://catalogo.ftfoods.cl/ambiente/otros-ave.jpg',
-  Cerdo:'https://catalogo.ftfoods.cl/ambiente/otros-cerdo.jpg',
-  Vacuno:'https://catalogo.ftfoods.cl/ambiente/otros-vacuno-importado.jpg',
-  Procesado:'https://catalogo.ftfoods.cl/ambiente/apunto-lomo-liso.jpg',
-};
+// Sin fallback por categoría — los productos sin foto muestran el ícono y el botón de subir
+const CAT_DEFAULT_PHOTOS={};
 
 function buildCatalog(){
   // Merge CATALOG_PRODUCTS with PRICES_DATA prices (match by code)
