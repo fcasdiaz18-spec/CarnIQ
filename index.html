@@ -2827,13 +2827,14 @@ async function loadInformePDF(input) {
       };
     });
 
-    // Guardar en localStorage (reemplaza noticias de prensa del día)
+    // Guardar en localStorage acumulando (deduplicar por URL, nunca borrar)
     const saved = JSON.parse(localStorage.getItem('carniq_press_news') || '[]');
-    const filtered = saved.filter(n => n.tipo !== 'informe_prensa' || n.fecha_dato !== dateStr);
-    const merged = [...newsItems, ...filtered].slice(0, 100);
+    const existingUrls = new Set(saved.map(n => n.url));
+    const nuevas = newsItems.filter(n => !existingUrls.has(n.url));
+    const merged = [...nuevas, ...saved]; // nuevas primero, sin límite por fecha
     localStorage.setItem('carniq_press_news', JSON.stringify(merged));
 
-    if (prev) prev.textContent = `✅ ${newsItems.length} noticias cargadas desde el informe.`;
+    if (prev) prev.textContent = `✅ ${nuevas.length} nuevas · ${newsItems.length - nuevas.length} ya existían · Total guardadas: ${merged.length}`;
     if (linksEl) {
       linksEl.innerHTML = '<div style="font-size:10px;color:var(--t2);font-weight:600;margin-bottom:6px">Noticias extraídas:</div>'
         + newsItems.slice(0, 15).map(n =>
@@ -2841,7 +2842,11 @@ async function loadInformePDF(input) {
           ).join('')
         + (newsItems.length > 15 ? `<div style="font-size:10px;color:var(--t3);margin-top:4px">…y ${newsItems.length - 15} más</div>` : '');
     }
+    // Mostrar en Noticias inmediatamente (sin necesidad de navegar)
     NEWS_LOADED = false;
+    const baseList = NEWS_CACHE.length ? NEWS_CACHE : NEWS_STATIC;
+    renderNewsData(baseList, curTab);
+    updateDashNews();
   } catch (err) {
     if (prev) prev.textContent = '❌ Error al leer el PDF: ' + err.message;
   }
