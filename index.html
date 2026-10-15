@@ -860,6 +860,9 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <div class="tab" onclick="aTab(this,'logistica')">🚢 Logística</div>
       </div>
       <div id="geo-alerts-list" style="padding-bottom:8px"></div>
+      <!-- Market Insights section -->
+      <div class="sec-title" style="margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px))">💡 INSIGHTS DE MERCADO · Implicancias para FT Foods</div>
+      <div id="market-insights" style="padding-bottom:8px"></div>
       <!-- Competitor intelligence section -->
       <div class="sec-title" style="margin:0 max(12px,env(safe-area-inset-left,0px));margin-right:max(12px,env(safe-area-inset-right,0px))">🏢 INTELIGENCIA COMPETITIVA · Mercado Nacional</div>
       <div id="competitor-intel" style="padding-bottom:16px"></div>
@@ -1589,7 +1592,7 @@ function goPage(id,el){
   if(el)el.classList.add('active');
   if(id==='noticias'&&!NEWS_LOADED)fetchAndRender('all');
   if(id==='catalogo')renderCatalog();
-  if(id==='alertas'){renderGeoAlerts();renderCompetitorIntel();}
+  if(id==='alertas'){renderGeoAlerts();renderMarketInsights();renderCompetitorIntel();}
   if(id==='mercado'){renderComunalData();drawFOBChart('vacuno');}
   if(id==='fuentes')renderSources();
   if(id==='intel')renderIntelPage();
@@ -2728,6 +2731,7 @@ function setScopeFilter(scope, el) {
   document.querySelectorAll('.scope-btn').forEach(b=>b.classList.remove('scope-active'));
   if(el) el.classList.add('scope-active');
   renderGeoAlerts();
+  renderMarketInsights();
   renderCompetitorIntel();
 }
 
@@ -2913,20 +2917,158 @@ const COMPETITORS = [
   },
   {
     id:'icb',
-    nombre:'ICB (Importadora y Comercializadora de Bovinos)',
-    logo:'🌎',
-    tipo:'Importador · Vacuno',
-    especies:['Vacuno'],
-    presencia:'Norte de Chile · Importación Brasil/Paraguay',
-    fortaleza:'Especialización en vacuno importado. Acceso a cortes Brasil/PY.',
-    debilidad:'Portafolio limitado a vacuno.',
-    estrategia_oct26:'Aprovechar ventana de precios FOB Brasil.',
-    relevancia_ft:'Competidor directo en vacuno importado para Antofagasta.',
-    fuente:'Mercado público · DGA importaciones 2024',
+    nombre:'ICB Food Service',
+    logo:'🍽️',
+    tipo:'Distribuidor HORECA · Multiespecies',
+    especies:['Vacuno','Cerdo','Ave','Procesados'],
+    presencia:'Nacional · Foco en Región Metropolitana y zonas mineras Norte',
+    fortaleza:'Especialización en canal HORECA (hoteles, restaurantes, casinos). Portafolio amplio con vacuno importado Brasil/PY. Logística temperada directa a cocinas.',
+    debilidad:'Menor presencia en retail. Menos competitivo en volúmenes industriales masivos.',
+    estrategia_oct26:'Reforzar cartera de casinos mineros Norte Grande ante alza de actividad minera. Aprovechar ventana FOB Brasil en cortes premium.',
+    relevancia_ft:'Competidor directo en canal HORECA y casinos industriales Antofagasta/Calama. Evaluar diferenciación en servicio y trazabilidad.',
+    fuente:'Mercado público · DGA importaciones 2024 · Observación comercial',
+    url:'',
+    ambito:'nacional'
+  },
+  {
+    id:'frigosorno',
+    nombre:'Frigosorno',
+    logo:'🥩',
+    tipo:'Productor/Distribuidor · Vacuno y Cerdo',
+    especies:['Vacuno','Cerdo'],
+    presencia:'Nacional · Origen Los Lagos · Distribución Norte-Sur',
+    fortaleza:'Producción propia en zona sur (Los Lagos), reconocida calidad en vacuno patagónico y cerdo. Cadena integrada desde faena hasta distribución. Fuerte en supermercados y canal institucional.',
+    debilidad:'Imagen regional sureña puede limitar posicionamiento premium en norte. Logística a largas distancias incrementa costo.',
+    estrategia_oct26:'Expansión de distribución hacia norte Chile aprovechando infraestructura logística. Potenciar cortes premium de origen patagónico.',
+    relevancia_ft:'Competidor en vacuno y cerdo en canal institucional y supermercados. Monitorear precios en Antofagasta y zonas mineras.',
+    fuente:'Registro SEREMI · Observación comercial · sernambiental.cl',
+    url:'https://www.frigosorno.cl',
+    ambito:'nacional'
+  },
+  {
+    id:'todocarnes',
+    nombre:'Todo Carnes',
+    logo:'🔪',
+    tipo:'Distribuidor regional · Multiespecies',
+    especies:['Vacuno','Cerdo','Ave','Cordero'],
+    presencia:'Norte de Chile · Antofagasta · Iquique · Calama',
+    fortaleza:'Cobertura regional norte. Rapidez de entrega en zonas mineras. Relaciones consolidadas con clientes locales. Precio competitivo en segmento medio.',
+    debilidad:'Portafolio menos diversificado que grandes nacionales. Capacidad de frío limitada para grandes volúmenes.',
+    estrategia_oct26:'Mantener base de clientes mineros y de casinos escolares. Competir en precio ante importaciones.',
+    relevancia_ft:'Competidor directo en zona de influencia FT Foods Norte. Monitorear precios y clientes compartidos.',
+    fuente:'Observación comercial · Registro SII · Mercado público Norte',
     url:'',
     ambito:'nacional'
   }
 ];
+
+function renderMarketInsights() {
+  const el = document.getElementById('market-insights');
+  if(!el) return;
+  const usd = DB.usd || 980.79;
+  const fobVac = DB.fob_vacuno || 3.82;
+  const fobCer = DB.fob_cerdo || 1.95;
+  const fobAve = DB.fob_ave || 1.38;
+
+  // Dynamic insights based on current data
+  const insights = [
+    {
+      icon:'📉',
+      titulo:'Si baja el FOB de vacuno (Brasil/Paraguay)',
+      condicion: fobVac < 3.60 ? '⚠️ Activo ahora: FOB vacuno bajo USD '+fobVac.toFixed(2)+'/kg' : '📊 Referencia actual: USD '+fobVac.toFixed(2)+'/kg',
+      activo: fobVac < 3.60,
+      impacto:[
+        'Importadores como ICB Food Service y distribuidores locales bajan precios al canal HORECA y casinos.',
+        'Presión bajista en precios mayoristas Lo Valledor → afecta cotizaciones nacionales.',
+        'Agrosuper y Ariztia pueden verse forzados a reducir precios en vacuno nacional para competir.',
+        'Oportunidad FT Foods: mejorar márgenes comprando en ventana baja o ganar volumen con precios competitivos.',
+        'Riesgo: clientes comparan con importado; diferenciación por trazabilidad y servicio es clave.'
+      ],
+      accion:'Revisar cotizaciones activas y ajustar precios de oferta en cortes clave (tapapecho, asado carnicero, lomo vetado).',
+      color:'#e74c3c'
+    },
+    {
+      icon:'📈',
+      titulo:'Si sube el FOB de vacuno (presión de costos)',
+      condicion: fobVac > 4.20 ? '⚠️ Activo ahora: FOB vacuno alto USD '+fobVac.toFixed(2)+'/kg' : '📊 Referencia actual: USD '+fobVac.toFixed(2)+'/kg',
+      activo: fobVac > 4.20,
+      impacto:[
+        'Importadores trasladan alza al canal: precios HORECA y casinos suben con rezago de 2–4 semanas.',
+        'Clientes buscan alternativas nacionales → ventana para vacuno nacional Agrosuper/Ariztia.',
+        'FT Foods puede posicionarse con cortes nacionales de valor si mantiene precios estables.',
+        'Riesgo: si no se ajustan precios de compra, se comprimen márgenes.'
+      ],
+      accion:'Comunicar proactivamente estabilidad de precios a clientes clave. Evaluar contratos de precio fijo de corto plazo.',
+      color:'#e67e22'
+    },
+    {
+      icon:'🐷',
+      titulo:'Si baja el FOB de cerdo (Brasil)',
+      condicion: fobCer < 1.75 ? '⚠️ Activo ahora: FOB cerdo bajo USD '+fobCer.toFixed(2)+'/kg' : '📊 Referencia actual: USD '+fobCer.toFixed(2)+'/kg',
+      activo: fobCer < 1.75,
+      impacto:[
+        'Agrosuper y Ariztia (productores nacionales) enfrentan competencia de cerdo importado más barato.',
+        'Canal retail ajusta precios de cerdo nacional hacia abajo.',
+        'Bidfood Chile y distribuidores HORECA aumentan oferta de cortes importados (paleta, costilla, pierna).',
+        'FT Foods: oportunidad de competir con cerdo importado en casinos y restaurantes del norte.'
+      ],
+      accion:'Monitorear precios de cerdo en Lo Valledor y cotizaciones de distribuidores norte. Evaluar cambio de mix de productos.',
+      color:'#9b59b6'
+    },
+    {
+      icon:'💵',
+      titulo:'Si sube el USD/CLP (dólar alto)',
+      condicion: usd > 1020 ? '⚠️ Activo ahora: USD/CLP '+usd.toFixed(0) : '📊 Referencia actual: USD/CLP '+usd.toFixed(0),
+      activo: usd > 1020,
+      impacto:[
+        'Todo lo importado (vacuno Brasil/PY, cerdo, insumos) sube de precio en CLP de forma inmediata.',
+        'Productores nacionales (Agrosuper, Ariztia) ganan competitividad relativa frente al importado.',
+        'Clientes con presupuesto fijo en CLP reducen compra de importados o exigen precio especial.',
+        'FT Foods: si tiene stock comprado a dólar bajo, puede mantener precios y ganar mercado.',
+        'Riesgo: si no hay stock cubierto, márgenes se comprimen o hay que trasladar alza al cliente.'
+      ],
+      accion:'Verificar cobertura cambiaria. Revisar precios en UF vs CLP en contratos vigentes. Comunicar a clientes con anticipación.',
+      color:'#27ae60'
+    },
+    {
+      icon:'🏗️',
+      titulo:'Si sube actividad minera Norte Grande',
+      condicion:'📊 Contexto estructural · Norte de Chile',
+      activo: false,
+      impacto:[
+        'Mayor demanda de casinos industriales en Antofagasta, Calama, Tocopilla → principal canal FT Foods.',
+        'ICB Food Service y Todo Carnes aumentan cobertura en minería; competencia se intensifica.',
+        'Frigosorno refuerza logística norte aprovechando auge minero.',
+        'Demanda de proteína premium (lomo, filete) sube en casinos de alta categoría.',
+        'Presión de precios hacia arriba en productos de alto volumen (pechuga, pollo trozado, filete vacuno).'
+      ],
+      accion:'Fortalecer contratos de largo plazo con operadores de casinos mineros. Asegurar capacidad logística y fría en zona norte.',
+      color:'#2980b9'
+    }
+  ];
+
+  el.innerHTML = `<div style="padding:0 max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));padding-bottom:4px">`
+    + insights.map(ins=>`
+    <div style="background:var(--c2);border-radius:10px;margin-bottom:10px;overflow:hidden;border-left:4px solid ${ins.color}${ins.activo?';box-shadow:0 0 0 2px '+ins.color+'40':''}">
+      <div style="padding:10px 12px 8px;display:flex;align-items:center;gap:8px;cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <span style="font-size:18px">${ins.icon}</span>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:600;color:var(--fg)">${ins.titulo}</div>
+          <div style="font-size:10px;color:${ins.activo?ins.color:'var(--t3)'};margin-top:2px;font-weight:${ins.activo?'600':'400'}">${ins.condicion}</div>
+        </div>
+        <span style="font-size:10px;color:var(--t3)">▼</span>
+      </div>
+      <div style="display:none;padding:0 12px 10px">
+        <div style="font-size:11px;color:var(--t2);margin-bottom:6px;font-weight:600">Impacto en el mercado:</div>
+        ${ins.impacto.map(i=>`<div style="font-size:11px;color:var(--t2);padding:3px 0;border-top:1px solid var(--b3)">• ${i}</div>`).join('')}
+        <div style="margin-top:8px;padding:6px 8px;background:${ins.color}18;border-radius:6px;border-left:3px solid ${ins.color}">
+          <span style="font-size:10px;font-weight:600;color:${ins.color}">🎯 Acción recomendada: </span>
+          <span style="font-size:10px;color:var(--t2)">${ins.accion}</span>
+        </div>
+      </div>
+    </div>`).join('')
+    + `</div>`;
+}
 
 function renderCompetitorIntel() {
   const el = document.getElementById('competitor-intel');
