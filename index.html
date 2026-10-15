@@ -2700,9 +2700,9 @@ function removeTyping(){const e=document.getElementById('typing-ind');if(e)e.rem
 // FILE LOAD
 // ═══════════════════════════════════════════
 // ── INFORME DE PRENSA PDF ────────────────────────────────────────────────────
-// El PDF del informe diario de prensa contiene URLs de noticias relevantes.
-// Esta función extrae el texto del PDF en el browser con pdf.js y busca URLs con regex.
-// No requiere servidor ni API key — todo corre localmente.
+// El PDF del informe diario de prensa contiene URLs como hipervínculos en anotaciones.
+// Esta función lee el PDF como texto binario y extrae /URI(...) con regex puro —
+// sin depender de pdf.js para resolver anotaciones. 100% local, sin API key.
 async function loadInformePDF(input) {
   if (!input.files.length) return;
   const f = input.files[0];
@@ -2712,84 +2712,60 @@ async function loadInformePDF(input) {
   if (linksEl) linksEl.innerHTML = '';
 
   try {
-    // Leer el archivo como ArrayBuffer
     const buf = await f.arrayBuffer();
+    // Decodificar el PDF como texto Latin-1 (preserva bytes ASCII intactos)
+    const pdfText = new TextDecoder('latin-1').decode(buf);
 
-    // Cargar pdf.js dinámicamente si no está disponible
-    if (!window.pdfjsLib) {
-      await new Promise((res, rej) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-        s.onload = res; s.onerror = rej;
-        document.head.appendChild(s);
-      });
-      // Configurar worker ANTES de cualquier llamada a getDocument
-      // Usar workerSrc externo para evitar problemas de origen cruzado
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    }
-    if (prev) prev.textContent = '⏳ Analizando hipervínculos…';
-
-    // Extraer texto Y anotaciones (hipervínculos) del PDF
-    const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
-
-    // Mapa: url → texto visible más cercano (para usar como título)
-    const urlMap = new Map(); // url → {titulo, rect, page}
-    let fullText = '';
-
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const [tc, annotations] = await Promise.all([
-        page.getTextContent(),
-        page.getAnnotations()
-      ]);
-
-      // Texto de la página con posición
-      const textItems = tc.items.map(it => ({ str: it.str, x: it.transform[4], y: it.transform[5], w: it.width, h: it.height }));
-      fullText += textItems.map(it => it.str).join(' ') + '\n';
-
-      // Anotaciones de tipo URI (hipervínculos)
-      // ann.url: pdf.js ya resuelve la URI directamente en este campo
-      // ann.contentsObj / ann.contents: texto del tooltip/contents de la anotación
-      for (const ann of annotations) {
-        if (ann.subtype !== 'Link') continue;
-        // pdf.js expone la URL resuelta en ann.url (para actions tipo URI)
-        const url = (ann.url || '').trim();
-        if (!url || urlMap.has(url)) continue;
-        // El titulo puede venir de ann.contents (campo /Contents del PDF)
-        // o buscarlo por superposición de texto
-        let titulo = (ann.contents || '').trim();
-        if (!titulo) {
-          const [ax1, ay1, ax2, ay2] = ann.rect;
-          const overlapping = textItems.filter(it =>
-            it.x < ax2 && (it.x + it.w) > ax1 &&
-            it.y < ay2 && (it.y + it.h) > ay1
-          );
-          titulo = overlapping.map(it => it.str).join('').trim() || url;
-        }
-        urlMap.set(url, { titulo, page: i });
+    // ── 1. Extraer URLs únicas desde /URI (...) ──────────────────────────────
+    // Patrón robusto: soporta paréntesis escapados dentro de la URL
+    const uriRe = /\/URI\s*\(([^)\\]*(?:\\.[^)\\]*)*)\)/g;
+    const urlsSeen = new Map(); // url → titulo
+    let m;
+    while ((m = uriRe.exec(pdfText)) !== null) {
+      const url = m[1].replace(/\\(.)/g, '$1').trim();
+      if (url.startsWith('http') && !urlsSeen.has(url)) {
+        urlsSeen.set(url, '');
       }
     }
 
-    // También buscar URLs en texto plano (por si algunas están escritas como texto)
-    const urlRegex = /https?:\/\/[^\s"'<>\]\),;]+/g;
-    for (const u of (fullText.match(urlRegex) || [])) {
-      if (!urlMap.has(u)) urlMap.set(u, { titulo: u, page: 0 });
+    // ── 2. Extraer títulos desde /Contents (...) ────────────────────────────
+    // Cada anotación /Link tiene un /Contents con el texto visible del enlace
+    // Buscamos el bloque completo de cada anotación para asociar Contents ↔ URI
+    const annotRe = /\/Subtype\s*\/Link[\s\S]{0,800}?\/URI\s*\(([^)\\]*(?:\\.[^)\\]*)*)\)/g;
+    while ((m = annotRe.exec(pdfText)) !== null) {
+      const url = m[1].replace(/\\(.)/g, '$1').trim();
+      if (!url.startsWith('http') || !urlsSeen.has(url) || urlsSeen.get(url)) continue;
+      // Buscar /Contents en el mismo bloque (hacia atrás desde match)
+      const block = pdfText.slice(Math.max(0, m.index - 600), m.index + m[0].length);
+      const contMatch = /\/Contents\s*\(([^)\\]*(?:\\.[^)\\]*)*)\)/.exec(block);
+      if (contMatch) {
+        urlsSeen.set(url, contMatch[1].replace(/\\(.)/g, '$1').trim());
+      }
     }
 
-    // Filtrar URLs de noticias (excluir URLs de infraestructura/sistema)
-    const skipDomains = /jsonbin\.io|anthropic\.com|github\.com|googleapis\.com|cdnjs\.cloudflare|gstatic\.com|fonts\.google/i;
-    const newsEntries = [...urlMap.entries()].filter(([u]) => {
+    // ── 3. También intentar asociar por proximidad en el stream ─────────────
+    // Para los /Contents que están ANTES de /URI en el mismo objeto PDF
+    const objRe = /\/Contents\s*\(([^)\\]*(?:\\.[^)\\]*)*)\)[\s\S]{0,400}?\/URI\s*\(([^)\\]*(?:\\.[^)\\]*)*)\)/g;
+    while ((m = objRe.exec(pdfText)) !== null) {
+      const titulo = m[1].replace(/\\(.)/g, '$1').trim();
+      const url = m[2].replace(/\\(.)/g, '$1').trim();
+      if (url.startsWith('http') && urlsSeen.has(url) && !urlsSeen.get(url)) {
+        urlsSeen.set(url, titulo);
+      }
+    }
+
+    // ── 4. Filtrar URLs de sistema ───────────────────────────────────────────
+    const skipDomains = /jsonbin\.io|anthropic\.com|github\.com|googleapis\.com|cdnjs|gstatic\.com/i;
+    const newsEntries = [...urlsSeen.entries()].filter(([u]) => {
       try { return !skipDomains.test(new URL(u).hostname); } catch { return false; }
     });
 
     if (!newsEntries.length) {
-      const totalAnns = [...urlMap.entries()].length;
-      if (prev) prev.textContent = `⚠️ No se encontraron enlaces. El PDF tiene ${pdf.numPages} pág. — verifica que los encabezados sean hipervínculos activos (no solo texto).`;
+      if (prev) prev.textContent = `⚠️ No se encontraron hipervínculos en este PDF (${(buf.byteLength/1024).toFixed(0)} KB). Verifica que el archivo tenga links activos.`;
       return;
     }
 
-    // Determinar especie y ámbito por heurística en texto cercano
+    // ── 5. Construir ítems de noticias ───────────────────────────────────────
     function guessEspecie(text) {
       const t = text.toLowerCase();
       if (/cerdo|pork|swine|porcino|cerd/i.test(t)) return 'cerdo';
@@ -2800,23 +2776,21 @@ async function loadInformePDF(input) {
     function guessAmbito(url) {
       try {
         const h = new URL(url).hostname;
-        if (/\.cl$|emol|biobio|lun\.com|cooperativa|minagri|odepa|ftf|ftfoods/i.test(h)) return 'nacional';
-        return 'internacional';
+        return /\.cl$|emol|biobio|lun\.com|cooperativa|minagri|odepa|ftf|ftfoods/i.test(h)
+          ? 'nacional' : 'internacional';
       } catch { return 'internacional'; }
     }
 
-    // Build news items
     const dateStr = new Date().toLocaleDateString('es-CL');
-    const newsItems = newsEntries.map(([url, meta], i) => {
+    const newsItems = newsEntries.map(([url, titulo], i) => {
       let hostname = '';
       try { hostname = new URL(url).hostname.replace('www.', ''); } catch {}
-      // Usar título del texto visible del hipervínculo, o el hostname como fallback
-      const titulo = (meta.titulo && meta.titulo !== url) ? meta.titulo : hostname || url;
+      const tit = titulo || hostname || url;
       return {
         id: 'press_' + Date.now() + '_' + i,
-        titulo,
+        titulo: tit,
         resumen: 'Noticia del Informe de Prensa · ' + dateStr,
-        especie: guessEspecie(url + ' ' + titulo),
+        especie: guessEspecie(url + ' ' + tit),
         ambito: guessAmbito(url),
         fuente: hostname,
         url,
@@ -2827,22 +2801,20 @@ async function loadInformePDF(input) {
       };
     });
 
-    // Merge with existing press news
+    // Guardar en localStorage (reemplaza noticias de prensa del día)
     const saved = JSON.parse(localStorage.getItem('carniq_press_news') || '[]');
-    // Remove old press items from today to avoid duplicates
     const filtered = saved.filter(n => n.tipo !== 'informe_prensa' || n.fecha_dato !== dateStr);
     const merged = [...newsItems, ...filtered].slice(0, 100);
     localStorage.setItem('carniq_press_news', JSON.stringify(merged));
 
-    if (prev) prev.textContent = `✅ ${newsItems.length} enlaces cargados desde el informe.`;
+    if (prev) prev.textContent = `✅ ${newsItems.length} noticias cargadas desde el informe.`;
     if (linksEl) {
-      linksEl.innerHTML = '<div style="font-size:10px;color:var(--t2);font-weight:600;margin-bottom:6px">Enlaces extraídos:</div>'
+      linksEl.innerHTML = '<div style="font-size:10px;color:var(--t2);font-weight:600;margin-bottom:6px">Noticias extraídas:</div>'
         + newsItems.slice(0, 15).map(n =>
-            `<div style="font-size:10px;color:var(--b);margin-bottom:3px">📎 <a href="${n.url}" target="_blank" style="color:var(--b)">${n.fuente||n.url}</a> · ${n.especie}</div>`
+            `<div style="font-size:10px;margin-bottom:4px">📎 <a href="${n.url}" target="_blank" style="color:var(--b);font-size:10px">${n.titulo.length>60?n.titulo.slice(0,60)+'…':n.titulo}</a> <span style="color:var(--t3);font-size:9px">· ${n.especie} · ${n.fuente}</span></div>`
           ).join('')
         + (newsItems.length > 15 ? `<div style="font-size:10px;color:var(--t3);margin-top:4px">…y ${newsItems.length - 15} más</div>` : '');
     }
-    // Mark news as needing reload
     NEWS_LOADED = false;
   } catch (err) {
     if (prev) prev.textContent = '❌ Error al leer el PDF: ' + err.message;
