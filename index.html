@@ -169,6 +169,17 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 /* FOB strip */
 .fob-strip{display:flex;gap:6px;overflow-x:auto;padding-top:0;padding-bottom:10px;scrollbar-width:none}
 .fob-strip::-webkit-scrollbar{display:none}
+/* ── Hero banner (slider de portada) ── */
+#hero-banner{position:relative;width:100%;height:160px;border-radius:14px;overflow:hidden;background:#1a0a06;margin-bottom:12px}
+#hero-banner-img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .5s}
+#hero-banner-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.55) 0%,rgba(0,0,0,.1) 60%,transparent 100%)}
+#hero-banner-text{position:absolute;bottom:16px;left:16px;color:#fff}
+#hero-banner-text .hb-sub{font-size:10px;letter-spacing:.8px;text-transform:uppercase;opacity:.85;font-weight:600}
+#hero-banner-text .hb-title{font-size:18px;font-weight:800;line-height:1.1;margin-top:2px;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+#hero-banner-dots{position:absolute;bottom:8px;right:12px;display:flex;gap:4px}
+.hb-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);transition:background .3s;cursor:pointer}
+.hb-dot.active{background:#fff}
+/* legacy hero strip (usado si hay fotos de catálogo) */
 #hero-cuts::-webkit-scrollbar{display:none}
 .hero-cut{flex:0 0 140px;height:100px;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 3px 12px rgba(0,0,0,.25)}
 .hero-cut img{width:100%;height:100%;object-fit:cover;display:block;opacity:.82}
@@ -644,8 +655,16 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
         <p>FT Foods · <span id="dash-date"></span></p>
       </div>
 
-      <!-- Hero cortes (se renderiza dinámicamente con fotos reales del catálogo) -->
-      <div id="hero-cuts" style="overflow-x:auto;display:flex;gap:8px;padding:0 max(12px,env(safe-area-inset-left,0px)) 10px;scrollbar-width:none"></div>
+      <!-- Hero banner de portada -->
+      <div id="hero-banner">
+        <img id="hero-banner-img" src="" alt="FT Foods" onerror="this.style.opacity=0">
+        <div id="hero-banner-overlay"></div>
+        <div id="hero-banner-text">
+          <div class="hb-sub" id="hb-sub">FT Foods</div>
+          <div class="hb-title" id="hb-title">Inteligencia Cárnica</div>
+        </div>
+        <div id="hero-banner-dots"></div>
+      </div>
 
       <!-- KPI Bar -->
       <div id="rates-bar">
@@ -881,10 +900,12 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       </div>
       <div class="tabs" style="padding-top:8px">
         <div class="tab active" onclick="catTab(this,'all')">Todos</div>
-        <div class="tab" onclick="catTab(this,'Vacuno')">🥩 Vacuno</div>
-        <div class="tab" onclick="catTab(this,'Cerdo')">🐷 Cerdo</div>
-        <div class="tab" onclick="catTab(this,'Ave')">🍗 Ave</div>
-        <div class="tab" onclick="catTab(this,'Procesado')">🍔 Procesado</div>
+        <div class="tab" onclick="catTab(this,'Ave Congelada')">🍗 Ave Congelada</div>
+        <div class="tab" onclick="catTab(this,'Cerdo Congelado')">🐷 Cerdo Congelado</div>
+        <div class="tab" onclick="catTab(this,'Vacuno Congelado')">🥩 Vacuno Congelado</div>
+        <div class="tab" onclick="catTab(this,'Vacuno Importado')">🌎 Vacuno Importado</div>
+        <div class="tab" onclick="catTab(this,'Vacuno Premium')">⭐ Vacuno Premium</div>
+        <div class="tab" onclick="catTab(this,'Procesados y Hortalizas')">🥦 Procesados y Hortalizas</div>
       </div>
       <div id="cat-grid"></div>
     </div>
@@ -2381,7 +2402,7 @@ function extractTitleFromUrl(url, fallback){
     if(kwMatch){
       let t='';
       try{t=decodeURIComponent(kwMatch[1].replace(/\+/g,' '));}catch{t=kwMatch[1].replace(/\+/g,' ');}
-      t=t.replace(/[-_]/g,' ').replace(/\s+\d{4,}$/,'').trim().replace(/\b\w/g,c=>c.toUpperCase());
+      t=t.replace(/[-_]/g,' ').replace(/\s+\d{4,}$/,'').trim().replace(/^\w/,c=>c.toUpperCase());
       if(t && !SECTION_WORDS.test(t)) return t;
     }
     // Prioridad 2: último segmento no-numérico y no-genérico del path
@@ -2396,7 +2417,7 @@ function extractTitleFromUrl(url, fallback){
     if(!slug) return fallback||'';
     let decoded='';
     try{decoded=decodeURIComponent(slug.replace(/\+/g,' '));}catch{decoded=slug.replace(/\+/g,' ');}
-    const t=decoded.replace(/[-_]/g,' ').replace(/\s+\d{4,}$/,'').trim().replace(/\b\w/g,c=>c.toUpperCase());
+    const t=decoded.replace(/[-_]/g,' ').replace(/\s+\d{4,}$/,'').trim().replace(/^\w/,c=>c.toUpperCase());
     if(t && !SECTION_WORDS.test(t)) return t;
   }catch{}
   return fallback||'';
@@ -2486,71 +2507,116 @@ function updateDashNews(){
   el.style.cssText=borderStyle;
 }
 
-// ── Hero de marcas en Dashboard ──────────────────────────────────────────
-// Devuelve todas las fotos disponibles de una marca (para rotar)
-function getBrandPhotos(brandKeyword){
-  const photos=[];
-  if(!DB||!DB.stock)return photos;
-  const kw=brandKeyword.toLowerCase();
-  for(const p of DB.stock){
-    const pb=(p.brand||'').toLowerCase();
-    if(pb!==kw&&!pb.startsWith(kw+' ')&&!pb.includes(' '+kw))continue;
-    const uid=p.code;
-    if(p.lotes&&p.lotes.length){
-      for(const lt of p.lotes){
-        const luid=photoUid(uid,lt.lote);
-        for(let s=1;s<=4;s++){const k=slotUid(luid,s);if(PHOTO_CACHE[k])photos.push(PHOTO_CACHE[k]);}
+// ── Hero banner de portada ────────────────────────────────────────────────
+// Slides: imágenes de productos reales (del catálogo o fallback CDN Jumbo)
+const HERO_SLIDES=[
+  {
+    src:'https://jumbocl.vtexassets.com/arquivos/ids/310918-900-900?width=900&height=900&aspect=true',
+    sub:'La Reserva · Vacuno Premium',title:'Entraña al vacío',
+    bg:'#2d0a04'
+  },
+  {
+    src:'https://jumbocl.vtexassets.com/arquivos/ids/314294-900-900?width=900&height=900&aspect=true',
+    sub:'A Punto · Vacuno Nacional',title:'Filete entrecot premium',
+    bg:'#1a0f04'
+  },
+  {
+    src:'https://jumbocl.vtexassets.com/arquivos/ids/374851-900-900?width=900&height=900&aspect=true',
+    sub:'A Punto · Procesados',title:'Hamburguesa ChuckRoll',
+    bg:'#1c0c02'
+  },
+  {
+    src:'https://jumbocl.vtexassets.com/arquivos/ids/654700-900-900?width=900&height=900&aspect=true',
+    sub:'FT Foods · Stock',title:'Vacuno nacional congelado',
+    bg:'#12080a'
+  }
+];
+
+let _heroBannerIdx=0,_heroBannerTimer=null;
+
+// Recolecta fotos del PHOTO_CACHE para insertar como slides adicionales
+function getCatalogSlides(){
+  const slides=[];
+  if(!DB||!DB.stock)return slides;
+  const brandMap=[
+    {key:'A Punto',sub:'A Punto · Vacuno Nacional'},
+    {key:'La Reserva',sub:'La Reserva · Vacuno Premium'},
+    {key:'Fundo Sur',sub:'Fundo Sur · Cerdo Nacional'},
+    {key:'Neuland',sub:'Neuland · Vacuno Importado'},
+  ];
+  for(const b of brandMap){
+    const kw=b.key.toLowerCase();
+    for(const p of DB.stock){
+      const pb=(p.brand||'').toLowerCase();
+      if(pb!==kw&&!pb.startsWith(kw+' '))continue;
+      const uid=p.code;
+      if(p.lotes&&p.lotes.length){
+        for(const lt of p.lotes){
+          const luid=photoUid(uid,lt.lote);
+          for(let s=1;s<=4;s++){
+            const k=slotUid(luid,s);
+            if(PHOTO_CACHE[k]){slides.push({src:PHOTO_CACHE[k],sub:b.sub,title:p.name.replace(/\bV\b/g,'').replace(/CON\b.*/,'').trim(),bg:'#120806'});break;}
+          }
+          if(slides.length&&slides[slides.length-1].title===p.name.replace(/\bV\b/g,'').replace(/CON\b.*/,'').trim())break;
+        }
       }
     }
-    if(PHOTO_CACHE[uid])photos.push(PHOTO_CACHE[uid]);
   }
-  return photos;
+  return slides;
 }
 
-let _heroCutsTimer=null;
-function renderHeroCuts(){
-  const el=document.getElementById('hero-cuts');
-  if(!el)return;
-  if(_heroCutsTimer){clearInterval(_heroCutsTimer);_heroCutsTimer=null;}
-  const brands=[
-    {key:'A Punto',    label:'Vacuno Nacional', emoji:'🥩', bg:'linear-gradient(160deg,#3d1408 0%,#7a2010 50%,#4a0e06 100%)'},
-    {key:'La Reserva', label:'Vacuno Premium',  emoji:'🥩', bg:'linear-gradient(160deg,#1a3d14 0%,#2d6b22 50%,#0f2a0a 100%)'},
-    {key:'Fundo Sur',  label:'Cerdo Nacional',  emoji:'🐷', bg:'linear-gradient(160deg,#3d2a08 0%,#7a5210 50%,#4a3006 100%)'},
-    {key:'Neuland',    label:'Vacuno Importado',emoji:'🌎', bg:'linear-gradient(160deg,#082a3d 0%,#105280 50%,#062040 100%)'},
-  ];
-  // Estado de índice de foto por marca
-  const idxs=brands.map(()=>0);
-  const allPhotos=brands.map(b=>getBrandPhotos(b.key));
+function renderHeroBanner(){
+  const imgEl=document.getElementById('hero-banner-img');
+  const subEl=document.getElementById('hb-sub');
+  const titleEl=document.getElementById('hb-title');
+  const dotsEl=document.getElementById('hero-banner-dots');
+  const bannerEl=document.getElementById('hero-banner');
+  if(!imgEl||!bannerEl)return;
 
-  function buildHtml(){
-    return brands.map((b,i)=>{
-      const photos=allPhotos[i];
-      const photo=photos.length?photos[idxs[i]]:null;
-      const inner=photo
-        ?`<img src="${photo}" style="width:100%;height:100%;object-fit:cover;display:block;opacity:.9;border-radius:12px;transition:opacity .4s" alt="${b.key}" onerror="this.style.display='none'">`
-        :`<div class="hero-cut-emoji">${b.emoji}</div>`;
-      return`<div class="hero-cut" style="background:${b.bg}">
-        ${inner}
-        <div class="hero-cut-lbl"><span>${b.label}</span><strong>${b.key}</strong></div>
-      </div>`;
-    }).join('');
+  if(_heroBannerTimer){clearInterval(_heroBannerTimer);_heroBannerTimer=null;}
+
+  const catalogSlides=getCatalogSlides();
+  const slides=catalogSlides.length?[...catalogSlides,...HERO_SLIDES]:HERO_SLIDES;
+
+  function show(idx){
+    _heroBannerIdx=(idx+slides.length)%slides.length;
+    const s=slides[_heroBannerIdx];
+    imgEl.style.opacity='0';
+    setTimeout(()=>{
+      imgEl.src=s.src;
+      imgEl.style.opacity='1';
+      subEl.textContent=s.sub;
+      titleEl.textContent=s.title;
+      bannerEl.style.background=s.bg;
+    },200);
+    // dots
+    if(dotsEl){
+      dotsEl.innerHTML=slides.map((_,i)=>`<div class="hb-dot${i===_heroBannerIdx?' active':''}" onclick="renderHeroBannerGo(${i})"></div>`).join('');
+    }
   }
 
-  el.innerHTML=buildHtml();
-
-  // Rotar solo si hay marcas con más de 1 foto
-  const hasMult=allPhotos.some(p=>p.length>1);
-  if(hasMult){
-    _heroCutsTimer=setInterval(()=>{
-      // Avanzar índice de la marca con más fotos primero
-      let advanced=false;
-      allPhotos.forEach((photos,i)=>{
-        if(photos.length>1){idxs[i]=(idxs[i]+1)%photos.length;advanced=true;}
-      });
-      if(advanced)el.innerHTML=buildHtml();
-    },4000);
-  }
+  show(0);
+  if(slides.length>1)_heroBannerTimer=setInterval(()=>show(_heroBannerIdx+1),5000);
 }
+
+function renderHeroBannerGo(idx){
+  if(_heroBannerTimer){clearInterval(_heroBannerTimer);_heroBannerTimer=null;}
+  const imgEl=document.getElementById('hero-banner-img');
+  const bannerEl=document.getElementById('hero-banner');
+  const subEl=document.getElementById('hb-sub');
+  const titleEl=document.getElementById('hb-title');
+  const dotsEl=document.getElementById('hero-banner-dots');
+  const catalogSlides=getCatalogSlides();
+  const slides=catalogSlides.length?[...catalogSlides,...HERO_SLIDES]:HERO_SLIDES;
+  _heroBannerIdx=(idx+slides.length)%slides.length;
+  const s=slides[_heroBannerIdx];
+  if(imgEl){imgEl.style.opacity='0';setTimeout(()=>{imgEl.src=s.src;imgEl.style.opacity='1';subEl.textContent=s.sub;titleEl.textContent=s.title;bannerEl.style.background=s.bg;},200);}
+  if(dotsEl)dotsEl.innerHTML=slides.map((_,i)=>`<div class="hb-dot${i===_heroBannerIdx?' active':''}" onclick="renderHeroBannerGo(${i})"></div>`).join('');
+  if(slides.length>1)_heroBannerTimer=setInterval(()=>renderHeroBannerGo(_heroBannerIdx+1),5000);
+}
+
+// Alias para compatibilidad con llamadas previas
+function renderHeroCuts(){renderHeroBanner();}
 
 async function fetchAndRender(cat){
   const data=await fetchLiveNews();
@@ -2714,7 +2780,30 @@ function renderAlerts(){
 // CATÁLOGO — Acordeón por categoría
 // ═══════════════════════════════════════════
 let curCatFilter='all',catSearch='',catOpenSubs={},catOpenDetail=null;
-const CAT_ICONS={Ave:'🍗',Cerdo:'🐷',Vacuno:'🥩',Procesado:'🍔',Vegetal:'🥔'};
+const CAT_ICONS={'Ave Congelada':'🍗','Cerdo Congelado':'🐷','Vacuno Congelado':'🥩','Vacuno Importado':'🌎','Vacuno Premium':'⭐','Procesados y Hortalizas':'🥦'};
+
+// Mapea un producto (p) a una de las 6 nuevas categorías de tab
+function getNewCat(p){
+  const cat=(p.cat||'').toLowerCase();
+  const sub=(p.sub||'').toLowerCase();
+  const brand=(p.brand||'').toLowerCase();
+  // Ave Congelada
+  if(cat==='ave') return 'Ave Congelada';
+  // Cerdo Congelado
+  if(cat==='cerdo') return 'Cerdo Congelado';
+  // Vacuno Importado
+  if(cat==='vacuno' && (sub==='vacuno importado'||brand==='neuland'||brand==='campo largo'||brand==='campo largo spd'))
+    return 'Vacuno Importado';
+  // Vacuno Premium
+  if(cat==='vacuno' && (sub==='vacuno nacional a punto'||brand==='a punto'||brand==='la reserva'))
+    return 'Vacuno Premium';
+  // Vacuno Congelado (resto de vacuno)
+  if(cat==='vacuno') return 'Vacuno Congelado';
+  // Procesados y Hortalizas
+  if(cat==='procesado'||cat==='vegetal') return 'Procesados y Hortalizas';
+  return 'Procesados y Hortalizas'; // fallback
+}
+
 function catTab(el,cat){
   curCatFilter=cat;
   document.querySelectorAll('#pg-catalogo .tabs .tab').forEach(t=>t.classList.remove('active'));
@@ -2740,7 +2829,7 @@ function showProdDetail(code,name){
 
 function renderCatalog(){
   let items=DB.catalog.length?DB.catalog:buildCatalog();
-  if(curCatFilter!=='all')items=items.filter(p=>p.cat===curCatFilter);
+  if(curCatFilter!=='all')items=items.filter(p=>getNewCat(p)===curCatFilter);
   if(catSearch)items=items.filter(p=>
     p.name.toLowerCase().includes(catSearch)||
     (p.code&&p.code.includes(catSearch))||
@@ -2770,7 +2859,7 @@ function renderCatalog(){
       const open=catOpenSubs[key]!==false;
       const arrow=open?'▲':'▼';
       html+=`<div class="acc-sub-header" onclick="toggleCatSub('${key}')">
-        <span class="acc-sub-icon">${CAT_ICONS[cat]||'📦'}</span>
+        <span class="acc-sub-icon">${CAT_ICONS[getNewCat({cat,sub})]||CAT_ICONS[cat]||'📦'}</span>
         <span class="acc-sub-title">${sub}</span>
         <span class="acc-sub-count">${prods.length} prod</span>
         <span class="acc-arrow">${arrow}</span>
