@@ -169,6 +169,12 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 /* FOB strip */
 .fob-strip{display:flex;gap:6px;overflow-x:auto;padding-top:0;padding-bottom:10px;scrollbar-width:none}
 .fob-strip::-webkit-scrollbar{display:none}
+#hero-cuts::-webkit-scrollbar{display:none}
+.hero-cut{flex:0 0 140px;height:100px;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 3px 12px rgba(0,0,0,.25)}
+.hero-cut img{width:100%;height:100%;object-fit:cover;display:block;opacity:.82}
+.hero-cut-lbl{position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(transparent,rgba(0,0,0,.72));color:#fff;display:flex;flex-direction:column;gap:1px}
+.hero-cut-lbl span{font-size:9px;opacity:.85;letter-spacing:.3px}
+.hero-cut-lbl strong{font-size:11px;font-weight:700;letter-spacing:.2px}
 .fob-chip{flex-shrink:0;background:var(--card);border:1px solid var(--brd);border-radius:var(--rad-sm);padding:7px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:68px}
 .fob-flag{font-size:14px;line-height:1}
 .fob-lbl{font-size:8px;color:var(--t3);font-weight:600;text-align:center}
@@ -572,11 +578,15 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       <!-- Logo SVG inline con diseño FT Foods -->
       <!-- Logo real FT Foods — sobre píldora blanca para legibilidad en cualquier tema -->
       <div style="background:#fff;border-radius:10px;padding:4px 10px;display:flex;align-items:center">
-        <svg viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg" style="height:34px;width:auto;display:block">
-          <rect x="0" y="22" width="20" height="20" rx="2" fill="#da532c"/>
-          <rect x="12" y="10" width="12" height="12" rx="1.5" fill="#4a7c3f"/>
-          <text x="28" y="34" font-family="Arial Black,Arial,Helvetica,sans-serif" font-weight="900" font-size="28" fill="#111111" letter-spacing="-1">FT</text>
-          <text x="29" y="43" font-family="Arial,Helvetica,sans-serif" font-weight="400" font-size="11" fill="#666666" letter-spacing="2">foods</text>
+        <!-- Logo FT Foods: ícono 2×2 grid (verde oscuro + rojo), FT negro, foods rojo -->
+        <svg viewBox="0 0 108 46" xmlns="http://www.w3.org/2000/svg" style="height:34px;width:auto;display:block">
+          <!-- Ícono: cuadrado verde oscuro (arriba izq) + cuadrado rojo (abajo der) -->
+          <rect x="1"  y="1"  width="18" height="18" rx="2.5" fill="#2d5a27"/>
+          <rect x="11" y="11" width="18" height="18" rx="2.5" fill="#9b1c1c"/>
+          <!-- "FT" negro bold -->
+          <text x="33" y="35" font-family="'Arial Black',Arial,Helvetica,sans-serif" font-weight="900" font-size="32" fill="#1a1a1a" letter-spacing="-1.5">FT</text>
+          <!-- "foods" rojo oscuro pequeño alineado a la derecha de FT -->
+          <text x="34" y="45" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="11" fill="#9b1c1c" letter-spacing="1.5">foods</text>
         </svg>
       </div>
       <div class="header-brand">
@@ -626,6 +636,26 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       <div class="sh" style="padding-bottom:8px">
         <h2>Dashboard</h2>
         <p>FT Foods · <span id="dash-date"></span></p>
+      </div>
+
+      <!-- Hero cortes -->
+      <div id="hero-cuts" style="overflow-x:auto;display:flex;gap:8px;padding:0 max(12px,env(safe-area-inset-left,0px)) 10px;scrollbar-width:none">
+        <div class="hero-cut" style="background:linear-gradient(160deg,#1a0a06 0%,#3d1408 100%)">
+          <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=320&q=75&fit=crop" alt="Vacuno premium" loading="lazy">
+          <div class="hero-cut-lbl"><span>🥩 Vacuno</span><strong>A Punto</strong></div>
+        </div>
+        <div class="hero-cut" style="background:linear-gradient(160deg,#0d1a0a 0%,#1a3d14 100%)">
+          <img src="https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=320&q=75&fit=crop" alt="Corte premium" loading="lazy">
+          <div class="hero-cut-lbl"><span>🥩 Vacuno</span><strong>La Reserva</strong></div>
+        </div>
+        <div class="hero-cut" style="background:linear-gradient(160deg,#1a1006 0%,#3d2a08 100%)">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=320&q=75&fit=crop" alt="Corte parrilla" loading="lazy">
+          <div class="hero-cut-lbl"><span>🐷 Cerdo</span><strong>Fundo Sur</strong></div>
+        </div>
+        <div class="hero-cut" style="background:linear-gradient(160deg,#06101a 0%,#082a3d 100%)">
+          <img src="https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=320&q=75&fit=crop" alt="Ave" loading="lazy">
+          <div class="hero-cut-lbl"><span>🍗 Ave</span><strong>Importado</strong></div>
+        </div>
       </div>
 
       <!-- KPI Bar -->
@@ -2338,13 +2368,25 @@ function nulHdr(ico,txt,color){
 }
 
 function pressNewsHtml(n, highlighted){
-  // Intentar extraer un título legible de la URL si el guardado es solo hostname
+  // Extraer título legible de la URL si el guardado es solo hostname
   let title = n.title||'';
   if(!title || title===n.src){
     try{
       const u=new URL(n.url);
-      const slug=u.pathname.replace(/\/$|\.html?$|\.php$/,'').split('/').filter(Boolean).pop()||'';
-      title=slug?slug.replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):n.src;
+      // Buscar el segmento más descriptivo del path (evitar segmentos numéricos cortos)
+      const parts=u.pathname.replace(/\/$|\.html?$|\.php$/,'').split('/').filter(Boolean);
+      const slug=parts.find(p=>p.length>6&&!/^\d+$/.test(p))||parts.pop()||'';
+      // Decodificar URL encoding (%C3%A9 → é) y reemplazar + por espacio
+      let decoded='';
+      try{decoded=decodeURIComponent(slug.replace(/\+/g,' '));}catch{decoded=slug.replace(/\+/g,' ');}
+      // Limpiar: reemplazar - y _ por espacio, quitar número al final, title case
+      title=decoded
+        .replace(/[-_]/g,' ')
+        .replace(/\s+\d{3,}$/,'')   // quitar código numérico final (ej: "Articulo 72305")
+        .replace(/\bkw\b.*/i,'')    // quitar "kw/..." parámetros
+        .trim()
+        .replace(/\b\w/g,c=>c.toUpperCase())
+        ||n.src;
     }catch{title=n.src;}
   }
   const catIcon={vacuno:'🥩',cerdo:'🐷',ave:'🍗',mercado:'📊',sanidad:'🏥'}[n.cat]||'📰';
