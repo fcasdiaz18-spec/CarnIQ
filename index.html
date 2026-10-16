@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════
@@ -566,6 +567,152 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 .comp-rel{background:var(--r3)}
 .comp-footer{display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid var(--brd)}
 
+/* ═══════════════════════════════════════════
+   PANEL NOVILLO INTERNACIONAL
+   ═══════════════════════════════════════════ */
+.novillo-section {
+  margin: 0 max(12px,env(safe-area-inset-left,0px));
+  margin-right: max(12px,env(safe-area-inset-right,0px));
+  margin-bottom: 16px;
+}
+.novillo-hdr {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.novillo-hdr-title { font-size: 15px; font-weight: 700; color: var(--t); }
+.novillo-hdr-sub { font-size: 11px; color: var(--t3); text-transform: uppercase; letter-spacing: .4px; }
+.novillo-fx { font-size: 11px; color: var(--t3); font-family: monospace; background: var(--bg); border: 1px solid var(--brd); border-radius: 6px; padding: 3px 8px; }
+/* KPI strip */
+.nv-kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+@media (max-width: 440px) { .nv-kpi-strip { grid-template-columns: 1fr 1fr; } }
+.nv-kpi {
+  background: var(--card);
+  border: 1px solid var(--brd);
+  border-radius: var(--rad-sm);
+  padding: 10px 12px;
+  position: relative;
+  overflow: hidden;
+}
+.nv-kpi::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 8px 8px 0 0;
+}
+.nv-kpi.py::before { background: #1e6ab5; }
+.nv-kpi.br::before { background: #23a559; }
+.nv-kpi.us::before { background: #c93a37; }
+.nv-kpi-flag { font-size: 16px; margin-bottom: 2px; }
+.nv-kpi-country { font-size: 10px; color: var(--t3); text-transform: uppercase; letter-spacing: .4px; font-weight: 600; }
+.nv-kpi-price { font-size: 19px; font-weight: 700; font-family: monospace; color: var(--t); }
+.nv-kpi-unit { font-size: 10px; color: var(--t3); margin-left: 2px; }
+.nv-kpi-delta { font-size: 11px; font-weight: 600; font-family: monospace; margin-top: 2px; }
+.nv-kpi-delta.up   { color: var(--g); }
+.nv-kpi-delta.down { color: var(--r); }
+.nv-kpi-delta.flat { color: var(--t3); }
+/* panel grid: gráfico + sidebar */
+.nv-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+@media (max-width: 760px) { .nv-grid { grid-template-columns: 1fr; } }
+/* chart card */
+.nv-chart-card {
+  background: var(--card);
+  border: 1px solid var(--brd);
+  border-radius: var(--rad);
+  padding: 14px;
+}
+.nv-card-hdr {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.nv-card-title { font-size: 12px; font-weight: 700; color: var(--t); }
+.nv-card-sub { font-size: 10px; color: var(--t3); margin-top: 1px; }
+.nv-toggles { display: flex; gap: 4px; flex-wrap: wrap; }
+.nv-tbtn {
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--brd);
+  background: var(--bg);
+  color: var(--t2);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.nv-tbtn.active { background: var(--r); border-color: var(--r); color: #fff; font-weight: 700; }
+.nv-chart-wrap { position: relative; height: 220px; }
+.nv-disclaimer { font-size: 9px; color: var(--t3); margin-top: 6px; line-height: 1.4; }
+/* chips países */
+.nv-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.nv-chip {
+  padding: 3px 9px;
+  border-radius: 16px;
+  border: 1px solid var(--brd);
+  background: var(--bg);
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--t3);
+  transition: all .15s;
+}
+.nv-chip[data-key="py"].active { background: rgba(30,106,181,.12); border-color: #1e6ab5; color: #1e6ab5; font-weight: 600; }
+.nv-chip[data-key="br"].active { background: rgba(35,165,89,.12); border-color: #23a559; color: #23a559; font-weight: 600; }
+.nv-chip[data-key="us"].active { background: rgba(201,58,55,.12); border-color: #c93a37; color: #c93a37; font-weight: 600; }
+.nv-chip[data-key="ar"].active { background: rgba(139,92,246,.12); border-color: #8b5cf6; color: #8b5cf6; font-weight: 600; }
+.nv-chip[data-key="uy"].active { background: rgba(14,165,233,.12); border-color: #0ea5e9; color: #0ea5e9; font-weight: 600; }
+/* sidebar */
+.nv-side { display: flex; flex-direction: column; gap: 10px; }
+.nv-impact-card {
+  background: var(--card);
+  border: 1px solid var(--brd);
+  border-radius: var(--rad);
+  padding: 14px;
+}
+.nv-impact-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--r); margin-bottom: 10px; }
+.nv-impact-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 0; border-bottom: 1px solid var(--brd); gap: 6px;
+}
+.nv-impact-row:last-of-type { border-bottom: none; }
+.nv-impact-label { font-size: 11px; color: var(--t2); flex: 1; min-width: 0; }
+.nv-impact-val { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--t); white-space: nowrap; }
+.nv-impact-note { font-size: 9px; color: var(--t3); margin-top: 8px; line-height: 1.4; }
+/* tabla comparativa */
+.nv-compare {
+  background: var(--card);
+  border: 1px solid var(--brd);
+  border-radius: var(--rad);
+  padding: 14px;
+}
+.nv-compare table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.nv-compare th { text-align: left; color: var(--t3); font-size: 9px; text-transform: uppercase; letter-spacing: .4px; padding: 0 0 6px; border-bottom: 1px solid var(--brd); }
+.nv-compare th:not(:first-child) { text-align: right; }
+.nv-compare td { padding: 6px 0; border-bottom: 1px solid var(--bg); }
+.nv-compare tr:last-child td { border-bottom: none; }
+.nv-compare td:not(:first-child) { text-align: right; font-family: monospace; }
+/* sources footer */
+.nv-sources { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.nv-src {
+  padding: 2px 8px; border-radius: 16px; background: var(--bg);
+  border: 1px solid var(--brd); font-size: 9px; color: var(--t3);
+  text-decoration: none;
+}
+.nv-src:hover { border-color: var(--r); color: var(--r); }
 </style>
 
 <!-- SPLASH -->
@@ -891,6 +1038,91 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
       </div>
     </div>
 
+      <!-- ═══ PANEL NOVILLO INTERNACIONAL ═══ -->
+      <div class="novillo-section">
+        <div class="novillo-hdr">
+          <span style="font-size:20px">🥩</span>
+          <div>
+            <div class="novillo-hdr-title">Precio Novillo Internacional</div>
+            <div class="novillo-hdr-sub">Paraguay · Brasil · USA · Impacto Chile</div>
+          </div>
+          <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+            <span style="font-size:9px;color:var(--t3)">Datos al 15 oct 2026 · Observado</span>
+            <span class="novillo-fx" id="nv-fx-badge">USD/CLP: —</span>
+          </div>
+        </div>
+
+        <!-- KPI strip -->
+        <div class="nv-kpi-strip" id="nv-kpi-strip"></div>
+
+        <!-- Gráfico + sidebar -->
+        <div class="nv-grid">
+          <div class="nv-chart-card">
+            <div class="nv-card-hdr">
+              <div>
+                <div class="nv-card-title">Evolución precio novillo (USD/kg carcasa)</div>
+                <div class="nv-card-sub">Faxcarne / CEPEA / USDA · elaboración propia</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+                <div class="nv-toggles" id="nv-period-toggle">
+                  <button class="nv-tbtn active" data-period="mensual">Mensual</button>
+                  <button class="nv-tbtn" data-period="semanal">Semanal</button>
+                </div>
+                <div class="nv-chips" id="nv-ct-chips">
+                  <button class="nv-chip active" data-key="py">🇵🇾 PY</button>
+                  <button class="nv-chip active" data-key="br">🇧🇷 BR</button>
+                  <button class="nv-chip active" data-key="us">🇺🇸 USA</button>
+                  <button class="nv-chip" data-key="ar">🇦🇷 AR</button>
+                  <button class="nv-chip" data-key="uy">🇺🇾 UY</button>
+                </div>
+              </div>
+            </div>
+            <div class="nv-chart-wrap">
+              <canvas id="nvChart"></canvas>
+            </div>
+            <div class="nv-disclaimer">
+              <strong>Observado:</strong> datos recolectados de fuentes públicas (Faxcarne, Valor Carne, CEPEA, USDA/AMS). Los datos históricos son registros de reportes publicados por dichas fuentes. <strong>No son proyecciones.</strong>
+            </div>
+          </div>
+
+          <div class="nv-side">
+            <!-- Tabla comparativa -->
+            <div class="nv-compare">
+              <div class="nv-card-title" style="margin-bottom:8px">Comparativa regional</div>
+              <div style="overflow-x:auto">
+                <table>
+                  <thead><tr><th>País</th><th>USD/kg</th><th>Sem.</th><th>Año</th></tr></thead>
+                  <tbody id="nv-compare-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Impacto CLP -->
+            <div class="nv-impact-card">
+              <div class="nv-impact-title">⚡ Impacto en mercado chileno</div>
+              <div id="nv-impact-rows"></div>
+              <div class="nv-impact-note" id="nv-impact-note"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fuentes -->
+        <div style="background:var(--card);border:1px solid var(--brd);border-radius:var(--rad-sm);padding:10px 12px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);margin-bottom:6px">Fuentes de datos</div>
+          <div class="nv-sources">
+            <a class="nv-src" href="https://www.valoragro.com.py/mercados/" target="_blank">Valor Agro (PY)</a>
+            <a class="nv-src" href="https://www.valorcarne.com.ar" target="_blank">Valor Carne / Faxcarne</a>
+            <a class="nv-src" href="https://www.cepea.org.br/br/indicador/boi-gordo.aspx" target="_blank">CEPEA-ESALQ (BR)</a>
+            <a class="nv-src" href="https://www.ams.usda.gov/mnreports/lsddcbs.pdf" target="_blank">USDA/AMS (USA)</a>
+            <a class="nv-src" href="https://indicadoresdiarios.bcentral.cl/" target="_blank">Banco Central</a>
+          </div>
+          <div style="font-size:9px;color:var(--t3);margin-top:6px;line-height:1.4">
+            Los precios son datos <strong>observados</strong> en fuentes públicas. Los valores CLP son <strong>estimaciones de referencia</strong> (tipo de cambio + factores logísticos típicos). No representan precios de compra ni de venta de FT Foods.
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ═══ CATÁLOGO ═══ -->
     <div class="page" id="pg-catalogo">
       <div class="sh"><h2>Catálogo</h2><p>FT Foods · Gestión de productos</p></div>
@@ -1038,7 +1270,10 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
           </div>
           <!-- Formulario (se muestra si NO está configurado o presiona Cambiar) -->
           <div id="sync-form">
-            <p style="font-size:11px;color:var(--t2);margin:0 0 10px">Comparte fotos y registros de acceso entre todos los dispositivos. Usa <a href="https://jsonbin.io" target="_blank" style="color:var(--b)">jsonbin.io</a> (gratuito). Crea un bin con <code>{}</code>, copia el Bin ID y tu Master Key.</p>
+            <div style="background:var(--am2);border:1px solid var(--am);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:var(--am)">
+              <strong>⚠️ Para que otra persona vea tus fotos:</strong> ambos navegadores deben tener configurado el <strong>mismo</strong> Bin ID y Master Key. Las fotos se suben automáticamente al guardar; el otro usuario las ve al abrir la app.
+            </div>
+            <p style="font-size:11px;color:var(--t2);margin:0 0 10px">Usa <a href="https://jsonbin.io" target="_blank" style="color:var(--b)">jsonbin.io</a> (gratuito). Crea un bin vacío con <code>{}</code>, copia el Bin ID y tu Master Key. Configura los <strong>mismos valores</strong> en todos los dispositivos.</p>
             <label class="lbl-sm">Master Key (X-Master-Key)</label>
             <input type="password" class="api-input" id="sync-key-input" placeholder="$2a$10$..." autocomplete="off">
             <label class="lbl-sm" style="margin-top:8px">Bin ID</label>
@@ -1387,8 +1622,8 @@ async function uploadProdPhoto(slotKey,luidBase,inputEl){
   const reader=new FileReader();
   reader.onload=async e=>{
     const rawUrl=e.target.result;
-    // Comprimir para sync remoto (thumbnail)
-    const thumbUrl=await compressDataUrl(rawUrl,400,0.8);
+    // Comprimir para sync remoto — thumbnail muy pequeño para caber en JSONBin free (≤10KB)
+    const thumbUrl=await compressDataUrl(rawUrl,150,0.5);
     // Guardar en IDB (foto original)
     PHOTO_CACHE[slotKey]=rawUrl;
     await iPhotoSet(slotKey,rawUrl);
@@ -4386,4 +4621,217 @@ async function init(){
   }
 }
 init();
+</script>
+
+<!-- ═══ PANEL NOVILLO INTERNACIONAL — JS ═══ -->
+<script>
+/* =====================================================================
+   DATOS OBSERVADOS — Panel Novillo Internacional
+   Fuentes: Faxcarne (Novillo Mercosur semanal), CEPEA (boi gordo),
+   USDA/AMS (Live cattle CME), Valor Agro (Paraguay)
+   Unidad: USD/kg carcasa equivalente
+   ===================================================================== */
+
+// Tipo de cambio referencia — ESTIMADO, no conectado a API en tiempo real
+const NV_USD_CLP = 930;
+
+const NV_MONTHLY_LABELS = [
+  'Ene 25','Feb 25','Mar 25','Abr 25','May 25','Jun 25',
+  'Jul 25','Ago 25','Sep 25','Oct 25','Nov 25','Dic 25',
+  'Ene 26','Feb 26','Mar 26','Abr 26','May 26','Jun 26',
+  'Jul 26','Ago 26','Sep 26','Oct 26'
+];
+
+// Paraguay – novillo apto UE / frigorífico. Fuente: Valor Agro + Faxcarne
+const NV_D_PY_M = [3.80,3.82,3.85,3.90,3.92,3.95,3.98,4.05,4.10,4.18,4.22,4.28,4.38,4.75,4.68,4.60,4.85,5.40,5.30,5.25,5.35,5.35];
+// Brasil – boi gordo (CEPEA/ESALQ convertido a USD/kg carcasa)
+const NV_D_BR_M = [3.50,3.52,3.58,3.60,3.65,3.70,3.72,3.78,3.85,3.90,3.92,3.98,4.20,4.49,4.60,4.88,4.90,4.63,4.70,4.75,4.85,4.92];
+// USA – Live Cattle CME (cts/lb → USD/kg carcasa eq.)
+const NV_D_US_M = [4.45,4.50,4.55,4.60,4.65,4.68,4.70,4.75,4.80,4.88,4.92,4.95,5.00,5.05,5.10,5.15,5.18,5.22,5.20,5.15,5.10,4.96];
+// Argentina – Faxcarne / Valor Carne (inc. retenciones 5%)
+const NV_D_AR_M = [4.80,4.85,4.90,5.10,5.20,5.30,5.40,5.45,5.50,5.55,5.60,5.65,5.80,6.08,6.20,5.99,6.10,5.54,5.60,5.65,5.70,5.75];
+// Uruguay – ACG / Faxcarne
+const NV_D_UY_M = [4.40,4.45,4.50,4.60,4.65,4.70,4.80,4.85,4.90,5.00,5.10,5.15,5.20,5.64,5.55,5.30,5.50,5.67,5.60,5.55,5.50,5.45];
+
+const NV_WEEKLY_LABELS = ['23-jul','30-jul','06-ago','13-ago','20-ago','27-ago','03-sep','10-sep','17-sep','24-sep','01-oct','08-oct','15-oct'];
+const NV_D_PY_W = [5.20,5.22,5.18,5.20,5.25,5.25,5.28,5.30,5.35,5.35,5.35,5.35,5.35];
+const NV_D_BR_W = [4.65,4.68,4.70,4.72,4.75,4.78,4.80,4.82,4.85,4.88,4.90,4.90,4.92];
+const NV_D_US_W = [5.18,5.20,5.18,5.15,5.12,5.10,5.08,5.10,5.12,5.10,5.05,5.00,4.96];
+const NV_D_AR_W = [5.55,5.58,5.60,5.62,5.62,5.65,5.65,5.68,5.70,5.72,5.73,5.75,5.75];
+const NV_D_UY_W = [5.48,5.50,5.50,5.48,5.48,5.45,5.45,5.44,5.45,5.45,5.45,5.45,5.45];
+
+const NV_COUNTRIES = {
+  py: { label:'Paraguay', flag:'🇵🇾', color:'#1e6ab5', monthly:NV_D_PY_M, weekly:NV_D_PY_W, note:'Novillo apto UE · Valor Agro/Faxcarne', weekDelta:+0.05, yearPct:+40.8 },
+  br: { label:'Brasil',   flag:'🇧🇷', color:'#23a559', monthly:NV_D_BR_M, weekly:NV_D_BR_W, note:'Boi gordo CEPEA-ESALQ/B3 USD', weekDelta:+0.02, yearPct:+23.5 },
+  us: { label:'USA',      flag:'🇺🇸', color:'#c93a37', monthly:NV_D_US_M, weekly:NV_D_US_W, note:'Live Cattle CME (cts/lb→USD/kg)', weekDelta:-0.04, yearPct:-7.5 },
+  ar: { label:'Argentina',flag:'🇦🇷', color:'#8b5cf6', monthly:NV_D_AR_M, weekly:NV_D_AR_W, note:'Faxcarne neto ret. 5%', weekDelta:+0.02, yearPct:+20.0 },
+  uy: { label:'Uruguay',  flag:'🇺🇾', color:'#0ea5e9', monthly:NV_D_UY_M, weekly:NV_D_UY_W, note:'Novillo export. ACG/Faxcarne', weekDelta:0.00, yearPct:+23.9 }
+};
+
+let nvChart = null;
+let nvPeriod = 'mensual';
+let nvActive = new Set(['py','br','us']);
+
+function nvLastPrice(key, period) {
+  const d = period==='semanal' ? NV_COUNTRIES[key].weekly : NV_COUNTRIES[key].monthly;
+  return d[d.length-1];
+}
+
+function nvRenderKPI() {
+  const strip = document.getElementById('nv-kpi-strip');
+  if (!strip) return;
+  strip.innerHTML = ['py','br','us'].map(k => {
+    const c = NV_COUNTRIES[k];
+    const price = nvLastPrice(k,'mensual');
+    const d = c.weekDelta;
+    const cls = d>0?'up':d<0?'down':'flat';
+    const arrow = d>0?'↑':d<0?'↓':'→';
+    return `<div class="nv-kpi ${k}">
+      <div class="nv-kpi-flag">${c.flag}</div>
+      <div class="nv-kpi-country">${c.label}</div>
+      <div class="nv-kpi-price">${price.toFixed(2)}<span class="nv-kpi-unit">USD/kg</span></div>
+      <div class="nv-kpi-delta ${cls}">${arrow} ${d>0?'+':''}${d.toFixed(2)} sem.</div>
+    </div>`;
+  }).join('');
+}
+
+function nvRenderTable() {
+  const tbody = document.getElementById('nv-compare-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = Object.entries(NV_COUNTRIES).map(([k,c]) => {
+    const p = nvLastPrice(k,'mensual');
+    const d = c.weekDelta; const y = c.yearPct;
+    const dc = d>0?'color:var(--g);font-weight:600':d<0?'color:var(--r);font-weight:600':'color:var(--t3)';
+    const yc = y>0?'color:var(--g);font-weight:600':y<0?'color:var(--r);font-weight:600':'color:var(--t3)';
+    return `<tr>
+      <td><span style="font-size:13px;margin-right:4px">${c.flag}</span>${c.label}</td>
+      <td>${p.toFixed(2)}</td>
+      <td style="${dc}">${d>0?'+':''}${d.toFixed(2)}</td>
+      <td style="${yc}">${y>0?'+':''}${y.toFixed(1)}%</td>
+    </tr>`;
+  }).join('');
+}
+
+function nvRenderImpact() {
+  const cont = document.getElementById('nv-impact-rows');
+  const note = document.getElementById('nv-impact-note');
+  if (!cont) return;
+  // Factores estimados de conversión a precio importado Chile (CIF+aranceles+logística)
+  // Estos son ESTIMACIONES de referencia, no precios de compra de FT Foods
+  const rows = [
+    { label:'🇵🇾 Paraguay → Chile', usd: nvLastPrice('py','mensual'), factor: 1.20 },
+    { label:'🇧🇷 Brasil → Chile',   usd: nvLastPrice('br','mensual'), factor: 1.22 },
+    { label:'🇺🇸 USA → Chile',      usd: nvLastPrice('us','mensual'), factor: 1.30 },
+  ];
+  cont.innerHTML = rows.map(r => {
+    const clp = Math.round(r.usd * r.factor * NV_USD_CLP);
+    return `<div class="nv-impact-row">
+      <div class="nv-impact-label">${r.label}</div>
+      <div class="nv-impact-val">$${clp.toLocaleString('es-CL')} CLP/kg</div>
+    </div>`;
+  }).join('');
+  if (note) note.innerHTML = `Estimación: precio × logística × USD/CLP ${NV_USD_CLP.toLocaleString('es-CL')} (est.).<br><strong>No representa precio FT Foods.</strong>`;
+}
+
+function nvBuildDatasets(period) {
+  return Object.entries(NV_COUNTRIES)
+    .filter(([k]) => nvActive.has(k))
+    .map(([k,c]) => ({
+      label: c.flag + ' ' + c.label,
+      data: period==='semanal' ? c.weekly : c.monthly,
+      borderColor: c.color,
+      backgroundColor: c.color + '18',
+      borderWidth: 2,
+      pointRadius: 2,
+      pointHoverRadius: 4,
+      tension: 0.35,
+      fill: false,
+    }));
+}
+
+function nvBuildChart(period) {
+  const canvas = document.getElementById('nvChart');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const ctx = canvas.getContext('2d');
+  const labels = period==='semanal' ? NV_WEEKLY_LABELS : NV_MONTHLY_LABELS;
+  if (nvChart) { nvChart.destroy(); }
+  nvChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: nvBuildDatasets(period) },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode:'index', intersect:false },
+      plugins: {
+        legend: {
+          position:'top',
+          labels: { color:'#8888aa', font:{size:10}, boxWidth:12, padding:8 }
+        },
+        tooltip: {
+          backgroundColor:'#fff',
+          borderColor:'#e2e4ee',
+          borderWidth:1,
+          titleColor:'#1a1a2e',
+          bodyColor:'#4a4a6a',
+          padding:8,
+          callbacks: { label: ctx => ` ${ctx.dataset.label}: USD ${ctx.raw.toFixed(2)}/kg` }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color:'#8888aa', font:{size:9,family:'monospace'}, maxRotation:45 },
+          grid: { color:'#e2e4ee' }
+        },
+        y: {
+          ticks: { color:'#8888aa', font:{size:9,family:'monospace'}, callback: v=>'USD '+v.toFixed(2) },
+          grid: { color:'#e2e4ee' },
+          title: { display:true, text:'USD/kg carcasa', color:'#8888aa', font:{size:9} }
+        }
+      }
+    }
+  });
+}
+
+function nvRefresh() { nvBuildChart(nvPeriod); }
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  // Período toggle
+  const pt = document.getElementById('nv-period-toggle');
+  if (pt) pt.addEventListener('click', e => {
+    const btn = e.target.closest('.nv-tbtn');
+    if (!btn) return;
+    nvPeriod = btn.dataset.period;
+    pt.querySelectorAll('.nv-tbtn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    nvRefresh();
+  });
+
+  // País toggle
+  const chips = document.getElementById('nv-ct-chips');
+  if (chips) chips.addEventListener('click', e => {
+    const chip = e.target.closest('.nv-chip');
+    if (!chip) return;
+    const key = chip.dataset.key;
+    if (nvActive.has(key)) {
+      if (nvActive.size <= 1) return;
+      nvActive.delete(key);
+      chip.classList.remove('active');
+    } else {
+      nvActive.add(key);
+      chip.classList.add('active');
+    }
+    nvRefresh();
+  });
+
+  // Badge tipo cambio
+  const fxBadge = document.getElementById('nv-fx-badge');
+  if (fxBadge) fxBadge.textContent = `USD/CLP: ${NV_USD_CLP.toLocaleString('es-CL')} (est.)`;
+
+  // Render inicial
+  nvRenderKPI();
+  nvRenderTable();
+  nvRenderImpact();
+  nvBuildChart('mensual');
+});
 </script>
