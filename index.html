@@ -170,15 +170,15 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 .fob-strip{display:flex;gap:6px;overflow-x:auto;padding-top:0;padding-bottom:10px;scrollbar-width:none}
 .fob-strip::-webkit-scrollbar{display:none}
 /* ── Hero banner (slider de portada) ── */
-#hero-banner{position:relative;width:100%;height:160px;border-radius:14px;overflow:hidden;background:#1a0a06;margin-bottom:12px}
-#hero-banner-img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .5s}
-#hero-banner-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.55) 0%,rgba(0,0,0,.1) 60%,transparent 100%)}
-#hero-banner-text{position:absolute;bottom:16px;left:16px;color:#fff}
-#hero-banner-text .hb-sub{font-size:10px;letter-spacing:.8px;text-transform:uppercase;opacity:.85;font-weight:600}
-#hero-banner-text .hb-title{font-size:18px;font-weight:800;line-height:1.1;margin-top:2px;text-shadow:0 1px 4px rgba(0,0,0,.4)}
-#hero-banner-dots{position:absolute;bottom:8px;right:12px;display:flex;gap:4px}
-.hb-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);transition:background .3s;cursor:pointer}
-.hb-dot.active{background:#fff}
+#hero-banner{position:relative;width:100%;height:240px;border-radius:14px;overflow:hidden;background:#1a0a06;margin-bottom:12px}
+#hero-banner-img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;transition:opacity .6s}
+#hero-banner-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.65) 0%,rgba(0,0,0,.25) 50%,rgba(0,0,0,.05) 100%)}
+#hero-banner-text{position:absolute;bottom:20px;left:18px;color:#fff;max-width:65%}
+#hero-banner-text .hb-sub{font-size:10px;letter-spacing:1px;text-transform:uppercase;opacity:.9;font-weight:700;color:#f5c97a}
+#hero-banner-text .hb-title{font-size:22px;font-weight:900;line-height:1.15;margin-top:4px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+#hero-banner-dots{position:absolute;bottom:12px;right:14px;display:flex;gap:5px}
+.hb-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);transition:background .3s,transform .3s;cursor:pointer}
+.hb-dot.active{background:#fff;transform:scale(1.25)}
 /* legacy hero strip (usado si hay fotos de catálogo) */
 #hero-cuts::-webkit-scrollbar{display:none}
 .hero-cut{flex:0 0 140px;height:100px;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 3px 12px rgba(0,0,0,.25)}
@@ -2509,26 +2509,31 @@ function updateDashNews(){
 
 // ── Hero banner de portada ────────────────────────────────────────────────
 // Slides: imágenes de productos reales (del catálogo o fallback CDN Jumbo)
+// IDs verificados desde páginas de producto Jumbo — solo imágenes de A Punto / La Reserva
 const HERO_SLIDES=[
   {
     src:'https://jumbocl.vtexassets.com/arquivos/ids/310918-900-900?width=900&height=900&aspect=true',
-    sub:'La Reserva · Vacuno Premium',title:'Entraña al vacío',
+    pos:'center 25%',
+    sub:'La Reserva · Vacuno Premium',title:'Entraña A Punto al vacío',
     bg:'#2d0a04'
   },
   {
     src:'https://jumbocl.vtexassets.com/arquivos/ids/314294-900-900?width=900&height=900&aspect=true',
-    sub:'A Punto · Vacuno Nacional',title:'Filete entrecot premium',
+    pos:'center 20%',
+    sub:'A Punto · Vacuno Premium',title:'Filete entrecot premium',
     bg:'#1a0f04'
   },
   {
-    src:'https://jumbocl.vtexassets.com/arquivos/ids/374851-900-900?width=900&height=900&aspect=true',
-    sub:'A Punto · Procesados',title:'Hamburguesa ChuckRoll',
-    bg:'#1c0c02'
+    src:'https://jumbocl.vtexassets.com/arquivos/ids/311053-900-900?width=900&height=900&aspect=true',
+    pos:'center 30%',
+    sub:'A Punto · Vacuno Nacional',title:'Punta de paleta A Punto',
+    bg:'#1c0905'
   },
   {
-    src:'https://jumbocl.vtexassets.com/arquivos/ids/654700-900-900?width=900&height=900&aspect=true',
-    sub:'FT Foods · Stock',title:'Vacuno nacional congelado',
-    bg:'#12080a'
+    src:'https://jumbocl.vtexassets.com/arquivos/ids/341162-900-900?width=900&height=900&aspect=true',
+    pos:'center 30%',
+    sub:'A Punto · Procesados',title:'Churrasco A Punto',
+    bg:'#1a0c04'
   }
 ];
 
@@ -2584,11 +2589,12 @@ function renderHeroBanner(){
     imgEl.style.opacity='0';
     setTimeout(()=>{
       imgEl.src=s.src;
+      imgEl.style.objectPosition=s.pos||'center 30%';
       imgEl.style.opacity='1';
       subEl.textContent=s.sub;
       titleEl.textContent=s.title;
       bannerEl.style.background=s.bg;
-    },200);
+    },250);
     // dots
     if(dotsEl){
       dotsEl.innerHTML=slides.map((_,i)=>`<div class="hb-dot${i===_heroBannerIdx?' active':''}" onclick="renderHeroBannerGo(${i})"></div>`).join('');
@@ -2610,7 +2616,7 @@ function renderHeroBannerGo(idx){
   const slides=catalogSlides.length?[...catalogSlides,...HERO_SLIDES]:HERO_SLIDES;
   _heroBannerIdx=(idx+slides.length)%slides.length;
   const s=slides[_heroBannerIdx];
-  if(imgEl){imgEl.style.opacity='0';setTimeout(()=>{imgEl.src=s.src;imgEl.style.opacity='1';subEl.textContent=s.sub;titleEl.textContent=s.title;bannerEl.style.background=s.bg;},200);}
+  if(imgEl){imgEl.style.opacity='0';setTimeout(()=>{imgEl.src=s.src;imgEl.style.objectPosition=s.pos||'center 30%';imgEl.style.opacity='1';subEl.textContent=s.sub;titleEl.textContent=s.title;bannerEl.style.background=s.bg;},250);}
   if(dotsEl)dotsEl.innerHTML=slides.map((_,i)=>`<div class="hb-dot${i===_heroBannerIdx?' active':''}" onclick="renderHeroBannerGo(${i})"></div>`).join('');
   if(slides.length>1)_heroBannerTimer=setInterval(()=>renderHeroBannerGo(_heroBannerIdx+1),5000);
 }
