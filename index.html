@@ -1297,6 +1297,8 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
           </div>
           <div class="upload-preview" id="informe-preview"></div>
           <div id="informe-links" style="margin-top:8px"></div>
+          <button class="btn-outline" style="margin-top:10px;width:100%;padding:8px;font-size:11px" onclick="runFixTitles(this)">🔧 Reparar títulos genéricos</button>
+          <div class="upload-preview" id="fix-titles-status"></div>
         </div>
 
         <div class="admin-card">
@@ -2545,9 +2547,9 @@ function getPresNewsItems(cat) {
       .map(n => {
         let src='';
         try{src=n.fuente||new URL(n.url).hostname.replace('www.','');}catch{src=n.fuente||'';}
-        // Limpiar título: si es genérico o una palabra de sección, extraer de la URL
+        // Limpiar título: si es genérico (hostname, slug sin espacios, sección), extraer de la URL
         let title=n.titulo||'';
-        if(!title||title===src||SECTION_WORDS.test(title.replace(/[-_]/g,' ').trim())){
+        if(isTitleGeneric(title, src)){
           const fromUrl=extractTitleFromUrl(n.url,'');
           title=fromUrl||fmtHostTitle(src);
         }
@@ -2715,8 +2717,8 @@ async function fetchPageTitle(url){
       .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
       .replace(/\s*[|\-–]\s*.{0,60}$/, '') // quitar sufijo "| Sitio X"
       .trim();
-    // Rechazar si sigue siendo genérico o muy corto
-    if(!t || t.length < 10 || /^(inicio|home|index|noticias|news|eurocarne|indicadores)/i.test(t)) return '';
+    // Rechazar solo si es muy corto o claramente es la portada del sitio
+    if(!t || t.length < 10 || /^(inicio|home|index|noticias?|news)\s*$/i.test(t)) return '';
     return t;
   }catch{ clearTimeout(tid); return ''; }
 }
@@ -2726,42 +2728,70 @@ async function fixGenericTitles(){
   try{
     const raw = JSON.parse(localStorage.getItem('carniq_press_news')||'[]');
     let changed = false;
-    // Procesar en paralelo (máx 4 a la vez)
+    let fixedCount = 0;
+    // Detectar entradas con título genérico
     const needFix = raw.map((n,i)=>({n,i})).filter(({n})=>{
-      const host = '';
       let src = '';
       try{ src = n.fuente || new URL(n.url).hostname.replace('www.',''); }catch{}
       return isTitleGeneric(n.titulo||'', src);
     });
-    if(!needFix.length) return;
+    if(!needFix.length) return {fixed:0, total:0};
 
     // Procesar en lotes de 4
-    for(let i=0;i<needFix.length;i+=4){
-      const batch = needFix.slice(i,i+4);
-      const results = await Promise.all(batch.map(async ({n,idx})=>{
+    for(let b=0;b<needFix.length;b+=4){
+      const batch = needFix.slice(b,b+4);
+      const results = await Promise.all(batch.map(async ({n,i})=>{
         const title = await fetchPageTitle(n.url);
-        return { idx: raw.indexOf(n), title };
+        return { i, title };
       }));
-      results.forEach(({idx,title})=>{
-        if(title && idx>=0){
-          raw[idx] = {...raw[idx], titulo: title};
+      results.forEach(({i,title})=>{
+        if(title){
+          raw[i] = {...raw[i], titulo: title};
           changed = true;
+          fixedCount++;
         }
       });
     }
     if(changed){
       localStorage.setItem('carniq_press_news', JSON.stringify(raw));
-      // Re-renderizar noticias
       const list = NEWS_CACHE.length ? NEWS_CACHE : NEWS_STATIC;
       renderNewsData(list, curTab);
     }
-  }catch(e){ console.warn('fixGenericTitles:',e); }
+    return { fixed: fixedCount, total: needFix.length };
+  }catch(e){ console.warn('fixGenericTitles:',e); return {fixed:0,total:0}; }
+}
+
+async function runFixTitles(btn){
+  const st = document.getElementById('fix-titles-status');
+  if(st){ st.className='upload-preview show'; st.textContent='🔄 Buscando títulos…'; }
+  if(btn) btn.disabled = true;
+  try{
+    const raw = JSON.parse(localStorage.getItem('carniq_press_news')||'[]');
+    const generics = raw.filter(n=>{
+      let src=''; try{ src=n.fuente||new URL(n.url).hostname.replace('www.',''); }catch{}
+      return isTitleGeneric(n.titulo||'', src);
+    });
+    if(!generics.length){
+      if(st) st.textContent='✅ Todos los títulos ya son correctos';
+      if(btn) btn.disabled=false;
+      return;
+    }
+    if(st) st.textContent=`🔄 Reparando ${generics.length} título(s)…`;
+    const res = await fixGenericTitles();
+    if(st) st.textContent = res.fixed > 0
+      ? `✅ ${res.fixed} título(s) reparado(s) de ${res.total}`
+      : `⚠️ No se pudieron obtener títulos (verifica conexión)`;
+  }catch(e){
+    if(st){ st.textContent='❌ Error: '+e.message; }
+  }finally{
+    if(btn) btn.disabled=false;
+  }
 }
 function pressNewsHtml(n, highlighted){
   // Usar título guardado solo si es descriptivo; si no, extraer de la URL
   let title = n.title||'';
   const srcHost = n.src||'';
-  if(!title || title===srcHost || SECTION_WORDS.test(title.replace(/[-_]/g,' ').trim())){
+  if(isTitleGeneric(title, srcHost)){
     const fromUrl=extractTitleFromUrl(n.url,'');
     // Si extractTitleFromUrl tampoco dio nada útil, usar hostname formateado
     title=fromUrl||fmtHostTitle(srcHost);
