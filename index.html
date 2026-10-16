@@ -2406,7 +2406,7 @@ function extractTitleFromUrl(url, fallback){
       if(t && !SECTION_WORDS.test(t)) return t;
     }
     // Prioridad 2: último segmento no-numérico y no-genérico del path
-    const rawParts=u.pathname.replace(/\/$|\.html?$|\.php$/,'').split('/').filter(Boolean);
+    const rawParts=u.pathname.replace(/\/$|\.html?$|\.php$|\.aspx?$|\.jsp$|\.cfm$/i,'').split('/').filter(Boolean);
     const parts=rawParts.filter(p=>!/^\d+$/.test(p));
     const meaningful=parts.filter(p=>{
       let decoded='';
@@ -2418,7 +2418,8 @@ function extractTitleFromUrl(url, fallback){
     let decoded='';
     try{decoded=decodeURIComponent(slug.replace(/\+/g,' '));}catch{decoded=slug.replace(/\+/g,' ');}
     const t=decoded.replace(/[-_]/g,' ').replace(/\s+[a-z]?\d{4,}$/i,'').trim().replace(/^\w/,c=>c.toUpperCase());
-    if(t && !SECTION_WORDS.test(t)) return t;
+    // Rechazar nombres de archivo sin espacios (ej: "Indicadoresdiarios") — no son títulos legibles
+    if(t && !SECTION_WORDS.test(t) && (t.includes(' ')||t.length<=18)) return t;
   }catch{}
   return fallback||'';
 }
