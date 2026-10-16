@@ -2298,7 +2298,16 @@ function getPresNewsItems(cat) {
   try {
     const raw = JSON.parse(localStorage.getItem('carniq_press_news') || '[]');
     return raw
-      .filter(n => cat === 'all' || n.especie === cat || n.especie === 'mercado')
+      .filter(n => {
+        // Filtro 1: categoría
+        if(cat !== 'all' && n.especie !== cat && n.especie !== 'mercado') return false;
+        // Filtro 2: bloquear shorteners y dominios sin contexto
+        try{
+          const host=new URL(n.url).hostname.replace('www.','');
+          if(BLOCKED_DOMAINS.test(host)) return false;
+        }catch{}
+        return true;
+      })
       .map(n => {
         let src='';
         try{src=n.fuente||new URL(n.url).hostname.replace('www.','');}catch{src=n.fuente||'';}
@@ -2308,6 +2317,10 @@ function getPresNewsItems(cat) {
           const fromUrl=extractTitleFromUrl(n.url,'');
           title=fromUrl||fmtHostTitle(src);
         }
+        // Filtro 3: descartar si el título no tiene ninguna palabra clave del rubro
+        // (solo aplica cuando el título tiene más de 4 palabras — evita falsos positivos en títulos cortos como "Eurocarne.com")
+        const wordCount=(title.match(/\S+/g)||[]).length;
+        if(wordCount>4 && !MEAT_KEYS.test(title)) return null;
         return {
           u: 'info',
           cat: n.especie || 'mercado',
@@ -2320,7 +2333,8 @@ function getPresNewsItems(cat) {
           img: '',
           _press: true
         };
-      });
+      })
+      .filter(Boolean); // elimina los null del filtro temático
   } catch { return []; }
 }
 
@@ -2393,6 +2407,12 @@ function nulHdr(ico,txt,color){
 
 // ── Extractor de título desde URL (reutilizable) ──────────────────────────
 const SECTION_WORDS=/^(noticias?|news|articulos?|article|nota|post|actualidad|mercados?|markets?|internacional|nacional|ultima.hora|last.news|prensa|press|inicio|home|index|categoria|category|seccion|section|tendencias?|novedades?|eventos?|destacadas?|featured|codigo|code|tag|tags|autor|author|buscar|search|page|pagina)$/i;
+
+// Dominios bloqueados: shorteners y fuentes sin contexto cárnico/económico
+const BLOCKED_DOMAINS=/^(lnkd\.in|bit\.ly|t\.co|tinyurl\.com|ow\.ly|buff\.ly|dlvr\.it|fb\.me|goo\.gl|youtu\.be|instagram\.com|tiktok\.com|twitter\.com|x\.com)$/i;
+
+// Palabras clave de relevancia temática (al menos 1 debe estar en el título)
+const MEAT_KEYS=/vacuno|bovino|carne|porcino|cerdo|ave|pollo|avicola|ovino|cordero|salmon|pesquer|frigorif|faena|exportacion|importacion|precio|mercado|tonelada|kilo|kg|consumo|produccion|abastecimiento|oferta|demanda|tendencia|inflacion|economia|ipc|dolar|tipo.cambio|arancele|comercio|agro|ganadero|ganado|novillo|ternero|matadero|planta.procesad|frigorifico|sanidad.animal|fiebre|aftosa|pestes|enfermedad|brote|usda|ocde|fao|odepa|indap|minagri|sag\b/i;
 
 function extractTitleFromUrl(url, fallback){
   try{
