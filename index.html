@@ -171,13 +171,20 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 .fob-strip{display:flex;gap:6px;overflow-x:auto;padding-top:0;padding-bottom:10px;scrollbar-width:none}
 .fob-strip::-webkit-scrollbar{display:none}
 /* ── Hero banner (slider de portada) ── */
-#hero-banner{position:relative;width:100%;height:240px;border-radius:14px;overflow:hidden;background:#1a0a06;margin-bottom:12px}
+#hero-banner{position:relative;width:100%;height:320px;border-radius:14px;overflow:hidden;background:#0d0d0d;margin-bottom:12px}
 #hero-banner-img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;transition:opacity .6s}
 /* video de fondo hero */
-#hero-banner-video-wrap{position:absolute;inset:0;width:100%;height:100%;z-index:0;overflow:hidden;background:#1a0a06}
-#hero-banner-video-wrap video{position:absolute;top:50%;left:50%;width:100%;height:100%;min-width:100%;min-height:177.78%;transform:translate(-50%,-50%);object-fit:cover;pointer-events:none}
-#hero-banner-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.65) 0%,rgba(0,0,0,.25) 50%,rgba(0,0,0,.05) 100%)}
-#hero-banner-text{position:absolute;bottom:20px;left:18px;color:#fff;max-width:65%}
+#hero-banner-video-wrap{position:absolute;inset:0;width:100%;height:100%;z-index:0;overflow:hidden;background:#0d0d0d}
+#hero-banner-video-wrap video{position:absolute;top:50%;left:50%;min-width:100%;min-height:100%;width:auto;height:auto;transform:translate(-50%,-50%);object-fit:cover;pointer-events:none}
+#hero-banner-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.82) 0%,rgba(0,0,0,.1) 18%,rgba(0,0,0,.0) 40%,rgba(0,0,0,.0) 60%,rgba(0,0,0,.1) 82%,rgba(0,0,0,.82) 100%)}
+#hero-banner-text{position:absolute;bottom:24px;left:20px;color:#fff;max-width:55%;z-index:4}
+/* paneles laterales de marca */
+#hb-panel-left,#hb-panel-right{position:absolute;top:0;bottom:0;width:16%;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px 10px}
+#hb-panel-left{left:0;background:linear-gradient(to right,rgba(0,0,0,.88) 60%,rgba(0,0,0,0))}
+#hb-panel-right{right:0;background:linear-gradient(to left,rgba(0,0,0,.88) 60%,rgba(0,0,0,0))}
+.hb-panel-img{width:100%;max-width:90px;border-radius:8px;object-fit:cover;aspect-ratio:1/1;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.hb-panel-logo{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.75);text-align:center;margin-top:2px}
+.hb-panel-tag{font-size:8px;color:rgba(255,255,255,.5);text-align:center;letter-spacing:.5px}
 #hero-banner-text .hb-sub{font-size:10px;letter-spacing:1px;text-transform:uppercase;opacity:.9;font-weight:700;color:#f5c97a}
 #hero-banner-text .hb-title{font-size:22px;font-weight:900;line-height:1.15;margin-top:4px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
 #hero-banner-dots{position:absolute;bottom:12px;right:14px;display:flex;gap:5px}
@@ -807,13 +814,31 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 
       <!-- Hero banner de portada -->
       <div id="hero-banner">
+        <!-- Video fondo -->
         <div id="hero-banner-video-wrap">
           <video autoplay muted loop playsinline preload="auto">
             <source src="assets/hero-video.mp4" type="video/mp4">
           </video>
         </div>
+        <!-- Overlay con gradiente lateral para integrar paneles -->
         <div id="hero-banner-overlay" style="z-index:2"></div>
-        <div id="hero-banner-text" style="z-index:3">
+        <!-- Panel izquierdo: Fundo Sur -->
+        <div id="hb-panel-left">
+          <img class="hb-panel-img" src="assets/fundo-sur-banner.jpg" alt="Fundo Sur"
+               onerror="this.style.display='none'">
+          <div class="hb-panel-logo">Fundo Sur</div>
+          <div class="hb-panel-tag">Tradición de Familia</div>
+        </div>
+        <!-- Panel derecho: A Punto -->
+        <div id="hb-panel-right">
+          <div style="width:80px;height:80px;border-radius:8px;background:linear-gradient(135deg,#8b1a1a,#c0392b);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.5)">
+            <span style="color:#fff;font-size:13px;font-weight:900;letter-spacing:.5px;text-align:center;line-height:1.2">A<br>PUNTO</span>
+          </div>
+          <div class="hb-panel-logo">A Punto</div>
+          <div class="hb-panel-tag">Premium Vacuno</div>
+        </div>
+        <!-- Texto principal -->
+        <div id="hero-banner-text" style="z-index:4">
           <div class="hb-sub" id="hb-sub">FT Foods</div>
           <div class="hb-title" id="hb-title">Inteligencia Cárnica</div>
         </div>
