@@ -208,6 +208,15 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 .nul{display:flex;align-items:center;gap:10px;padding:14px max(16px,env(safe-area-inset-left,0px)) 8px;margin-right:max(16px,env(safe-area-inset-right,0px))}
 .nul-line{flex:1;height:1px;background:var(--brd)}
 .nul-txt{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;white-space:nowrap}
+.press-card{margin:0 max(12px,env(safe-area-inset-left,0px)) 6px;margin-right:max(12px,env(safe-area-inset-right,0px));background:var(--card);border-radius:var(--rad);border:1px solid var(--brd);padding:10px 12px;display:flex;align-items:flex-start;gap:10px}
+.press-card--hl{border:2px solid var(--r)!important;background:color-mix(in srgb,var(--card) 93%,var(--r) 7%)!important}
+.press-card-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.press-card-body{flex:1;min-width:0}
+.press-card-title{font-size:12px;font-weight:700;color:var(--t);line-height:1.4;margin-bottom:4px;word-break:break-word}
+.press-card-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:5px}
+.press-card-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;padding-top:6px;border-top:1px solid var(--brd)}
+.press-group-hdr{display:flex;align-items:center;gap:8px;padding:10px max(16px,env(safe-area-inset-left,0px)) 4px;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.7px}
+.press-group-hdr span{font-size:11px}
 
 #news-loading{text-align:center;padding:40px 20px;color:var(--t3)}
 #news-loading .spin{font-size:28px;display:block;margin-bottom:8px;animation:spin 1s linear infinite}
@@ -2262,31 +2271,98 @@ function getPresNewsItems(cat) {
 
 function renderNewsData(list,cat){
   const uc={critico:'ntag-warn',alerta:'ntag-warn',info:'ntag-info'};
-  const ul={alerta:'🟡 Tendencia a monitorear',info:'🔵 Informativa'};
-  // Prepend press report items
+  const pressRaw = JSON.parse(localStorage.getItem('carniq_press_news')||'[]');
   const pressItems = getPresNewsItems(cat);
-  if (pressItems.length) {
-    list = [...pressItems, ...list];
-  }
-  // Ordenar: destacadas primero, luego por fecha descendente
-  list = [...list].sort((a,b)=>{
-    const ha=isHighlight(a)?1:0, hb=isHighlight(b)?1:0;
-    if(hb!==ha)return hb-ha;
+
+  // Separar en 3 grupos
+  // 1. Destacadas (de prensa O de IA que hagan match)
+  const allForHL = [...pressItems,...list];
+  const highlighted = allForHL.filter(n=>isHighlight(n));
+  const hlUrls = new Set(highlighted.map(n=>n.url));
+
+  // 2. Prensa sin destacar
+  const pressNormal = pressItems.filter(n=>!hlUrls.has(n.url));
+
+  // 3. Noticias IA sin destacar, filtradas por cat
+  let aiList = (cat==='all'?list:list.filter(n=>n.cat===cat)).filter(n=>!hlUrls.has(n.url));
+  if(!aiList.length && cat!=='all') aiList=list.filter(n=>!hlUrls.has(n.url));
+
+  // Ordenar prensa por fecha desc
+  const sortByDate = arr=>[...arr].sort((a,b)=>{
     const da=a.fecha?new Date(a.fecha.split('-').reverse().join('-')):new Date(a.t||0);
     const db=b.fecha?new Date(b.fecha.split('-').reverse().join('-')):new Date(b.t||0);
     return db-da;
   });
-  let filtered=cat==='all'?list:list.filter(n=>n.cat===cat);
-  if(!filtered.length)filtered=list;
+
   let html='';
-  if(cat==='all'){
-    const g={alerta:filtered.filter(n=>n.u==='alerta'||n.u==='critico'),info:filtered.filter(n=>n.u==='info')};
+
+  // ── Bloque 1: Destacadas ──
+  if(highlighted.length){
+    html+=nulHdr('⭐','FT Foods · Destacadas','#da532c');
+    sortByDate(highlighted).forEach(n=>{
+      html += n._press ? pressNewsHtml(n,true) : newsHtml(n,uc[n.u]||'ntag-info');
+    });
+  }
+
+  // ── Bloque 2: Informe de Prensa ──
+  if(pressNormal.length){
+    // Agrupar por fecha
+    const byDate={};
+    pressNormal.forEach(n=>{
+      const k=n.t||n.fecha||'Sin fecha';
+      if(!byDate[k])byDate[k]=[];
+      byDate[k].push(n);
+    });
+    Object.entries(byDate).sort(([a],[b])=>b.localeCompare(a)).forEach(([fecha,items])=>{
+      html+=`<div class="press-group-hdr"><span>📋</span> Informe de Prensa · ${fecha}</div>`;
+      items.forEach(n=>html+=pressNewsHtml(n,false));
+    });
+  }
+
+  // ── Bloque 3: Noticias IA ──
+  if(aiList.length){
+    html+=nulHdr('🔵','Noticias del mercado','#1565c0');
+    const g={alerta:aiList.filter(n=>n.u==='alerta'||n.u==='critico'),info:aiList.filter(n=>n.u==='info')};
     ['alerta','info'].filter(u=>g[u].length).forEach(u=>{
-      html+=`<div class="nul"><div class="nul-line"></div><div class="nul-txt" style="color:${u==='alerta'?'#f39c12':'#1565c0'}">${ul[u]}</div><div class="nul-line"></div></div>`;
+      if(u==='alerta') html+=nulHdr('🟡','Tendencia a monitorear','#f39c12');
       g[u].forEach(n=>html+=newsHtml(n,uc[n.u]));
     });
-  }else{filtered.forEach(n=>html+=newsHtml(n,uc[n.u]))}
+  }
+
   document.getElementById('news-list').innerHTML=html||'<div class="empty"><span class="icon">📭</span><p>Sin noticias en esta categoría</p></div>';
+}
+
+function nulHdr(ico,txt,color){
+  return`<div class="nul"><div class="nul-line"></div><div class="nul-txt" style="color:${color}">${ico} ${txt}</div><div class="nul-line"></div></div>`;
+}
+
+function pressNewsHtml(n, highlighted){
+  // Intentar extraer un título legible de la URL si el guardado es solo hostname
+  let title = n.title||'';
+  if(!title || title===n.src){
+    try{
+      const u=new URL(n.url);
+      const slug=u.pathname.replace(/\/$|\.html?$|\.php$/,'').split('/').filter(Boolean).pop()||'';
+      title=slug?slug.replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):n.src;
+    }catch{title=n.src;}
+  }
+  const catIcon={vacuno:'🥩',cerdo:'🐷',ave:'🍗',mercado:'📊',sanidad:'🏥'}[n.cat]||'📰';
+  const hlClass=highlighted?' press-card--hl':'';
+  return`<div class="press-card${hlClass}">
+    <div class="press-card-icon">${catIcon}</div>
+    <div class="press-card-body">
+      <div class="press-card-meta">
+        ${highlighted?'<span class="ntag ntag-highlight">⭐ FT Foods</span>':''}
+        <span class="ntag ntag-cat">${n.cat}</span>
+        <span class="ntag ntag-cat">${n.pais}</span>
+      </div>
+      <div class="press-card-title">${title}</div>
+      <div class="press-card-footer">
+        <a href="${n.url}" target="_blank" class="src-lnk">📎 ${n.src}</a>
+        <span class="news-date">📅 ${n.t||n.fecha||''}</span>
+      </div>
+    </div>
+  </div>`;
 }
 
 function isHighlight(n){
