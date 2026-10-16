@@ -2683,6 +2683,80 @@ function fmtHostTitle(host){
   if(!host)return'Ver noticia';
   return host.charAt(0).toUpperCase()+host.slice(1);
 }
+
+// ── Detecta si un título es genérico (hostname, slug sin espacios, sección) ──
+function isTitleGeneric(title, srcHost){
+  if(!title) return true;
+  const t = title.trim();
+  if(t === srcHost) return true;
+  if(!t.includes(' ') && t.length > 18) return true; // "Indicadoresdiarios"
+  if(SECTION_WORDS.test(t.replace(/[-_]/g,' ').trim())) return true;
+  // Si termina en .com/.net/.org → es el hostname
+  if(/\.(com|net|org|cl|ar|py|br)(\/.*)?$/i.test(t)) return true;
+  return false;
+}
+
+// ── Fetch del <title> real via proxy CORS (allorigins.win) ──────────────────
+// Llama al proxy, extrae el <title> del HTML, lo limpia y resuelve.
+// Timeout 6s. Rechaza si el título sigue siendo genérico.
+async function fetchPageTitle(url){
+  const controller = new AbortController();
+  const tid = setTimeout(()=>controller.abort(), 6000);
+  try{
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxyUrl, { signal: controller.signal });
+    clearTimeout(tid);
+    if(!res.ok) return '';
+    const data = await res.json();
+    const html = data.contents || '';
+    const m = html.match(/<title[^>]*>([^<]{4,200})<\/title>/i);
+    if(!m) return '';
+    let t = m[1]
+      .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
+      .replace(/\s*[|\-–]\s*.{0,60}$/, '') // quitar sufijo "| Sitio X"
+      .trim();
+    // Rechazar si sigue siendo genérico o muy corto
+    if(!t || t.length < 10 || /^(inicio|home|index|noticias|news|eurocarne|indicadores)/i.test(t)) return '';
+    return t;
+  }catch{ clearTimeout(tid); return ''; }
+}
+
+// ── Reparar títulos genéricos en localStorage y re-renderizar ───────────────
+async function fixGenericTitles(){
+  try{
+    const raw = JSON.parse(localStorage.getItem('carniq_press_news')||'[]');
+    let changed = false;
+    // Procesar en paralelo (máx 4 a la vez)
+    const needFix = raw.map((n,i)=>({n,i})).filter(({n})=>{
+      const host = '';
+      let src = '';
+      try{ src = n.fuente || new URL(n.url).hostname.replace('www.',''); }catch{}
+      return isTitleGeneric(n.titulo||'', src);
+    });
+    if(!needFix.length) return;
+
+    // Procesar en lotes de 4
+    for(let i=0;i<needFix.length;i+=4){
+      const batch = needFix.slice(i,i+4);
+      const results = await Promise.all(batch.map(async ({n,idx})=>{
+        const title = await fetchPageTitle(n.url);
+        return { idx: raw.indexOf(n), title };
+      }));
+      results.forEach(({idx,title})=>{
+        if(title && idx>=0){
+          raw[idx] = {...raw[idx], titulo: title};
+          changed = true;
+        }
+      });
+    }
+    if(changed){
+      localStorage.setItem('carniq_press_news', JSON.stringify(raw));
+      // Re-renderizar noticias
+      const list = NEWS_CACHE.length ? NEWS_CACHE : NEWS_STATIC;
+      renderNewsData(list, curTab);
+    }
+  }catch(e){ console.warn('fixGenericTitles:',e); }
+}
 function pressNewsHtml(n, highlighted){
   // Usar título guardado solo si es descriptivo; si no, extraer de la URL
   let title = n.title||'';
@@ -3416,6 +3490,8 @@ async function loadInformePDF(input) {
     const baseList = NEWS_CACHE.length ? NEWS_CACHE : NEWS_STATIC;
     renderNewsData(baseList, curTab);
     updateDashNews();
+    // Reparar títulos genéricos en background
+    setTimeout(()=>fixGenericTitles(), 500);
   } catch (err) {
     if (prev) prev.textContent = '❌ Error al leer el PDF: ' + err.message;
   }
@@ -4611,6 +4687,8 @@ async function init(){
     // Noticias en background — no bloquea init
     fetchLiveNews().then(data=>{renderNewsData(data,curTab);updateDashNews()}).catch(()=>{renderStaticNews();updateDashNews()});
     scheduleNewsRefresh();
+    // Reparar títulos genéricos del Informe de Prensa en background
+    setTimeout(()=>fixGenericTitles(), 2000);
   }catch(e){
     console.error('CarnIQ init error:',e);
   }finally{
