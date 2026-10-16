@@ -3317,7 +3317,7 @@ function renderCatalog(){
                 <div class="prod-detail-grid">
                   ${p.code?`<div class="pd-item"><span class="pd-lbl">SAP</span><span class="pd-val">#${p.code}${(p.totalCajas>0&&p.totalKg>0)?` <span style="font-size:10px;font-weight:500;color:var(--t3)">(≈${(p.totalKg/p.totalCajas).toFixed(1)} kg/caja)</span>`:''}</span></div>`:''}
                   <div class="pd-item"><span class="pd-lbl">Categoría</span><span class="pd-val">${sub}</span></div>
-                  ${p.price?`<div class="pd-item pd-item--price"><span class="pd-lbl">Precio ref.</span><span class="pd-val price-val">${fmt(p.price)}/kg</span></div>`:''}
+
                 </div>`;
             if(hasLotes){
               html+=`<div class="lotes-section"><div class="lotes-title">📦 Lotes en stock — hasta 4 fotos por lote</div>`;
