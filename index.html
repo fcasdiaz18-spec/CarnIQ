@@ -174,8 +174,9 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 #hero-banner{position:relative;width:100%;height:240px;border-radius:14px;overflow:hidden;background:#1a0a06;margin-bottom:12px}
 #hero-banner-img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;transition:opacity .6s}
 /* video de fondo hero */
-#hero-banner-video-wrap{position:absolute;inset:0;z-index:0;overflow:hidden;background:#1a0a06}
-#hero-banner-video-wrap video{position:absolute;top:50%;left:50%;width:100%;height:100%;min-width:100%;min-height:100%;transform:translate(-50%,-50%);object-fit:cover;border:none;pointer-events:none}
+#hero-banner-video-wrap{position:absolute;inset:0;width:100%;height:100%;z-index:0;overflow:hidden;background:#1a0a06}
+#hero-banner-video-wrap img{position:absolute;top:50%;left:50%;width:100%;height:100%;min-width:100%;min-height:100%;transform:translate(-50%,-50%);object-fit:cover;pointer-events:none}
+#hero-banner-video-wrap iframe{position:absolute;top:50%;left:50%;width:180%;height:180%;transform:translate(-50%,-50%);border:none;pointer-events:none;opacity:0;transition:opacity 1s}
 #hero-banner-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.65) 0%,rgba(0,0,0,.25) 50%,rgba(0,0,0,.05) 100%)}
 #hero-banner-text{position:absolute;bottom:20px;left:18px;color:#fff;max-width:65%}
 #hero-banner-text .hb-sub{font-size:10px;letter-spacing:1px;text-transform:uppercase;opacity:.9;font-weight:700;color:#f5c97a}
@@ -807,14 +808,19 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 
       <!-- Hero banner de portada -->
       <div id="hero-banner">
-        <!-- Fondo de video hero: thumbnail maxres de YouTube como imagen de fondo -->
         <div id="hero-banner-video-wrap">
-          <img
+          <!-- Thumbnail como fondo inmediato mientras carga el video -->
+          <img id="hero-thumb"
             src="https://img.youtube.com/vi/dJmzd8E-0xU/maxresdefault.jpg"
             alt=""
-            style="position:absolute;top:50%;left:50%;width:100%;height:100%;min-width:100%;min-height:100%;transform:translate(-50%,-50%);object-fit:cover;pointer-events:none"
             onerror="this.src='https://img.youtube.com/vi/dJmzd8E-0xU/hqdefault.jpg'"
           >
+          <!-- iframe carga después — se hace visible cuando YouTube responde -->
+          <iframe id="hero-yt"
+            src="https://www.youtube-nocookie.com/embed/dJmzd8E-0xU?autoplay=1&mute=1&loop=1&playlist=dJmzd8E-0xU&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1&start=3&enablejsapi=1"
+            allow="autoplay; encrypted-media; fullscreen"
+            allowfullscreen
+          ></iframe>
         </div>
         <div id="hero-banner-overlay" style="z-index:2"></div>
         <div id="hero-banner-text" style="z-index:3">
@@ -5210,6 +5216,23 @@ function cifRenderTable() {
     </tr>`;
   }).join('');
 }
+
+// Hero banner: mostrar iframe YouTube cuando cargue, thumbnail como fallback visible
+(function(){
+  function initHeroVideo(){
+    const yt = document.getElementById('hero-yt');
+    const thumb = document.getElementById('hero-thumb');
+    if(!yt||!thumb) return;
+    // Cuando el iframe responde, hacerlo visible y ocultar thumb
+    yt.addEventListener('load', function(){
+      setTimeout(()=>{ yt.style.opacity='1'; thumb.style.opacity='0'; }, 800);
+    });
+    // Si en 4s no cargó, igual mostrar (puede haber cargado sin evento)
+    setTimeout(()=>{ if(parseFloat(getComputedStyle(yt).opacity)<1){ yt.style.opacity='1'; thumb.style.opacity='0'; }}, 4000);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', initHeroVideo);
+  else initHeroVideo();
+})();
 
 document.addEventListener('DOMContentLoaded', () => {
   // KPI y tabla no dependen de visibilidad — se renderizan siempre
