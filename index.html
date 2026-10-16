@@ -1,5 +1,5 @@
 <!---
-  CarnIQ v10.4 · FT Foods Antofagasta · Inteligencia Cárnica
+  CarnIQ v10.5 · FT Foods Antofagasta · Inteligencia Cárnica
   Felipe Castiglioni · fcasdiaz18@gmail.com
   Build: 2026-10-16-c
 -->
@@ -172,8 +172,9 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;ba
 #hero-cuts::-webkit-scrollbar{display:none}
 .hero-cut{flex:0 0 140px;height:100px;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 3px 12px rgba(0,0,0,.25)}
 .hero-cut img{width:100%;height:100%;object-fit:cover;display:block;opacity:.82}
-.hero-cut-lbl{position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(transparent,rgba(0,0,0,.72));color:#fff;display:flex;flex-direction:column;gap:1px}
-.hero-cut-lbl span{font-size:9px;opacity:.85;letter-spacing:.3px}
+.hero-cut-emoji{position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);font-size:36px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+.hero-cut-lbl{position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;display:flex;flex-direction:column;gap:1px}
+.hero-cut-lbl span{font-size:9px;opacity:.82;letter-spacing:.3px}
 .hero-cut-lbl strong{font-size:11px;font-weight:700;letter-spacing:.2px}
 .fob-chip{flex-shrink:0;background:var(--card);border:1px solid var(--brd);border-radius:var(--rad-sm);padding:7px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:68px}
 .fob-flag{font-size:14px;line-height:1}
@@ -366,9 +367,14 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 .lote-card{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid var(--brd)}
 .lote-card:last-child{border-bottom:none}
 /* 4 slots de foto en cuadrícula 2×2 */
-.lote-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.lote-slot{aspect-ratio:1;border-radius:7px;overflow:hidden;background:var(--g2);cursor:pointer;position:relative;border:1.5px dashed var(--brd);transition:border-color .15s}
-.lote-slot:hover{border-color:var(--r)}
+.lote-slots{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.lote-slot{width:70px;height:70px;border-radius:7px;overflow:hidden;cursor:pointer;position:relative;transition:border-color .15s}
+.lote-slot--filled{border:1.5px solid var(--brd)}
+.lote-slot--filled:hover{border-color:var(--r)}
+.lote-slot--add{border:2px dashed var(--brd);background:var(--bg);display:flex;align-items:center;justify-content:center}
+.lote-slot--add:hover{border-color:var(--r);background:var(--r3)}
+.slot-add-icon{font-size:28px;font-weight:300;color:var(--t3);line-height:1;user-select:none}
+.lote-slot--add:hover .slot-add-icon{color:var(--r)}
 .slot-num{position:absolute;top:3px;left:4px;font-size:8px;font-weight:800;color:#fff;background:rgba(0,0,0,.45);border-radius:3px;padding:0 3px;line-height:14px}
 .lote-card-info{display:flex;flex-direction:column;gap:2px}
 .lote-code{font-size:12px;font-weight:700;color:var(--t);margin-bottom:2px}
@@ -640,21 +646,21 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
 
       <!-- Hero cortes -->
       <div id="hero-cuts" style="overflow-x:auto;display:flex;gap:8px;padding:0 max(12px,env(safe-area-inset-left,0px)) 10px;scrollbar-width:none">
-        <div class="hero-cut" style="background:linear-gradient(160deg,#1a0a06 0%,#3d1408 100%)">
-          <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=320&q=75&fit=crop" alt="Vacuno premium" loading="lazy">
-          <div class="hero-cut-lbl"><span>🥩 Vacuno</span><strong>A Punto</strong></div>
+        <div class="hero-cut" style="background:linear-gradient(160deg,#3d1408 0%,#7a2010 50%,#4a0e06 100%)">
+          <div class="hero-cut-emoji">🥩</div>
+          <div class="hero-cut-lbl"><span>Vacuno Nacional</span><strong>A Punto</strong></div>
         </div>
-        <div class="hero-cut" style="background:linear-gradient(160deg,#0d1a0a 0%,#1a3d14 100%)">
-          <img src="https://images.unsplash.com/photo-1546039907-7fa05f864c02?w=320&q=75&fit=crop" alt="Corte premium" loading="lazy">
-          <div class="hero-cut-lbl"><span>🥩 Vacuno</span><strong>La Reserva</strong></div>
+        <div class="hero-cut" style="background:linear-gradient(160deg,#1a3d14 0%,#2d6b22 50%,#0f2a0a 100%)">
+          <div class="hero-cut-emoji">🥩</div>
+          <div class="hero-cut-lbl"><span>Vacuno Premium</span><strong>La Reserva</strong></div>
         </div>
-        <div class="hero-cut" style="background:linear-gradient(160deg,#1a1006 0%,#3d2a08 100%)">
-          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=320&q=75&fit=crop" alt="Corte parrilla" loading="lazy">
-          <div class="hero-cut-lbl"><span>🐷 Cerdo</span><strong>Fundo Sur</strong></div>
+        <div class="hero-cut" style="background:linear-gradient(160deg,#3d2a08 0%,#7a5210 50%,#4a3006 100%)">
+          <div class="hero-cut-emoji">🐷</div>
+          <div class="hero-cut-lbl"><span>Cerdo Nacional</span><strong>Fundo Sur</strong></div>
         </div>
-        <div class="hero-cut" style="background:linear-gradient(160deg,#06101a 0%,#082a3d 100%)">
-          <img src="https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=320&q=75&fit=crop" alt="Ave" loading="lazy">
-          <div class="hero-cut-lbl"><span>🍗 Ave</span><strong>Importado</strong></div>
+        <div class="hero-cut" style="background:linear-gradient(160deg,#082a3d 0%,#105280 50%,#062040 100%)">
+          <div class="hero-cut-emoji">🍗</div>
+          <div class="hero-cut-lbl"><span>Ave Importada</span><strong>Importado</strong></div>
         </div>
       </div>
 
@@ -758,8 +764,8 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
     <div class="page" id="pg-noticias">
       <div class="news-hdr">
         <div class="news-hdr-left">
-          <h2>Noticias</h2>
-          <p>Mercado cárnico · Actualiza cada 6 horas</p>
+          <h2>Noticias del mercado cárnico</h2>
+          <p>FT Foods · Actualiza cada 6 horas</p>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
           <span id="news-ts"></span>
@@ -2717,15 +2723,27 @@ function renderCatalog(){
               html+=`<div class="lotes-section"><div class="lotes-title">📦 Lotes en stock — hasta 4 fotos por lote</div>`;
               p.lotes.forEach(lt=>{
                 const luid=photoUid(uid,lt.lote);
-                // Construir 4 slots
-                let slotsHtml='<div class="lote-slots">';
+                // Recopilar fotos cargadas
+                const loaded=[];
                 for(let s=1;s<=4;s++){
                   const sk=slotUid(luid,s);
                   const sp=PHOTO_CACHE[sk];
-                  slotsHtml+=`<div class="lote-slot" onclick="triggerPhotoUpload('${sk}','${luid}')" title="Foto ${s}">
-                    ${sp?`<img src="${sp}" style="width:100%;height:100%;object-fit:cover;border-radius:5px" alt="Foto ${s}">`
-                       :`<span style="font-size:16px;display:flex;align-items:center;justify-content:center;height:100%;color:var(--t3)">📷</span>`}
+                  if(sp) loaded.push({sk,sp,s});
+                }
+                // Mostrar solo fotos cargadas + botón "+" si hay espacio
+                let slotsHtml='<div class="lote-slots">';
+                loaded.forEach(({sk,sp,s})=>{
+                  slotsHtml+=`<div class="lote-slot lote-slot--filled" onclick="triggerPhotoUpload('${sk}','${luid}')" title="Cambiar foto ${s}">
+                    <img src="${sp}" style="width:100%;height:100%;object-fit:cover;border-radius:5px" alt="Foto ${s}">
                     <div class="slot-num">${s}</div>
+                  </div>`;
+                });
+                // Botón "+" si aún hay espacio (menos de 4 fotos)
+                if(loaded.length<4){
+                  const nextSlot=loaded.length+1;
+                  const nextSk=slotUid(luid,nextSlot);
+                  slotsHtml+=`<div class="lote-slot lote-slot--add" onclick="triggerPhotoUpload('${nextSk}','${luid}')" title="Agregar foto">
+                    <span class="slot-add-icon">+</span>
                   </div>`;
                 }
                 slotsHtml+='</div>';
