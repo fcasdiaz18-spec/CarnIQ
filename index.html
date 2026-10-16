@@ -816,14 +816,11 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
             onerror="this.src='https://img.youtube.com/vi/dJmzd8E-0xU/hqdefault.jpg'"
           >
         </div>
-        <!-- Imagen fallback (se oculta si el video carga) -->
-        <img id="hero-banner-img" src="" alt="FT Foods" onerror="this.style.opacity=0" style="position:absolute;inset:0;z-index:1">
         <div id="hero-banner-overlay" style="z-index:2"></div>
         <div id="hero-banner-text" style="z-index:3">
           <div class="hb-sub" id="hb-sub">FT Foods</div>
           <div class="hb-title" id="hb-title">Inteligencia Cárnica</div>
         </div>
-        <div id="hero-banner-dots" style="z-index:3"></div>
       </div>
 
       <!-- KPI Bar -->
@@ -3016,56 +3013,10 @@ function getCatalogSlides(){
   return slides;
 }
 
-function renderHeroBanner(){
-  const imgEl=document.getElementById('hero-banner-img');
-  const subEl=document.getElementById('hb-sub');
-  const titleEl=document.getElementById('hb-title');
-  const dotsEl=document.getElementById('hero-banner-dots');
-  const bannerEl=document.getElementById('hero-banner');
-  if(!imgEl||!bannerEl)return;
-
-  if(_heroBannerTimer){clearInterval(_heroBannerTimer);_heroBannerTimer=null;}
-
-  const catalogSlides=getCatalogSlides();
-  const slides=catalogSlides.length?[...catalogSlides,...HERO_SLIDES]:HERO_SLIDES;
-
-  function show(idx){
-    _heroBannerIdx=(idx+slides.length)%slides.length;
-    const s=slides[_heroBannerIdx];
-    imgEl.style.opacity='0';
-    setTimeout(()=>{
-      imgEl.src=s.src;
-      imgEl.style.objectPosition=s.pos||'center 30%';
-      imgEl.style.opacity='1';
-      subEl.textContent=s.sub;
-      titleEl.textContent=s.title;
-      bannerEl.style.background=s.bg;
-    },250);
-    // dots
-    if(dotsEl){
-      dotsEl.innerHTML=slides.map((_,i)=>`<div class="hb-dot${i===_heroBannerIdx?' active':''}" onclick="renderHeroBannerGo(${i})"></div>`).join('');
-    }
-  }
-
-  show(0);
-  if(slides.length>1)_heroBannerTimer=setInterval(()=>show(_heroBannerIdx+1),5000);
-}
-
-function renderHeroBannerGo(idx){
-  if(_heroBannerTimer){clearInterval(_heroBannerTimer);_heroBannerTimer=null;}
-  const imgEl=document.getElementById('hero-banner-img');
-  const bannerEl=document.getElementById('hero-banner');
-  const subEl=document.getElementById('hb-sub');
-  const titleEl=document.getElementById('hb-title');
-  const dotsEl=document.getElementById('hero-banner-dots');
-  const catalogSlides=getCatalogSlides();
-  const slides=catalogSlides.length?[...catalogSlides,...HERO_SLIDES]:HERO_SLIDES;
-  _heroBannerIdx=(idx+slides.length)%slides.length;
-  const s=slides[_heroBannerIdx];
-  if(imgEl){imgEl.style.opacity='0';setTimeout(()=>{imgEl.src=s.src;imgEl.style.objectPosition=s.pos||'center 30%';imgEl.style.opacity='1';subEl.textContent=s.sub;titleEl.textContent=s.title;bannerEl.style.background=s.bg;},250);}
-  if(dotsEl)dotsEl.innerHTML=slides.map((_,i)=>`<div class="hb-dot${i===_heroBannerIdx?' active':''}" onclick="renderHeroBannerGo(${i})"></div>`).join('');
-  if(slides.length>1)_heroBannerTimer=setInterval(()=>renderHeroBannerGo(_heroBannerIdx+1),5000);
-}
+// renderHeroBanner desactivado — banner muestra solo video/thumbnail fijo
+function renderHeroBanner(){}
+function renderHeroBannerGo(){}
+function renderHeroCuts(){}
 
 // Alias para compatibilidad con llamadas previas
 function renderHeroCuts(){renderHeroBanner();}
