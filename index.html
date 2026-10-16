@@ -1120,6 +1120,78 @@ label.lbl-sm{font-size:11px;font-weight:600;color:var(--t2);display:block;margin
           </div>
         </div>
       </div>
+
+      <!-- ═══ PANEL CIF CHILE ═══ -->
+      <div class="novillo-section" style="margin-top:16px">
+        <div class="novillo-hdr">
+          <span style="font-size:20px">🇨🇱</span>
+          <div>
+            <div class="novillo-hdr-title">Vacuno Puesto en Chile · USD/kg</div>
+            <div class="novillo-hdr-sub">Valor CIF estimado por origen · Comparativo de competitividad</div>
+          </div>
+          <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+            <span style="font-size:9px;color:var(--t3)">Datos oct 2026 · FOB + flete estimado</span>
+            <span class="novillo-fx" id="cif-update-badge" style="background:var(--b2);color:var(--b)">Estimación referencia</span>
+          </div>
+        </div>
+
+        <!-- KPI strip: precio CIF por origen -->
+        <div class="nv-kpi-strip" id="cif-kpi-strip">
+          <!-- Renderizado por JS -->
+        </div>
+
+        <!-- Gráfico de barras horizontal -->
+        <div class="nv-chart-card" style="margin-top:0">
+          <div class="nv-card-hdr">
+            <span>Precio comparativo puesto en Chile</span>
+            <span style="font-size:9px;color:var(--t3)">USD/kg · Base CIF estimada</span>
+          </div>
+          <canvas id="cif-chart" height="220"></canvas>
+        </div>
+
+        <!-- Tabla de desglose -->
+        <div style="background:var(--card);border:1px solid var(--brd);border-radius:var(--rad-sm);padding:10px 12px;margin-top:8px;overflow-x:auto">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);margin-bottom:8px">Desglose estimado por componente · USD/kg</div>
+          <table style="width:100%;border-collapse:collapse;font-size:11px" id="cif-table">
+            <thead>
+              <tr style="color:var(--t3);font-size:10px">
+                <th style="text-align:left;padding:4px 6px;border-bottom:1px solid var(--brd)">Origen</th>
+                <th style="text-align:right;padding:4px 6px;border-bottom:1px solid var(--brd)">FOB</th>
+                <th style="text-align:right;padding:4px 6px;border-bottom:1px solid var(--brd)">Flete+Seg</th>
+                <th style="text-align:right;padding:4px 6px;border-bottom:1px solid var(--brd)">Arancel</th>
+                <th style="text-align:right;padding:4px 6px;border-bottom:1px solid var(--brd);font-weight:700;color:var(--t)">CIF Chile</th>
+                <th style="text-align:center;padding:4px 6px;border-bottom:1px solid var(--brd)">vs PY</th>
+                <th style="text-align:left;padding:4px 6px;border-bottom:1px solid var(--brd)">Fuente FOB</th>
+              </tr>
+            </thead>
+            <tbody id="cif-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Nota metodológica -->
+        <div style="background:var(--card);border:1px solid var(--brd);border-radius:var(--rad-sm);padding:10px 12px;margin-top:8px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);margin-bottom:6px">Metodología y supuestos</div>
+          <div style="font-size:9px;color:var(--t3);line-height:1.5">
+            <strong>FOB observado:</strong> valores promedio de exportación implícito declarado ante organismos oficiales (Senacsa/BCP para PY; CEPEA/SECEX para BR; USDA/AMS para USA; INDEC/Adex para AR; INAC para UY). Dato: oct 2026, parcial o último disponible.<br>
+            <strong>Flete + seguro:</strong> estimación referencial basada en distancia y volumen típico de contenedor 20' reefer. PY: USD 0,08–0,12/kg (tierra). BR: USD 0,18–0,22/kg. USA: USD 0,38–0,45/kg. AR: USD 0,12–0,16/kg. UY: USD 0,16–0,20/kg.<br>
+            <strong>Arancel:</strong> Chile aplica 6% general; 0% para Mercosur (PY/BR/AR/UY) bajo TLC Mercosur-Chile. USA: 6% general (sin TLC vigente para carne vacuna).<br>
+            <strong>Importante:</strong> Los valores son <em>estimaciones de referencia</em>. El precio real CIF depende de la partida arancelaria, calidad, corte, incoterm pactado y tipo de cambio del día. No representan precios de compra ni de venta de FT Foods.
+          </div>
+        </div>
+
+        <!-- Fuentes -->
+        <div style="background:var(--card);border:1px solid var(--brd);border-radius:var(--rad-sm);padding:10px 12px;margin-top:8px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);margin-bottom:6px">Fuentes de datos</div>
+          <div class="nv-sources">
+            <a class="nv-src" href="https://www.comexlatam.com/paraguay-exporta-menos-carne-pero-mejora-su-precio/" target="_blank">ComexLatam / Senacsa (PY)</a>
+            <a class="nv-src" href="https://farmnews.com.br/mercado/exportacao-de-carne-bovina-primeira-parcial-de-outubro-de-2026/" target="_blank">FarmNews / SECEX (BR)</a>
+            <a class="nv-src" href="https://dataportuaria.com/es/argentina/analisis/el-precio-de-exportacion-de-la-carne-vacuna-alcanzo-un-record-de-usd-6-968-por-tonelada" target="_blank">DataPortuaria / INDEC (AR)</a>
+            <a class="nv-src" href="https://blasinayasociados.com/precio-de-exportacion-se-afirma-arriba-de-us-6-000-para-la-carne-vacuna/" target="_blank">Blasina y Asoc. / INAC (UY)</a>
+            <a class="nv-src" href="https://www.apea.org.ar/importaciones-chilenas-de-carne-crece-la-participacion-de-brasil-y-argentina-mantiene-el-tercer-lugar/" target="_blank">APEA · Importaciones Chile</a>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ═══ CATÁLOGO ═══ -->
@@ -4942,3 +5014,250 @@ document.addEventListener('DOMContentLoaded', () => {
   nvBuildChart('mensual');
 });
 </script>
+
+<!-- ═══ PANEL CIF CHILE — JS ═══ -->
+<script>
+/* =====================================================================
+   DATOS: USD/kg PUESTO EN CHILE POR ORIGEN
+   FOB: valores promedio implícito de exportación (fuentes oficiales)
+   Flete+Seg: estimación referencial contenedor 20' reefer
+   Arancel: 0% Mercosur (TLC Mercosur-Chile), 6% USA
+   Estado: PY = OBSERVADO (oct 2026) · resto = ESTIMADO
+   ===================================================================== */
+
+const CIF_DATA = [
+  {
+    key: 'py',
+    label: 'Paraguay', flag: '🇵🇾', color: '#1e6ab5',
+    fob: 6.97,
+    flete: 0.09,
+    arancel: 0.00,
+    total: 7.06,
+    estado: 'OBSERVADO',
+    fuente: 'ComexLatam / Senacsa · oct 2026',
+    fuente_url: 'https://www.comexlatam.com/paraguay-exporta-menos-carne-pero-mejora-su-precio/',
+    calidad: 'Novillo apto UE · enfriado/congelado',
+    vol_pct: 49
+  },
+  {
+    key: 'br',
+    label: 'Brasil', flag: '🇧🇷', color: '#23a559',
+    fob: 6.16,
+    flete: 0.20,
+    arancel: 0.00,
+    total: 6.36,
+    estado: 'ESTIMADO',
+    fuente: 'FarmNews / SECEX · oct 2026 (parcial)',
+    fuente_url: 'https://farmnews.com.br/mercado/exportacao-de-carne-bovina-primeira-parcial-de-outubro-de-2026/',
+    calidad: 'Boi gordo · diversas categorías',
+    vol_pct: 41
+  },
+  {
+    key: 'ar',
+    label: 'Argentina', flag: '🇦🇷', color: '#8b5cf6',
+    fob: 6.97,
+    flete: 0.14,
+    arancel: 0.00,
+    total: 7.11,
+    estado: 'ESTIMADO',
+    fuente: 'DataPortuaria / INDEC · abr 2026',
+    fuente_url: 'https://dataportuaria.com/es/argentina/analisis/el-precio-de-exportacion-de-la-carne-vacuna-alcanzo-un-record-de-usd-6-968-por-tonelada',
+    calidad: 'Novillo export · cortes premium',
+    vol_pct: 8
+  },
+  {
+    key: 'uy',
+    label: 'Uruguay', flag: '🇺🇾', color: '#0ea5e9',
+    fob: 6.16,
+    flete: 0.18,
+    arancel: 0.00,
+    total: 6.34,
+    estado: 'ESTIMADO',
+    fuente: 'Blasina y Asoc. / INAC · jul 2026',
+    fuente_url: 'https://blasinayasociados.com/precio-de-exportacion-se-afirma-arriba-de-us-6-000-para-la-carne-vacuna/',
+    calidad: 'Novillo export · enfriado',
+    vol_pct: 1
+  },
+  {
+    key: 'us',
+    label: 'USA', flag: '🇺🇸', color: '#c93a37',
+    fob: 8.00,
+    flete: 0.42,
+    arancel: 0.50,
+    total: 8.92,
+    estado: 'ESTIMADO',
+    fuente: 'USDA/AMS · estimación referencial',
+    fuente_url: 'https://www.ams.usda.gov/market-news/livestock-poultry-grain',
+    calidad: 'Cortes premium · USDA Choice/Prime',
+    vol_pct: 1
+  }
+];
+
+const CIF_AVG_CHILE = 7.046; // Promedio importaciones Chile H1 2026 (APEA)
+
+let cifChart = null;
+
+function cifRenderKPI() {
+  const strip = document.getElementById('cif-kpi-strip');
+  if (!strip) return;
+  const minTotal = Math.min(...CIF_DATA.map(x => x.total));
+  strip.innerHTML = CIF_DATA.map(d => {
+    const isBest = d.total === minTotal;
+    const diffPY = d.key === 'py' ? null : ((d.total - CIF_DATA[0].total) / CIF_DATA[0].total * 100);
+    return `<div class="nv-kpi ${d.key}" style="border-top:3px solid ${d.color}${isBest ? ';outline:1.5px solid var(--am,#b45309)' : ''}">
+      <div class="nv-kpi-flag">${d.flag}</div>
+      <div class="nv-kpi-country">${d.label}</div>
+      <div class="nv-kpi-price">${d.total.toFixed(2)}<span class="nv-kpi-unit">USD/kg CIF</span></div>
+      <div class="nv-kpi-delta ${diffPY === null ? 'flat' : diffPY > 0 ? 'up' : 'down'}">
+        ${diffPY === null
+          ? '<span style="font-size:9px;color:var(--g,#22c55e)">' + d.estado + '</span>'
+          : (diffPY > 0 ? '↑ +' : '↓ ') + diffPY.toFixed(1) + '% vs PY'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function cifBuildChart() {
+  const canvas = document.getElementById('cif-chart');
+  if (!canvas) return;
+  if (cifChart) { cifChart.destroy(); cifChart = null; }
+
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+    (!document.documentElement.getAttribute('data-theme') &&
+      window.matchMedia('(prefers-color-scheme:dark)').matches);
+  const textColor = isDark ? '#c9d1d9' : '#24292f';
+  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+
+  cifChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: CIF_DATA.map(d => `${d.flag} ${d.label}`),
+      datasets: [
+        {
+          label: 'FOB Origen',
+          data: CIF_DATA.map(d => d.fob),
+          backgroundColor: CIF_DATA.map(d => d.color + 'cc'),
+          borderColor: CIF_DATA.map(d => d.color),
+          borderWidth: 1,
+          stack: 'cif'
+        },
+        {
+          label: 'Flete + Seguro (est.)',
+          data: CIF_DATA.map(d => d.flete),
+          backgroundColor: CIF_DATA.map(d => d.color + '44'),
+          borderColor: CIF_DATA.map(d => d.color + '88'),
+          borderWidth: 1,
+          stack: 'cif'
+        },
+        {
+          label: 'Arancel',
+          data: CIF_DATA.map(d => d.arancel),
+          backgroundColor: 'rgba(220,80,60,0.4)',
+          borderColor: 'rgba(220,80,60,0.7)',
+          borderWidth: 1,
+          stack: 'cif'
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true, position: 'top',
+          labels: { color: textColor, font: { size: 10 }, boxWidth: 12, padding: 8 }
+        },
+        tooltip: {
+          callbacks: {
+            footer: items => {
+              const d = CIF_DATA[items[0].dataIndex];
+              return [
+                `TOTAL CIF Chile: USD ${d.total.toFixed(2)}/kg`,
+                `Dato: ${d.estado}`,
+                `Volumen: ~${d.vol_pct}% importaciones CL`
+              ];
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true, min: 0, max: 10,
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { size: 10 }, callback: v => `$${v.toFixed(0)}` },
+          title: { display: true, text: 'USD/kg', color: textColor, font: { size: 10 } }
+        },
+        y: {
+          stacked: true,
+          grid: { display: false },
+          ticks: { color: textColor, font: { size: 11 } }
+        }
+      }
+    },
+    plugins: [{
+      id: 'cifAvgLine',
+      afterDraw(chart) {
+        const { ctx, chartArea, scales } = chart;
+        if (!chartArea) return;
+        const x = scales.x.getPixelForValue(CIF_AVG_CHILE);
+        ctx.save();
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255,165,0,0.85)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 4]);
+        ctx.moveTo(x, chartArea.top);
+        ctx.lineTo(x, chartArea.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(255,140,0,0.95)';
+        ctx.font = 'bold 9px system-ui,sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Prom. CL $${CIF_AVG_CHILE}`, x + 4, chartArea.top + 12);
+        ctx.restore();
+      }
+    }]
+  });
+}
+
+function cifRenderTable() {
+  const tbody = document.getElementById('cif-tbody');
+  if (!tbody) return;
+  const minTotal = Math.min(...CIF_DATA.map(d => d.total));
+  tbody.innerHTML = CIF_DATA.map(d => {
+    const isBest = d.total === minTotal;
+    const diffPY = d.key === 'py' ? '—' : ((d.total - CIF_DATA[0].total) / CIF_DATA[0].total * 100).toFixed(1) + '%';
+    const diffUp = d.key !== 'py' && d.total > CIF_DATA[0].total;
+    const estBadge = d.estado === 'OBSERVADO'
+      ? `<span style="background:#d1fae5;color:#065f46;font-size:8px;font-weight:700;padding:1px 4px;border-radius:3px;margin-left:3px">OBS</span>`
+      : `<span style="background:#fef9c3;color:#92400e;font-size:8px;font-weight:700;padding:1px 4px;border-radius:3px;margin-left:3px">EST</span>`;
+    return `<tr style="${isBest ? 'background:rgba(255,220,50,0.10)' : ''}">
+      <td style="padding:5px 6px;font-weight:600;white-space:nowrap">${d.flag} ${d.label}${estBadge}</td>
+      <td style="text-align:right;padding:5px 6px;font-family:monospace">$${d.fob.toFixed(2)}</td>
+      <td style="text-align:right;padding:5px 6px;color:var(--t3);font-family:monospace">$${d.flete.toFixed(2)}</td>
+      <td style="text-align:right;padding:5px 6px;color:var(--t3);font-family:monospace">${d.arancel > 0 ? '$' + d.arancel.toFixed(2) : '—'}</td>
+      <td style="text-align:right;padding:5px 6px;font-weight:700;color:${d.color};font-family:monospace">$${d.total.toFixed(2)}</td>
+      <td style="text-align:center;padding:5px 6px;font-size:10px;color:${d.key==='py'?'var(--t3)':diffUp?'var(--r,#ef4444)':'var(--g,#22c55e)'}">${diffPY}</td>
+      <td style="text-align:left;padding:5px 6px;font-size:9px">
+        <a href="${d.fuente_url}" target="_blank" style="color:var(--b);text-decoration:none">${d.fuente.split('·')[0].trim()}</a>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  cifRenderKPI();
+  cifBuildChart();
+  cifRenderTable();
+
+  // Re-render si cambia tema
+  new MutationObserver(() => {
+    if (cifChart) { cifChart.destroy(); cifChart = null; }
+    cifBuildChart();
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  const badge = document.getElementById('cif-update-badge');
+  if (badge) badge.textContent = 'Datos oct 2026';
+});
+</script>
+
