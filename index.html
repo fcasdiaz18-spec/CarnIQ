@@ -2402,7 +2402,7 @@ function extractTitleFromUrl(url, fallback){
     if(kwMatch){
       let t='';
       try{t=decodeURIComponent(kwMatch[1].replace(/\+/g,' '));}catch{t=kwMatch[1].replace(/\+/g,' ');}
-      t=t.replace(/[-_]/g,' ').replace(/\s+\d{4,}$/,'').trim().replace(/^\w/,c=>c.toUpperCase());
+      t=t.replace(/[-_]/g,' ').replace(/\s+[a-z]?\d{4,}$/i,'').trim().replace(/^\w/,c=>c.toUpperCase());
       if(t && !SECTION_WORDS.test(t)) return t;
     }
     // Prioridad 2: último segmento no-numérico y no-genérico del path
@@ -2417,7 +2417,7 @@ function extractTitleFromUrl(url, fallback){
     if(!slug) return fallback||'';
     let decoded='';
     try{decoded=decodeURIComponent(slug.replace(/\+/g,' '));}catch{decoded=slug.replace(/\+/g,' ');}
-    const t=decoded.replace(/[-_]/g,' ').replace(/\s+\d{4,}$/,'').trim().replace(/^\w/,c=>c.toUpperCase());
+    const t=decoded.replace(/[-_]/g,' ').replace(/\s+[a-z]?\d{4,}$/i,'').trim().replace(/^\w/,c=>c.toUpperCase());
     if(t && !SECTION_WORDS.test(t)) return t;
   }catch{}
   return fallback||'';
