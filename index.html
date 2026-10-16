@@ -2374,26 +2374,42 @@ function nulHdr(ico,txt,color){
 }
 
 function pressNewsHtml(n, highlighted){
-  // Extraer título legible de la URL si el guardado es solo hostname
+  // Palabras de sección genéricas que NO son títulos de artículo
+  const SECTION_WORDS=/^(noticias?|news|articulo|article|nota|post|actualidad|mercados?|markets?|internacional|nacional|ultima.hora|last.news|prensa|press|inicio|home|index|categoria|category|seccion|section|tendencias?|novedades?|eventos?|destacadas?|featured)$/i;
+
+  // Extraer título legible de la URL si el guardado es solo hostname o genérico
   let title = n.title||'';
-  if(!title || title===n.src){
+  if(!title || title===n.src || SECTION_WORDS.test(title.toLowerCase().trim())){
     try{
       const u=new URL(n.url);
-      // Buscar el segmento más descriptivo del path (evitar segmentos numéricos cortos)
-      const parts=u.pathname.replace(/\/$|\.html?$|\.php$/,'').split('/').filter(Boolean);
-      const slug=parts.find(p=>p.length>6&&!/^\d+$/.test(p))||parts.pop()||'';
-      // Decodificar URL encoding (%C3%A9 → é) y reemplazar + por espacio
+      // Obtener todos los segmentos del path, limpios de extensiones
+      const rawParts=u.pathname.replace(/\/$|\.html?$|\.php$/,'').split('/').filter(Boolean);
+      // Quitar segmentos puramente numéricos (IDs)
+      const parts=rawParts.filter(p=>!/^\d+$/.test(p));
+      // Quitar segmentos que son palabras de sección genéricas
+      const meaningful=parts.filter(p=>!SECTION_WORDS.test(decodeURIComponent(p.replace(/\+/g,' ')).replace(/[-_]/g,' ').trim()));
+      // Tomar el último segmento con contenido útil (es el más específico = título del artículo)
+      // Si hay parámetro kw/ en la URL, extraerlo como título
+      const kwMatch = u.pathname.match(/\/kw\/([^\/]+)/i) || (u.search||'').match(/[?&]kw=([^&]+)/i);
+      let slug='';
+      if(kwMatch){
+        slug=kwMatch[1];
+      } else {
+        slug=meaningful[meaningful.length-1]||parts[parts.length-1]||'';
+      }
+      // Decodificar URL encoding completo
       let decoded='';
       try{decoded=decodeURIComponent(slug.replace(/\+/g,' '));}catch{decoded=slug.replace(/\+/g,' ');}
-      // Limpiar: reemplazar - y _ por espacio, quitar número al final, title case
+      // Limpiar separadores y códigos residuales
       title=decoded
         .replace(/[-_]/g,' ')
-        .replace(/\s+\d{3,}$/,'')   // quitar código numérico final (ej: "Articulo 72305")
-        .replace(/\bkw\b.*/i,'')    // quitar "kw/..." parámetros
+        .replace(/\s+\d{4,}$/,'')   // quitar ID numérico final largo (≥4 dígitos)
         .trim()
         .replace(/\b\w/g,c=>c.toUpperCase())
-        ||n.src;
-    }catch{title=n.src;}
+        ||'';
+      // Si aún queda vacío o es una palabra de sección, usar el src
+      if(!title || SECTION_WORDS.test(title.trim())) title=n.src||'Ver noticia';
+    }catch{title=n.src||'Ver noticia';}
   }
   const catIcon={vacuno:'🥩',cerdo:'🐷',ave:'🍗',mercado:'📊',sanidad:'🏥'}[n.cat]||'📰';
   const hlClass=highlighted?' press-card--hl':'';
